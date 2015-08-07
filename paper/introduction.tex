@@ -25,11 +25,31 @@ The power of these techniques, and what distinguishes them from
 simply running a program and observing its behavior, is in their
 ability to account for uncertainty.
  
-There are different kinds of uncertainty
+Uncertainty can come in different forms ...
  - data values
- - control decision outcomes
  - sequencing/timing
  - ...
 
-In recent years, there ... 
- - CPS
+... and it can be captured in models for program analysis in different ways
+ - free variables
+ - assumption specifications
+ - non-deterministic choice
+ - ...
+
+Program analysis techniques have used this type of modeling
+ - to abstract system behavior to reduce analysis cost while
+   retaining desirable fidelity in properties computed by the
+   analysis 
+ - model refinement has been a key means of improving the utility 
+   of analyses (to target specific behaviors, to eliminate misleading
+   computing properties, to speed analysis)
+
+There are limits to what can be achieved with "classic" program analyses
+ - software systems are becoming less deterministic
+   - machine learning
+   - CPS systems and their real-world environments
+   - probabilistic algorithms
+
+
+
+
