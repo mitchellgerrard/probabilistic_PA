@@ -1,0 +1,97 @@
+------------------------ Meta-comments --------------------------
+
+We have chosen to organize the work on prob. data flow analysis based 
+on how the probabilistic information is incorporated into the analysis
+(e.g., probabilities on data, probabilities on control)
+and on the nature of approximation in the analysis, 
+i.e., underapproximation, overapproximation, or "tight" approximation. 
+
+We plan a separate discussion of how non-deterministic choice is
+handled in data flow analysis.
+
+Finally, we plan a brief mention of work that does not fit into 
+"basic probabilistic program" category, i.e., programs that use
+conditioning.
+
+We would be interested in exposing other dimensions ASAP.  Specifically,
+are there different dimensions that might arise due to thinking about 
+model checking or symbolic execution?
+
+---------------------- Required Terminology -----------------------
+
+The following terms/concepts should be defined earlier in the paper
+since we will need them in this section.
+
+   + probabilistic program
+   + concrete domain
+   + abstract domain
+   + Galois connection
+   + fixpoint
+   + abstract interpretation/data flow analysis
+   + program trace
+   + path
+   + conditioned distribution
+   + Bayesian inference
+   + posterior probability
+
+We expect that this will be done in the intro and background section.   With
+regards to that section it would be ideal if we could have a compact
+explanation of non-probabilistic data flow analyis/abstract interpretation,
+model checking, and symbolic execution with the attendant concepts.
+That will cover most of the above and then we can have a separate
+subsection of the background covering the probabilistic 
+concepts/terms/definitions.
+
+--------------------- The Outline ---------------------------------
+
+Probabilistic Data Flow Analysis Outline
+
+We are considering approaches that start from classical abstract domains.
+and characterize the probability of properties expressed as subsets
+of those domains holding at program points.
+  - this is equivalent to reasoning about the probability of assertions
+    holding or not (in prob sym exe) or probabilistic universal properties
+    (in prob model checking) 
+
+Probabilities on control structure
+  - probabilistic information explicitly annotates the control flow
+    structure of the program
+  - Frequency analysis
+  	+ Ramalingam
+  	+ See if we can tie this approach to the linear
+  	  operators representing transfer functions
+  	  which both Monniaux and Di Pierro use
+
+Probabilities on data structure
+  - probabilistic information annotates the data structure of the
+    program and its influence on control and data is computed through
+    the analysis
+  - the rest of the approaches permit probabilistic information to
+    be defined as either an environment property (i.e., distribution
+    given for an input) or in the type of an expression (i.e., rand call) 
+
+Bounding property probabilities
+  - Abstract Interpretation
+    + Monniaux
+  	+ From Above
+  	+ From Below
+
+Estimating property probabilities
+  - PAI
+    + Di Pierro
+    + "Tight" in a least-square sense
+
+Treating uncertainty expressed as non-determinism
+  - Monniaux can do this 
+
+Expanding the scope of analysis
+  - ... to different probabilistic properties 
+    - Expectation Invariants
+  	+ Chakarov
+  	+ Fixed Points
+  	+ Martingales
+  - ... to more general probabilistic programs
+    - Bayesian Inference
+  	+ Nori
+  	+ Modern Probabilistic Programming Languages
+
