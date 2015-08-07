@@ -1,2 +1,69 @@
 \section{Probabilistic Model Checking}
 \label{sec:pmc}
+
+\subsection{Required Terminology}
+
+  \begin{enumerate}
+   \item discrete time markov chain
+   \item markov decision process
+   \item model
+   \item overapproximation
+   \item universal property
+   \item counterexample
+   \item rewards/costs
+   \item safety
+   \item trace
+   \item abstraction refinement
+   \item general probability terms
+  \end{enumerate}
+
+\subsection{The Outline}
+
+All based on checking universal properties.
+
+  \begin{enumerate}
+
+   \item Probabilities on control structure
+     \begin{enumerate}
+      \item probabilistic information explicitly annotates the modeled 
+            transition system
+      \item discrete time Markov chains
+      \item sources of these annotations
+        \begin{enumerate}
+         \item operational profiles
+         \item developer guesswork
+        \end{enumerate}
+     \end{enumerate}
+
+   \item Bounding property probabilities
+     \begin{enumerate}
+       \item computing fixed points over some formula
+       \item from above/below
+       \item extensions with rewards/costs
+     \end{enumerate}
+
+   \item Estimating property probabilities (via sampling)
+     \begin{enumerate}
+      \item confidence intervals
+      \item approximate probabilistic model checking (Herault)
+      \item sequential probability ratio test 
+     \end{enumerate}
+
+   \item Treating uncertainty expressed as nondeterminism
+     \begin{enumerate}
+      \item Markov decision processes as extension of DTMCs
+      \item minimum/maximum prob. values relating to nondeterminist
+            constructs in sym. ex. and in Monniaux's data flow
+     \end{enumerate}
+
+   \item Expanding the scope of analysis
+     \begin{enumerate}
+      \item probabilities on data structures?
+        \begin{enumerate}
+         \item extract model from actual program and decorate data
+               values with probabilities
+        \end{enumerate}
+      \item run-time probabilistic model checking (Anto)
+     \end{enumerate}
+
+  \end{enumerate}
