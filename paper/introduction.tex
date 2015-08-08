@@ -1,55 +1,131 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Program analyses aim to calculate properties of program executions 
-that hold during execution.
+Static program analyses aim to calculate properties of 
+the possible executions of a program without ever running the program
+and have been an active topic of study since the 1960s \cite{First}.
+Initially developed to allow compilers to generate more efficient
+output programs by the mid-1970s \cite{Fosdick} researchers had
+understood that such program analyses could be applied to fault
+detection -- and verification of the absence of specific classes of faults.
 
-Properties come in many flavors 
- - syntactic vs. semantic 
- - invariant vs. temporal
- - ...  
+There are extremely well-developed frameworks for defining
+and implementing such analyses.  In this paper we focus on three
+such frameworks: data flow analysis, model checking, and symbolic execution.
+\ignore{
+Conceptually, data flow analyses,
+typically, operate on a faithful representation of 
+program control flow and lift reasoning about program
+variables from individual values to sets of values the
+variable may hold.
+Rich frameworks for defining \cite{Hecht,Kildall,Cousot} and 
+implementing \cite{SOOT,others} data flow analyses are in wide-spread use.
 
-Properties have been put to many uses 
- - internal properties of implementations drive optimization 
- - checking implicit/explicit assertions and contracts within the code
- - checking output specifications
- - ...
+In model checking, a program's behavior is represented as a 
+state transition system whose paths can then be analyzed for
+conformance with specified properties.  A key element of all
+effective software model checking approaches \cite{SLAM,others}
+is the abstraction of data and control so as to retain just the
+information needed to check the property of interest.
+Rich model checking frameworks \cite{SMV,SPIN} have existed
+for decades and adaptations of those to target program analysis
+have grown in number and capability since 2000 \cite{JPF,SLAM,others}.
 
-A wide variety of analysis techniques have been developed
- - in cost and scalability
- - in the guarantees they provide about properties, e.g., precision
- - flow, path, calling, scheduling sensitivity
- - ...
+Symbolic execution generalizes the execution of a program from
+a single input vector to a set of input vectors which are represented
+by symbolic expressions with associated logical constraints.  
+Like the abstractions in data flow analysis
+and model checking these symbolic expressions permit sets of values
+to be operated on together which greatly reduces the cost of program analysis.
+Originally developed in the early 1970s \cite{King}, symbolic
+execution was not considered a practical program analysis approach
+until researchers began to leverage recent advances in 
+automated deduction \cite{SAT}.  Since the late 2000s,
+several frameworks for symbolic execution \cite{SPF,KLEE} have
+been developed and hundreds of researchers and developers have
+applied them.
+}
 
-The power of these techniques, and what distinguishes them from
+The power of these analysis techniques, and what distinguishes them from
 simply running a program and observing its behavior, is in their
-ability to account for uncertainty.
- 
-Uncertainty can come in different forms ...
- - data values
- - sequencing/timing
- - ...
+ability to reason about program behavior without knowing all of the
+exact details of program execution, e.g., the specific 
+input values provided to the program, the set of operating system
+thread scheduler decisions.  This tolerance of uncertainty allows analyses
+to provide useful information when users don't know exactly how
+a program will be used (e.g., when a program is first released, when
+embedded systems read sensor inputs from the physical world, or
+when it is ported to an operating system with a different scheduler).
 
-... and it can be captured in models for program analysis in different ways
- - free variables
- - assumption specifications
- - non-deterministic choice
- - ...
+Static analyses model uncertainty in program behavior
+through the use of various forms of abstraction and symbolic representation.
+For example, symbolic expressions with associated logical constraints 
+are used, in symbolic execution, to define abstract domains
+in data flow analysis, and for predicate abstraction in model checking, 
+to capture sets of data values that may be input to a program.
+Non-deterministic choice is another widely used approach for modeling
+uncertainty -- for instance in modeling uncertain branch 
+decisions in data flow analysis and
+in scheduler decisions in model checking.
+While undeniably effective, these approaches sacrifice potentially
+important distinctions in program behavior.   
 
-Program analysis techniques have used this type of modeling
- - to abstract system behavior to reduce analysis cost while
-   retaining desirable fidelity in properties computed by the
-   analysis 
- - model refinement has been a key means of improving the utility 
-   of analyses (to target specific behaviors, to eliminate misleading
-   computing properties, to speed analysis)
+Consider a program that accepts an integer input representing
+a person's income.  A static analysis might reason about the program
+allowing any integer value or, perhaps, by applying
+some simple assumption, i.e., that income must be non-negative.
+Domain experts have studied income distributions and find that
+it varies according to a generalized beta distribution 
+\cite{IncomeDistribution}.  Can this type of information be 
+exploited in a program analysis to speed analysis,
+to yield more useful analysis results, or to reason 
+about new types of program properties?
 
-There are limits to what can be achieved with "classic" program analyses
- - software systems are becoming less deterministic
-   - machine learning
-   - CPS systems and their real-world environments
-   - probabilistic algorithms
+For decades there has been a growing awareness of the value of 
+incorporating more precise forms of uncertainty into program behavior.  
+The field of randomized algorithms has studied how to incorporate
+randomness, as an additional program input, as a means of achieving
+good average case performance -- and consequently as a defense against
+intolerable worst case performance.
+Programming such algorithms requires that primitives be available
+to draw values from probability distributions and there are many
+languages that provide such primitives \cite{NetLogo,others}.  
 
+Regardless of whether information about the distribution of
+values is embedded within a program or stated as an input assumption,
+the semantics of these probabilistic programs is well-understood --
+and has long been studied \cite{Kozen,others}
+\footnote{In recent
+years, the term probabilistic program has been generalized beyond
+drawing inputs from probability distributions, which we
+consider here, to programs that can condition program behavior -- by
+rejecting certain program runs -- and thereby be viewed as
+computations over probability distributions.  We refer the reader to the
+recent paper by Gordon, Henzinger, Nori and Rajamani \cite{ICSE2014}
+for discussion of these more general programs.}. 
+What has lagged behind is work developing frameworks for 
+defining and implementing static analysis techniques for such programs.
 
-
+In this paper, we survey work on adapting model checking, data flow analysis, 
+and symbolic execution, to consider probabilistic information.
+We begin with a brief background that provides basic definitions
+related to static analysis and probabilities.
+Section~\ref{sec:computingprobabilities} discusses approaches that
+have been developed to reason about the probability of program
+related events, e.g., executing a path, taking a branch, or reaching a state.
+The following three sections, 
+Section~\ref{sec:pmc}-\ref{sec:pse}, survey work on probabilistic
+model checking, probabilistic data flow analysis, and probabilistic
+symbolic execution.  These sections seek to expose similarities
+and differences among analysis approaches with respect to issues
+such as the \texttt{accuracy} of analysis results, i.e., how results
+are related to executable program behavior, 
+the aspects of behavior that are governed by probabilities, and
+the treatment of non-determinism -- which is a standard modeling
+approach in static-analysis.
+Section~\ref{sec:probspecs} surveys approaches to the cross-cutting
+issue of how probabilities can be specified or encoded for use
+in analyses.
+Finally, we conclude with the discussion of a series of open questions
+and research challenges that we believe are worth pursuing.
 
