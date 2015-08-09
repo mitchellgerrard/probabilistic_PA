@@ -1,8 +1,7 @@
 \section{Probabilistic Data Flow Analysis}
 \label{sec:pdfa}
 
-\subsection{Meta-comments}
-
+\ignore{
 We have chosen to organize the work on prob. data flow analysis based 
 on how the probabilistic information is incorporated into the analysis
 (e.g., probabilities on data, probabilities on control)
@@ -19,8 +18,6 @@ conditioning.
 We would be interested in exposing other dimensions ASAP.  Specifically,
 are there different dimensions that might arise due to thinking about 
 model checking or symbolic execution?
-
-\subsection{Required Terminology}
 
 The following terms/concepts should be defined earlier in the paper
 since we will need them in this section.
@@ -46,17 +43,15 @@ model checking, and symbolic execution with the attendant concepts.
 That will cover most of the above and then we can have a separate
 subsection of the background covering the probabilistic 
 concepts/terms/definitions.
-
-\subsection{The Outline}
-
-Probabilistic Data Flow Analysis Outline
+}
 
 We are considering approaches that start from classical abstract domains.
 and characterize the probability of properties expressed as subsets
 of those domains holding at program points.
-  - this is equivalent to reasoning about the probability of assertions
-    holding or not (in prob sym exe) or probabilistic universal properties
-    (in prob model checking) 
+
+This is equivalent to reasoning about the probability of assertions
+holding or not (in prob sym exe) or probabilistic universal properties
+(in prob model checking) 
 
 \begin{enumerate}
 

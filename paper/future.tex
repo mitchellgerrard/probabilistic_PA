@@ -1,0 +1,18 @@
+\section{Open Questions and Future Directions}
+\label{sec:future}
+
+Some possible things to discuss:
+\begin{enumerate}
+\item tools: tools support for prob. data flow analysis is really lacking
+\item building a robust and flexible counting tool: that mixes methods, that cancompute prob. estimates with bounds, etc.
+\item hybrid approaches: could we identify portions of a state
+space that could be analyzed exactly through symex and then fold
+that information back into mc/dfa approaches to boost their precision
+\item inference: while we don't cover it in this paper, a key feature of
+the most recent prob. programming languages is conditioning in the form
+of an "observe" statement.  This functions exactly like an "assume" 
+statement and could be used to drive backtracking in mc/symex.  Work
+would have to be done to renormalize the prob. measures as in existing
+approaches.
+\item ... add more here ...
+\end{enumerate}
