@@ -1,0 +1,238 @@
+\section{Probabilistic Data Flow Analysis}
+\label{sec:pdfa}
+
+As we will see in all sections, probabilistic data flow
+analysis moves from the true/false nature of its classical
+counterpart to the probably-true/probably-false nature of
+a static analysis extended with probabilities.
+The shift from the qualitative to the quantitative allows
+you to incorporate probabilistic information into the
+analysis in different ways.
+
+\subsection{Probabilities on Control Structure}
+
+Initial work in extending data flow analysis 
+techniques with probabilities did not consider
+the semantics of the program; instead, already-given probabilities 
+were attached to nodes in that program's control flow graph.  
+The goal was to predict the probability of an expression evaluating 
+to some value or type at runtime, which could 
+allow you to perform useful program optimizations.
+
+This approach begins with a control flow graph where each edge $e$ is 
+mapped to the probability that $e$ is taken during execution.
+The sum of all probabilities leaving any control flow node must be 1
+(excepting the exit node).
+These probabilities may be obtained through heuristics, profiling,
+or some static analysis.
+Imagine an execution trace following some path along the edges of
+the control flow graph.
+The probability of executing that trace is expressed as the product of 
+edge probabilities along this path.
+So the probability of executing some program point can be seen as the
+summation of the probabilities of traces which can reach that program
+point.
+
+Within this bag of execution traces which reach point $u$, we want to 
+find the portion of traces which satisfy some data flow fact $d$.  
+The ratio of the satisfying portion to the size of the trace bags
+gives us the probability of fact $d$ holding at point $u$.
+
+{\sl 
+Fragments. 
+
+Kildall's general framework for computing fixpoints
+over this annotated flow graph.
+
+This assumes execution history does not matter (analysis is path 
+insensitive).
+Later work (Mehofer) adds some path sensitivity, but as Ramalingam's
+framework deals with exploded control flow graphs, a fully 
+path-sensitive approach is not tractable.
+}
+
+\subsection{Probabilities on Data Structure}
+
+Within the last 15 years, research in probabilistic data flow analysis
+began incorporating probabilistic information directly into
+the semantics of a program.
+This is typically done using a variation on Kozen's 
+probabilistic semantics alongside traditional data
+flow techniques.
+Embedding probabilities into the semantics allows probabilistic
+information to influence how both control {\sl and} data structure
+probabilities are computed during the analysis.
+
+The remaining approaches in this section permit probabilistic
+information to be defined as either an environment property
+(i.e., distribution given for an input) or in the type of
+an expression (i.e., rand call).
+Many of these techniques use the framework of abstract
+interpretation.
+We will deal primarily with classical
+abstract domains, where probabilities of properties are
+expressed as subsets of those domains holding at program
+points.
+
+\subsection{Bounding Property Probabilities}
+
+There are many ways to measure properties along some probability
+in a data flow analysis.
+One way to measure is by using upper or lower bounds, e.g. {\sl the 
+probability of violating $\phi$ is less than $0.0001\%$};
+
+\subsection{Estimating Property Probabilities}
+
+Another way to measure properties along some probability is to
+estimate some ``tight" approximation, e.g.
+{\sl this variable will be an even integer at this program point
+$67\%$ of the time}.
+
+\subsection{Modeling Nondeterminism}
+
+Monniaux recognizes that there are variations of uncertainty,
+and that not every program property should be modeled by a
+probability distribution.
+For instance, a user may exploit an unlikely control sequence
+in a vending machine to get free candy bars. 
+If word gets out, the probability of
+this exploited behavior occurring is poorly modeled by a uniform 
+random distribution.
+It is better to treat this kind of input nondeterminisitically.
+
+In one of Monniaux's semantics, variables that can be tied to a known
+distribution are cleanly separated from those that cannot.
+Assignments to variables drawn from a distribution are reasoned about
+through numerical sampling (Monte Carlo), while nondeterminisic choices 
+are explored using abstract interpretation.
+This combination of methods provides upper bounds on the probability
+of outcomes, where one domain is associated with a distribution 
+and the other (nondeterministic) domain is modeled using worse-case 
+behavior.
+
+\subsection{Expanding the Scope}
+
+\subsection{Meta-comments}
+
+We have chosen to organize the work on prob. data flow analysis based 
+on how the probabilistic information is incorporated into the analysis
+(e.g., probabilities on data, probabilities on control)
+and on the nature of approximation in the analysis, 
+i.e., underapproximation, overapproximation, or "tight" approximation.
+
+We plan a separate discussion of how non-deterministic choice is
+handled in data flow analysis.
+
+Finally, we plan a brief mention of work that does not fit into 
+"basic probabilistic program" category, i.e., programs that use
+conditioning.
+
+We would be interested in exposing other dimensions ASAP.  Specifically,
+are there different dimensions that might arise due to thinking about 
+model checking or symbolic execution?
+
+\subsection{Required Terminology}
+
+The following terms/concepts should be defined earlier in the paper
+since we will need them in this section.
+
+\begin{enumerate}
+
+ \item probabilistic program
+ \item concrete domain
+ \item abstract domain
+ \item fixpoint
+ \item abstract interpretation/data flow analysis
+ \item program trace
+ \item path
+ \item conditioned distribution
+ \item Bayesian inference
+
+\end{enumerate}
+
+We expect that this will be done in the intro and background section.   With
+regards to that section it would be ideal if we could have a compact
+explanation of non-probabilistic data flow analyis/abstract interpretation,
+model checking, and symbolic execution with the attendant concepts.
+That will cover most of the above and then we can have a separate
+subsection of the background covering the probabilistic 
+concepts/terms/definitions.
+
+\subsection{The Outline}
+
+Probabilistic Data Flow Analysis Outline
+
+We are considering approaches that start from classical abstract domains.
+and characterize the probability of properties expressed as subsets
+of those domains holding at program points.
+  - this is equivalent to reasoning about the probability of assertions
+    holding or not (in prob sym exe) or probabilistic universal properties
+    (in prob model checking) 
+
+\begin{enumerate}
+
+ \item Probabilities on control structure
+   \begin{enumerate}
+    \item probabilistic information explicitly annotates the control flow
+    structure of the program
+    \item Frequency analysis
+      \begin{enumerate}
+       \item Ramalingam
+       \item See if we can tie this approach to the linear
+  	  operators representing transfer functions
+  	  which both Monniaux and Di Pierro use
+      \end{enumerate}
+   \end{enumerate}
+
+ \item Probabilities on data structure
+   \begin{enumerate}
+    \item probabilistic information annotates the data structure of the
+    program and its influence on control and data is computed through
+    the analysis
+    \item the rest of the approaches permit probabilistic information to
+    be defined as either an environment property (i.e., distribution
+    given for an input) or in the type of an expression (i.e., rand call)
+   \end{enumerate}
+
+ \item Bounding property probabilities
+   \begin{enumerate}
+    \item Monniaux
+      \begin{enumerate}
+       \item From above
+       \item From below
+      \end{enumerate}
+   \end{enumerate}
+
+ \item Estimating property probabilities
+   \begin{enumerate}
+    \item PAI
+     \begin{enumerate}
+      \item Di Pierro
+      \item "Tight" in a least-square sense
+     \end{enumerate}
+   \end{enumerate}
+
+ \item Treating uncertainty expressed as non-determinism
+   \begin{enumerate}
+    \item Monniaux can do this 
+   \end{enumerate}
+
+ \item Expanding the scope of analysis
+   \begin{enumerate}
+    \item ... to different probabilistic properties
+      \begin{enumerate}
+        \item Chakarov
+        \item Fixed Points
+        \item Martingales
+      \end{enumerate}
+    \item ... to more general probabilistic programs
+      \begin{enumerate}
+        \item Bayesian inference
+          \begin{enumerate}
+            \item Nori
+            \item Modern Probabilistic Programming Languages
+          \end{enumerate}
+      \end{enumerate}
+   \end{enumerate}
+
+\end{enumerate}
