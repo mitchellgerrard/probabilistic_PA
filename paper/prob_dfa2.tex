@@ -33,6 +33,8 @@ So the probability of executing some program point can be seen as the
 summation of the probabilities of traces which can reach that program
 point.
 
+(insert figure to make explanation more concise)
+
 Within this bag of execution traces which reach point $u$, we want to 
 find the portion of traces which satisfy some data flow fact $d$.  
 The ratio of the satisfying portion to the size of the trace bags
@@ -69,24 +71,59 @@ information to be defined as either an environment property
 an expression (i.e., rand call).
 Many of these techniques use the framework of abstract
 interpretation.
-We will deal primarily with classical
-abstract domains, where probabilities of properties are
-expressed as subsets of those domains holding at program
-points.
 
-\subsection{Bounding Property Probabilities}
+We cannot go over the details of probabilistic semantics here, but there
+are a few modifications to the abstract semantics of a
+traditional imperitive program (see Hankin's WHILE language) 
+which we will point out.
+One is the addition of a random number generator primitive; it
+is possible and straightforward to approximate a safe upper
+bound on this generator.
+Approximations on loop semantics are dealt with in a safe way
+using ``suitable" widening operators instead of fixed points.
+We explain how conditionals are treated in the following
+graphical example.
 
-There are many ways to measure properties along some probability
-in a data flow analysis.
-One way to measure is by using upper or lower bounds, e.g. {\sl the 
-probability of violating $\phi$ is less than $0.0001\%$};
+(insert example)
+
+How do the classical abstract domains work in a
+probabilistic setting?
+We will focus on one technique developed by Monniaux
+that requires little change to the classical domain.
+The only difference between the classical and the probabilistic 
+case is that in the probabilistic case, 
+an abstract domain has a weight attached to any of its subsets.
+
+The valuation of any element in the concrete domain then 
+becomes the additive composition of weights of points in 
+the concrete domain which are represented by elements in
+the abstract domain.
+The concretization function maps from a set of abstract
+values to a weight function.
+
+An example will be helpful.
+Consider the abstract domain of intervals (in one dimension).
+
+This correctness criterion is given as an upper bound on the
+probability of some outcome in the program, e.g. {\sl the
+probability of violation $\phi$ is less than $0.0001\%$}.
+Dually, other approaches have
+used lower probability bounds as their correctness criterion.
 
 \subsection{Estimating Property Probabilities}
 
-Another way to measure properties along some probability is to
-estimate some ``tight" approximation, e.g.
+Di Pierro et al. have a different approach to abstract 
+interpretation in the probabilistic setting.
+Instead of defining the abstract domain over a lattice, they
+define the domain over vector spaces.
+The dataflow information is now collected using the Moore-Penrose
+pseudo-inverse instead of the usual fixed point.
+This is a way to measure property probabilities by
+estimating some ``tight" approximation, e.g.
 {\sl this variable will be an even integer at this program point
 $67\%$ of the time}.
+The matrices quickly become large; it is not clear how this
+approach scales with bigger programs.
 
 \subsection{Modeling Nondeterminism}
 
@@ -109,6 +146,8 @@ This combination of methods provides upper bounds on the probability
 of outcomes, where one domain is associated with a distribution 
 and the other (nondeterministic) domain is modeled using worse-case 
 behavior.
+
+(replace with DM's modelling of nondeterminism in the non-MC papers)
 
 \subsection{Expanding the Scope}
 
