@@ -1,0 +1,15 @@
+paper/main.aux
+paper/main.auxlock
+paper/main.bbl
+paper/main.blg
+paper/main.log
+paper/main.out
+paper/main.run.xml
+paper/main-blx.bib
+paper/*.*~
+paper/sections/*.tex~
+paper/.texpadtmp
+paper/.texpadtmp/*
+paper/main.dvi
+paper/main.ps
+paper/main.pdf
