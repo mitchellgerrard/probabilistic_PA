@@ -1,6 +1,6 @@
 NAME=main
 
-all:
+all:	clean
 	pdflatex -shell-escape ${NAME}.tex
 	bibtex ${NAME}
 	pdflatex -shell-escape ${NAME}.tex
