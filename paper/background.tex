@@ -1,48 +1,89 @@
 \section{Scope and Background}
 \label{sec:background}
 
-Here are some requirements from the following section outlines (more to come):
-
-From model checking:
-  \begin{enumerate}
-   \item discrete time markov chain
-   \item markov decision process
-   \item model
-   \item overapproximation
-   \item universal property
-   \item counterexample
-   \item rewards/costs
-   \item safety
-   \item trace
-   \item abstraction refinement
-   \item general probability terms
-  \end{enumerate}
-
-From data flow analysis:
+\ignore{
 \begin{enumerate}
- \item probabilistic program
- \item concrete domain
- \item abstract domain
- \item fixpoint
- \item abstract interpretation/data flow analysis
- \item program trace
- \item path
- \item conditioned distribution
- \item Bayesian inference
+\item abstraction refinement
+\item fixpoint
 \end{enumerate}
+}
 
-From symbolic execution:
-\begin{enumerate}
- \item TBD
-\end{enumerate}
+We focus in this paper on programs that draw input variables
+from given probability distributions, or equivalently that make
+calls on functions returning values drawn from given distributions
+such as those provided by the C++ \texttt{<random>} library.
+\mycomment{We should pull an example from one of the later sections
+back here to illustrate the idea.}
 
+While researchers have developed analyses that consider a wide
+range of program properties, in this survey
+we restrict our attention to program
+properties that can be encoded as boolean predicates that
+can be embedded in the program,
+e.g., \texttt{assert} statements, to simplify the explanation
+of how probabilities are incorporated into the analyses.
+These are refered to as \textit{invariant properties} since
+they are intended to hold at every state reached
+in all program program executions
 
+\subsection{Programs and Program Analyses}
+A program defines a set of execution \textit{traces} each of
+which is a sequence of \textit{concrete states}, i.e., 
+the current program counter and a map from memory locations to values.
+A program \textit{satisfies} an invariant property if in all states in
+all traces the predicate evaluates to true, otherwise the program
+\textit{falsifies} the property.
 
-Thoughts on this section:
+A key concept in the program analysis frameworks we survey is
+\textit{symbolic abstraction}.  A symbolic abstraction is a 
+representation of a set of states.  Abstractions can be encoded
+in a variety of forms, e.g., logical formula or binary
+decision diagrams \cite{BDD}.  
+
+Analyses that seek to prove the satisfaction of properties generally
+define abstractions that \textit{overapproximate} the set of program
+states, whereas that seek to falsify properties generally define
+abstractions that \textit{underapproximate} the set of program states.
+
+With overapproximating analyses it is common to define an \textit{abstract
+domain}, $\mathcal{A}$, 
+which symbolically represents a set of concrete states which 
+are said to be defined over the \textit{concrete domain}, $\mathcal{A}$.
+For any reachable state of a program a pair of abstraction 
+and concretization functions, 
+$\alpha : \mathcal{C} \mapsto \mathcal{A}$ and  
+$\gamma : \mathcal{A} \mapsto 2^\mathcal{C}$,
+serve to relate the concrete and abstract domains such that 
+$\forall c \in \mathcal{C} : \alpha(c) \in \mathcal{A}$ and $c \in \gamma(\alpha(c))$.
+Such an abstract domain is typically partially ordered, $\sqsupseteq$,
+such that 
+$\forall a,a' \in \mathcal{A} :  a \sqsupseteq a' \implies \gamma(a) \supseteq \gamma(a')$.
+
+Data flow analysis (and abstract interpretation) can be viewed as a
+non-standard interpretation of program executions over an abstract
+domain.  The semantics of program statements is lifted to operate
+on a set of states, encoded as an element of the abstract domain,
+rather than a single concrete state.  For a program statement $\tau$,
+$\tau^\#$ defines its abstract semantics such that
+$\forall c, c' \in \mathcal{C} : \tau(c) = c' \implies \tau^\#(\alpha(c)) \sqsupseteq \alpha(c')$.  This implies the classic overapproximating correctness
+relation for abstracted program statements:
+$\tau^\# \sqsupseteq \alpha \circ \tau \circ \gamma$.
+
+\mycomment{Matt: add definitions of underapproximation and whatever
+else symbolic execution needs}
+
+\mycomment{Matt: develop a figure which shows pseudo code for model checking,
+data flow analysis, and symbolic execution side by side}
+
+\mycomment{Matt: walk through an explanation of that figure which
+is where we will define what a fixpoint is}
+
+\subsection{Probabilities and Probabilistic Models}
+Define and explain the following
 \begin{itemize}
-\item we need to establish the scope/limits of the paper; our goal is to give people a sense of how probabilistic reasoning has been incorporated into 3 program analysis frameworks
-\item we want to introduce terminology and definitions pretty concisely here
-\item if we decide to focus on explicit state probabilistic model checking, then I think we could pretty easily have 3 little algorithms in this section that showed non-probabilistic versions of model checking, data flow analysis, and symbolic execution
-\item these algorithms could use very similar notation, e.g., state, transition, path, and we could discuss notions of state abstraction and the like with reference to that terminology/notation
-\item we will need a separate subsection on probability and it should provide a few basic definitions and a quick discussion of frequentist and Bayesian approaches.
+\item probability measure
+\item rewards/costs
+\item discrete time Markov chain
+\item discrete time Markov decision process
 \end{itemize}
+
