@@ -112,3 +112,143 @@ Can't think of a good name for this section now.
 \item discussion about input partitions if not going in the next section by Corina
 \end{itemize}
 
+\subsection{Added by Corina}
+\subsection{Symbolic Execution}
+Symbolic Execution~\cite{King1976,clarke76:system} is a program
+analysis technique that executes programs on unspecified inputs, by
+using symbolic inputs instead of concrete data. The state of a
+symbolically executed program is defined by the (symbolic) values of
+the program variables, a \emph{path condition} ($PC$), and a program
+counter. The path condition is a (quantifier-free) boolean formula
+over the symbolic inputs; it accumulates constraints on
+the inputs to follow that path. The program counter defines the next
+statement to be executed. Dynamic symbolic execution (or dynamic test generation or concolic execution)~\cite{godefroid05:dart,Cute,BitBlaze} is a variant of symbolic execution that builds path conditions along concrete program runs and systematically negates and solves collected constraints to drive the execution along different program paths. A key advantage of the technique is the ability of use execution data when symbolic constraints can not be solved. Further the technique has been shown to scale well in practice~\cite{SAGEsummaries}.
+
+A \emph{symbolic execution tree} characterizes the execution paths
+followed during symbolic execution. The tree nodes 
+represent program states and the arcs the transitions between
+states due to the execution of program instructions. Typical applications 
+of symbolic execution include test case
+generation and error detection, with many tools available
+\cite{SPF,godefroid05:dart,tillman-halleux-tap2008,Klee}.
+%Symbolic execution of looping programs may result in an infinite
+%symbolic execution tree. For this reason, symbolic execution is
+%typically run with a (user-specified) bound on the search depth.
+
+Our previous work on probabilistic software analysis used
+the symbolic execution tool Symbolic Java PathFinder (SPF)~\cite{SPF}, 
+part of the Java PathFinder open-source verification framework. 
+However, our algorithms are applicable in the context
+of other languages for which symbolic execution tools exists such as
+Klee~\cite{Klee} for C. 
+
+\subsection{Probabilistic Software Analysis} 
+%Code-level probabilistic analysis is an active area of research with 
+%techniques based on abstract interpretation~\cite{Monniaux2000,CousotESOP12}, 
+%static analysis~\cite{adje-etal-vstte13,Rajamani1,Rajamani2} and symbolic
+%execution~\cite{ISSTA12,PLDI13}.  All these techniques target 
+%sequential code and they differ in the type of input
+%distributions they consider, the language features supported, and
+%the approach used to calculate the number of solutions.
+%
+We will build on our previous work
+from~\cite{geldenhuys-etal-issta2012,filieri-etal-icse2013,Borges2014PLDI}, that handles numeric constraints and
+complex data structures as inputs (the latter is not described here,
+for brevity). The goal of the analysis is: (1) to identify the 
+symbolic constraints characterizing the inputs that make the 
+execution satisfy a given property, and then (2) to quantify the 
+probability of satisfying the constraints.
+For simplicity, we assume the satisfaction of the target property to be 
+characterized by the occurrence of a target event (e.g. successful 
+termination or failure), but our work extends to bounded 
+LTL~\cite{Zuliani2010} as well. 
+
+
+The analysis works with a limited budget of symbolic paths, obtained with a bounded symbolic execution of the program. 
+ Some of these paths lead to
+failure and some of them to success (termination without failure). 
+These path conditions are classified in two disjoint sets: 
+$\textit{PC}^s=\{\textit{PC}_1^s, 
+\textit{PC}_2^s, \ldots , \textit{PC}_m^s\}$ and
+$\textit{PC}^f=\{\textit{PC}_1^f, 
+\textit{PC}_2^f, \ldots , \textit{PC}_p^f\}$.
+The path conditions 
+may not cover the full input domain due to inherent incompleteness in the analysis (e.g. due to non-terminating loops or non-exhaustive path exploration) -- these remaining paths are called  {\em grey} paths and are used in~\cite{filieri-etal-icse2013} to quantify the confidence one can put in the bounded symbolic analysis.
+
+\subsubsection{Probabilistic Usage Profiles} 
+
+The constraints generated with symbolic execution are analyzed to
+quantify the likelihood of an input to satisfy them, where the inputs
+are distributed according to given {\em usage
+profiles}~\cite{filieri-etal-icse2013}. A usage profile is a probabilistic
+characterization of the software interactions with the external world,
+e.g. the users or the physical execution environment.  It assigns to
+each valid combination of inputs its probability to occur during
+ execution. 
+ %Usage profiles can come from monitoring the usage of
+% actual or similar systems or expert and domain knowledge (physical
+% phenomena). 
+In~\cite{filieri-etal-icse2013} we assumed that the usage profiles
+are given but part of the proposed project will investigate techniques for the 
+automated inference of compact usage profiles from the usage data 
+available and from the analysis of the program itself.
+
+In~\cite{filieri-etal-icse2013}, we also assumed that all the input variables
+range over finite discrete domains, whose joining is generically
+indicated as $D$. We relaxed this assumption in more recent work~\cite{Borges2014PLDI}. We profile the expected usage for the program through a profile
+$\textit{UP}$, which is a set of pairs $\langle
+c_i, p_i \rangle$ where $c_i$ is a \emph{usage scenario} defined as a
+(constraint representing a) subset of $D$ and $p_i$ ($p_i\geq 0$) is
+the probability that a user input belongs to $c_i$. We further
+require, for simplicity, $\{c_i\}$ to be a complete partition of $D$,
+and thus $\sum_i p_i=1$. Intuitively, $UP$ is the distribution over
+the input space. Notice that $c_i$ could contain even a single element
+of $D$, allowing for the finest grained specifications of
+$\textit{UP}$.
+
+Given the output of symbolic execution, the probability of success can
+be defined as the probability of executing the program ($P$) with
+an input satisfying any of the successful path conditions, given the
+profile $UP$. This definition can be formalized as
+$\textit{Pr}^s(P)=\sum_{i} \textit{Pr}(\textit{PC}_i^s \ | \ \textit{UP})$.
+An analogous definition is provided for the probability of failure,
+$\textit{Pr}^f(P)$. The probability of grey paths is $1-(\textit{Pr}^s(P)+\textit{Pr}^f(P))$ and it
+quantifies the ratio of elements
+of the input domain for which neither success nor failure have been
+revealed for the current analysis. This information is a measure of
+the confidence we can put on the probability estimation, under
+the current exploration bound.
+
+\subsubsection{Computing Probabilities using Model Counting} 
+To compute the probabilities of path conditions, we use a
+quantification procedure for the generated constraints.
+In~\cite{filieri-etal-icse2013} we used model counting techniques,
+i.e. LattE~\cite{deLoera-etal-2012}, to estimate (algorithmically) the exact
+number of points of a bounded (possibly very large) discrete domain
+that satisfy linear constraints.  In more recent work~\cite{Borges2014PLDI},  
+we developed quantification procedures for
+the analysis of programs that have mixed integer and floating point
+constraints of arbitrary complexity.
+
+To compute the estimated probability of
+success (or failure)  we use the fact that $UP$
+defines a partition of the input domain and then, from the law of total
+probability~\cite{pestman2009}:
+$\textit{Pr}(\textit{PC} \ | \ \textit{UP}) =  \sum_{i} \textit{Pr}(\textit{PC} \ | \ c_i) \cdot p_i$.
+Furthermore, from the definition of conditional probability~\cite{pestman2009}:
+$\textit{Pr}(\textit{PC} |c_i) = \textit{Pr}(\textit{PC} \wedge c_i) / \textit{Pr}(c_i)$. 
+
+To use model-counting techniques for the computation of the
+conditional probabilities, let us define for a constraint $c$ the
+function $\sharp(c)$ that returns the number of elements of $D$
+satisfying $c$. $\sharp(\cdot)$ is always a finite non negative
+integer because we assumed $D$ finite and countable. Under this same
+assumption, $\textit{Pr}(c)$ is, by definition~\cite{pestman2009},
+$\sharp(c) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty
+input domain).  Thus, one can express the probability of success as:
+\setlength\abovedisplayskip{-1pt}
+\setlength\belowdisplayskip{-2pt}
+\begin{equation*}
+\textit{Pr}^s(P)=\sum_{i} \textit{Pr}(\textit{PC}_i^s \ | \ \textit{UP})=
+ \sum_{i} \sum_{j} \textit{Pr}(\textit{PC}_i^s \ | \ c_j) \cdot p_j= \sum_{i} \sum_{j} \frac{\sharp(\textit{PC}_i^s \land c_j)}{\sharp(c_j)} \cdot p_j
+\end{equation*}
