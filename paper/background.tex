@@ -78,6 +78,61 @@ data flow analysis, and symbolic execution side by side}
 \mycomment{Matt: walk through an explanation of that figure which
 is where we will define what a fixpoint is}
 
+\noindent\begin{minipage}[t]{0.32\textwidth}
+\begin{algorithm}[H]
+\renewcommand{\thealgorithm}{}
+\floatname{algorithm}{Alg.}
+\caption{{\tt mc}$(l,m_0)$}
+\label{mc}
+\begin{algorithmic}
+ \WHILE{$\neg branch(l)$}
+   \STATE $m \gets m\lrangle{v, e}$
+   \STATE $l \gets next(l)$
+ \ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\begin{algorithm}[H]
+\renewcommand{\thealgorithm}{}
+\floatname{algorithm}{Alg.}
+\caption{{\tt dfa}$(l,m_0)$}
+\label{mc}
+\begin{algorithmic}
+ \WHILE{$\neg branch(l)$}
+   \STATE $m \gets m\lrangle{v, e}$
+   \STATE $l \gets next(l)$
+ \ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\begin{algorithm}[H]
+\renewcommand{\thealgorithm}{}
+\floatname{algorithm}{Alg.}
+\caption{{\tt symx}$(l,m,\phi)$}
+\label{symexe}
+\begin{algorithmic}
+ \WHILE{$\neg branch(l)$}
+   \STATE $m \gets m\lrangle{v, e}$
+   \STATE $l \gets next(l)$
+ \ENDWHILE
+
+ \STATE $c \gets m[\x{cond}(l)]$
+
+ \IF{SAT$(\phi \wedge c)$}
+   \STATE {\tt symx}$(\x{target}(l), m, \phi \wedge c)$
+ \ENDIF
+
+ \IF{SAT$(\phi \wedge \neg c)$}
+   \STATE {\tt symx}$(\x{next}(l), m, \phi \wedge \neg c)$
+ \ENDIF
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+
 \subsection{Probabilities and Probabilistic Models}
 Define and explain the following
 \begin{itemize}
