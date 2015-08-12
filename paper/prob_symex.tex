@@ -1,2 +1,114 @@
 \section{Probabilistic Symbolic Execution}
 \label{sec:pse}
+
+\subsection{Introduction}
+\begin{itemize}
+\item symex produces PCs and interested in SAT/UNSAT and solutions
+\item now we are interested in number of solutions, given a profile
+\item ISSUE: we assume uniform, but where will non-uniform be described?
+\item we can use model counting to count solutions for a PC (given uniform)
+\item dividing the solution count by the domain count gives probability of the PC holding
+\item call this probabilistic symbolic execution
+\end{itemize}
+
+\subsection{Applications}
+
+\begin{itemize}
+\item knowing the probability of a PC
+\item low-level: probability of a path, reaching a location, returning a value, failing an assertion,... 
+\item that can lead to...
+\item reliability of a piece of code
+\item program understanding
+\item program equivalence
+\item domain coverage
+\end{itemize}
+
+\subsection{Approach}
+
+{\bf following is just placeholder sentences}
+
+Note that the symex algorithm from section blah (background) produces path conditions along the way, which we can then use to do model counting, ...
+
+However, in order to allow us to sample a space of behaviours, i.e. paths, when all paths cannot be exhaustively analysed, we rather use the algorithm below, which samples fully executed symbolic paths. 
+
+\begin{minipage}{0.5\textwidth}
+\begin{algorithm}[H]
+\renewcommand{\thealgorithm}{}
+\floatname{algorithm}{Alg.}
+\caption{{\tt pse}$(l,m,\phi)$}
+\label{symexe}
+\begin{algorithmic}
+ \REPEAT
+  \STATE $p \gets {\tt symsample}(l_0, m_0, \x{true})$
+  \STATE $\x{processPath}(p)$
+ \UNTIL {$\x{stoppingSearch}(p)$}
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{algorithm}[H]
+\renewcommand{\thealgorithm}{}
+\floatname{algorithm}{Alg.}
+\caption{{\tt symsample}$(l,m,\phi)$}
+\label{symexe}
+\begin{algorithmic}
+ \IF{$\x{stoppingPath}((\phi)$} 
+ \RETURN $\phi$
+ \ENDIF
+ \WHILE{$\neg branch(l)$}
+   \STATE $m \gets m\lrangle{v, e}$
+   \STATE $l \gets next(l)$
+ \ENDWHILE
+ 
+ \STATE $c \gets (m[\x{cond}(l)]$
+ 
+ \IF{$\x{selectBranch}(c,\phi)$}
+   \RETURN {\tt symsample}$(\x{target}(l), m, \phi \wedge c)$
+ \ELSE
+   \RETURN {\tt symsample}$(\x{next}(l), m, \phi \wedge \neg c)$
+ \ENDIF
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+
+\subsubsection{stoppingpath}
+
+First explain stoppingPath, since it is arguably also part of symex itself: finite paths not an issue, but infinite paths, i.e. loops on input, must be stopped  {\bf but this needs to move to background really, since the algorithm there is never going to terminate}
+
+\subsubsection{selectBranch}
+
+\begin{itemize}
+\item If we sample exhaustively then we could pick branches any which way we want to, but we have to record which ones we have picked to allow termination [ note we will explain this in the processPath section this requires us to explain the counting and subtracting values etc.
+\item to do a proper monte carlo simulation we need to consider the counts of each branch
+\item could be elaborate here and use heuristics
+\item what if the branch is nondeterministic?
+\end{itemize}
+
+\subsubsection{stoppingSearch}
+
+\begin{itemize}
+\item now we have to consider the domain coverage, i.e. stopping when we have searched a pre-defined level of the domain, this needs to include the discussion about gray paths
+\item also need to talk about the statistical approach from FSE paper, hopefully Antonio can do this, the SA contingent is not capable!
+\item need to mention sample with replacement here as well
+\end{itemize}
+
+\subsubsection{processPath}
+\begin{itemize}
+\item it checks the property of interest
+\item Now we need to discuss the parts about storing the branch and the counts etc. i.e. the non replacement and termination issues
+\end{itemize}
+
+\subsection{Nondeterminism}
+
+Here we will not say much but refer to our previous work in the ICSE paper and then the more elaborate approach in the ASE paper.
+
+\subsection{Open Issues}
+
+Can't think of a good name for this section now.
+
+\begin{itemize}
+\item Domains for counting: reals, non-linear, structures, strings, \#sat
+\item distributed algorithms
+\item discussion about input partitions if not going in the next section by Corina
+\end{itemize}
+
