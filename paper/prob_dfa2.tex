@@ -110,8 +110,23 @@ c \in \gamma(a_j) \implies Pr(c) \le w_i + w_j$.
 The concretization function maps from a set of abstract
 values to a weight function.
 
-An example will be helpful.
-Consider the abstract domain of intervals (in one dimension).
+An example will be helpful (simplified from Monniaux's (2004)).
+We will work with the abstract domain of intervals in $\mathcal{R}$,
+Consider the following C-like program, where {\tt centered\_uniform()}
+and {\tt abs(x)} return a {\tt double} uniformly distributed in 
+$[-1,1]$ and the absolute value of {\tt x}, respectively.
+
+{\tt double x;\\
+     .../* A */\\
+     x = centered\_uniform();\\
+     if(abs(x) <= 1) \{ /* B */ \}}
+
+We want to find a weight function which, for any element in the
+concrete domain, sums up the weights of the corresponding elements
+in the abstract domain.
+
+\mycomment{Mitch : should our example include overlapping intervals
+to highlight the ``summation" aspect of the weight function?}
 
 This correctness criterion is given as an upper bound on the
 probability of some outcome in the program, e.g. {\sl the
