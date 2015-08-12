@@ -69,7 +69,7 @@ The remaining approaches in this section permit probabilistic
 information to be defined as either an environment property
 (i.e., distribution given for an input) or in the type of
 an expression (i.e., rand call).
-Many of these techniques use the framework of abstract
+We examine techniques that use the framework of abstract
 interpretation.
 
 We cannot go over the details of probabilistic semantics here, but there
@@ -136,8 +136,8 @@ approach scales with bigger programs.
 
 \subsection{Modeling Nondeterminism}
 
-Monniaux recognizes that there are variations of uncertainty,
-and that not every program property should be modeled by a
+There are variations of uncertainty,
+and not every program property should be modeled by a
 probability distribution.
 For instance, a user may exploit an unlikely control sequence
 in a vending machine to get free candy bars. 
@@ -146,17 +146,16 @@ this exploited behavior occurring is poorly modeled by a uniform
 random distribution.
 It is better to treat this kind of input nondeterminisitically.
 
-In one of Monniaux's semantics, variables that can be tied to a known
+In Monniaux's semantics, choices that can be tied to a known
 distribution are cleanly separated from those that cannot.
-Assignments to variables drawn from a distribution are reasoned about
-through numerical sampling (Monte Carlo), while nondeterminisic choices 
-are explored using abstract interpretation.
-This combination of methods provides upper bounds on the probability
-of outcomes, where one domain is associated with a distribution 
-and the other (nondeterministic) domain is modeled using worse-case 
-behavior.
-
-\mycomment{Mitch: replace with DM's modelling of nondeterminism in the non-MC papers}
+A nondeterministic choice allows for independent outcomes, and
+this is modeled by lifting the singleton outcomes of deterministic
+semantics to powersets of outcomes.
+In the probabilistic setting, the elements of this powerset are
+tuples of the abstract domain and the associated weight, defined
+above.
+So for any nondeterminstic choice, the resulting computation 
+is safely modeled by one of these tuples.
 
 \subsection{Expanding the Scope}
 
