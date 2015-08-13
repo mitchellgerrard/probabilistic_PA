@@ -134,21 +134,6 @@ probability of violation $\phi$ is less than $0.0001\%$}.
 Dually, other approaches have
 used lower probability bounds as their correctness criterion.
 
-\subsection{Estimating Property Probabilities}
-
-Di Pierro et al. have a different approach to abstract 
-interpretation in the probabilistic setting.
-Instead of defining the abstract domain over a lattice, they
-define the domain over vector spaces.
-The dataflow information is now collected using the Moore-Penrose
-pseudo-inverse instead of the usual fixed point.
-This is a way to measure property probabilities by
-estimating some ``tight" approximation, e.g.
-{\sl this variable will be an even integer at this program point
-$67\%$ of the time}.
-The matrices quickly become large; it is not clear how this
-approach scales with bigger programs.
-
 \subsection{Modeling Nondeterminism}
 
 There are variations of uncertainty,
@@ -178,9 +163,17 @@ There has been recent work which explores computing {\sl expectation
 invariants}.
 Instead of giving safe bounds on an over-approximation of a set
 of states, this approach computes the long-run expected value of
-some property.
-This is similar to the work of Di Pierro, but uses different 
-theoretical machinery, such as fixed points and martingales.
+some property, e.g. 
+{\sl this variable will be an even integer at this program point
+$67\%$ of the time}.
+Chakarov et al. compute this using an iterative analyis within
+abstract interpretation.
+Using a different approach, Di Pierro et al. define the abstract 
+domain over vector spaces, instead of lattices.
+The dataflow information is collected using the Moore-Penrose
+pseudo-inverse instead of the usual fixed point.
+The matrices quickly become large; it is not clear how this
+approach scales with bigger programs.
 
 The idea of a ``probabilistic program" has been generalized from
 Kozen's original semantics to include conditioning on program
