@@ -110,6 +110,8 @@ invariant properties that hold prior to executing statement $l$.
 a bit worried about space}
 
 \subsubsection{Symbolic Execution}
+\label{sec:back:symexe}
+
 \mycomment{Matt: add definitions of underapproximation and whatever
 else symbolic execution needs; walk through updated algorithm}
 
@@ -167,7 +169,7 @@ else symbolic execution needs; walk through updated algorithm}
    \STATE $l \gets \x{succ}(l)$
  \ENDWHILE
 
- \STATE $c \gets \x{cond}(l)(m)]$
+ \STATE $c \gets $
 
  \IF{SAT$(\phi \wedge c)$}
    \STATE {\tt symx}$(\x{succ_t}(l), m, \phi \wedge c)$
@@ -179,6 +181,40 @@ else symbolic execution needs; walk through updated algorithm}
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
+
+{\bf added by Corina, needs to aligned with algorithm}
+
+%\subsection{Symbolic Execution}
+Symbolic Execution~\cite{King1976,clarke76:system} is a program
+analysis technique that executes programs on unspecified inputs, by
+using symbolic inputs instead of concrete data. The state of a
+symbolically executed program is defined by the (symbolic) values of
+the program variables, a \emph{path condition} ($PC$), and a program
+counter. The path condition is a (quantifier-free) boolean formula
+over the symbolic inputs; it accumulates constraints on
+the inputs to follow that path. The program counter defines the next
+statement to be executed. Dynamic symbolic execution (or dynamic test generation or concolic execution)~\cite{godefroid05:dart,Cute,BitBlaze} is a variant of symbolic execution that builds path conditions along concrete program runs and systematically negates and solves collected constraints to drive the execution along different program paths. A key advantage of the technique is the ability of use execution data when symbolic constraints can not be solved. Further the technique has been shown to scale well in practice~\cite{SAGEsummaries}.
+
+A \emph{symbolic execution tree} characterizes the execution paths
+followed during symbolic execution. The tree nodes 
+represent program states and the arcs the transitions between
+states due to the execution of program instructions. Typical applications 
+of symbolic execution include test case
+generation and error detection, with many tools available
+\cite{SPF,godefroid05:dart,tillman-halleux-tap2008,Klee}.
+%Symbolic execution of looping programs may result in an infinite
+%symbolic execution tree. For this reason, symbolic execution is
+%typically run with a (user-specified) bound on the search depth.
+
+Our previous work on probabilistic software analysis used
+the symbolic execution tool Symbolic Java PathFinder (SPF)~\cite{SPF}, 
+part of the Java PathFinder open-source verification framework. 
+However, our algorithms are applicable in the context
+of other languages for which symbolic execution tools exists such as
+Klee~\cite{Klee} for C. 
+
+
+
 
 \subsection{Probabilities and Probabilistic Models}
 The probability of an event $e$ is written $Pr(e)$.

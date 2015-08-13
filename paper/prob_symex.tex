@@ -1,15 +1,36 @@
 \section{Probabilistic Symbolic Execution}
 \label{sec:pse}
 
-\subsection{Introduction}
-\begin{itemize}
-\item symex produces PCs and interested in SAT/UNSAT and solutions
-\item now we are interested in number of solutions, given a profile
-\item ISSUE: we assume uniform, but where will non-uniform be described?
-\item we can use model counting to count solutions for a PC (given uniform)
-\item dividing the solution count by the domain count gives probability of the PC holding
-\item call this probabilistic symbolic execution
-\end{itemize}
+%\subsection{Introduction}
+%\begin{itemize}
+%\item symex produces PCs and interested in SAT/UNSAT and solutions
+%\item now we are interested in number of solutions, given a profile
+%\item ISSUE: we assume uniform, but where will non-uniform be described?
+%\item we can use model counting to count solutions for a PC (given uniform)
+%\item dividing the solution count by the domain count gives probability of the PC holding
+%\item call this probabilistic symbolic execution
+%\end{itemize}
+
+Symbolic execution (section~\ref{sec:back:symexe}) produces path conditions (PCs), i.e. constraints on the inputs, that characterises how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not, since it if not then that path doesn't need to be analysed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the probability of a target property being satisfied. 
+
+For simplicity we will assume we are working with a uniform usage profile for the program under analysis, i.e. all input values are equally likely. Note that arbitrary usage profiles can be embedded in the code, hence this assumption is not a restriction on the generality of the approach. {\bf this now needs to link to somewhere where we discuss this}. Another simplifying assumption is that all the input variables range over finite discrete domains, whose joining is generically indicated as $D$~\cite{filieri-etal-icse2013}. Again this is not a general restriction and we relaxed this assumption in more recent work~\cite{Borges2014PLDI}.
+
+\subsubsection{Computing Probabilities using Model Counting} 
+To compute the probabilities of path conditions, we use a
+quantification procedure for the generated constraints.
+In~\cite{filieri-etal-icse2013} we used model counting techniques,
+i.e. LattE~\cite{deLoera-etal-2012}, to estimate (algorithmically) the exact
+number of points of a bounded (possibly very large) discrete domain
+that satisfy linear constraints.  In more recent work~\cite{Borges2014PLDI},  
+we developed quantification procedures for
+the analysis of programs that have mixed integer and floating point
+constraints of arbitrary complexity.
+
+To use model counting techniques to compute path condition ($pc$) probability ($Pr(pc)$) we define a counting function,  $\sharp(pc)$, that returns the number of elements of $D$ satisfying $pc$. $\sharp(\cdot)$ is always a finite non negative
+integer because we assumed $D$ finite and countable. Under this same
+assumption, $\textit{Pr}(pc)$ is, by definition~\cite{pestman2009},
+$\sharp(pc) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty
+input domain). 
 
 \subsection{Applications}
 
@@ -25,18 +46,14 @@
 
 \subsection{Approach}
 
-{\bf following is just placeholder sentences}
+To allow for a more general description of the approach to probabilistic symbolic execution we modify Algorithm~\ref{alg-symexe}, to rather sample symbolic paths one at a time after which each path is processed. This processing includes the calculation of probabilities as described above. This modified algorithm allows is to better handle the case where only a subset of paths of the program is analysed. The interested reader is referred to \cite{FSE014} for a more detailed discussion of the precise algorithm.
 
-Note that the symex algorithm from section blah (background) produces path conditions along the way, which we can then use to do model counting, ...
-
-However, in order to allow us to sample a space of behaviours, i.e. paths, when all paths cannot be exhaustively analysed, we rather use the algorithm below, which samples fully executed symbolic paths. 
-
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.4\textwidth}
 \begin{algorithm}[H]
 \renewcommand{\thealgorithm}{}
 \floatname{algorithm}{Alg.}
 \caption{{\tt pse}$(l,m,\phi)$}
-\label{symexe}
+\label{alg-pse}
 \begin{algorithmic}
  \REPEAT
   \STATE $p \gets {\tt symsample}(l_0, m_0, \x{true})$
@@ -50,53 +67,63 @@ However, in order to allow us to sample a space of behaviours, i.e. paths, when 
 \renewcommand{\thealgorithm}{}
 \floatname{algorithm}{Alg.}
 \caption{{\tt symsample}$(l,m,\phi)$}
-\label{symexe}
+\label{alg-samplesym}
 \begin{algorithmic}
  \IF{$\x{stoppingPath}((\phi)$} 
  \RETURN $\phi$
  \ENDIF
  \WHILE{$\neg branch(l)$}
    \STATE $m \gets m\lrangle{v, e}$
-   \STATE $l \gets next(l)$
+   \STATE $l \gets succ(l)$
  \ENDWHILE
  
- \STATE $c \gets (m[\x{cond}(l)]$
+ 
+ \STATE $c \gets \x{cond}(l)(m)$
  
  \IF{$\x{selectBranch}(c,\phi)$}
-   \RETURN {\tt symsample}$(\x{target}(l), m, \phi \wedge c)$
+   \RETURN {\tt symsample}$(\x{succ_t}(l), m, \phi \wedge c)$
  \ELSE
-   \RETURN {\tt symsample}$(\x{next}(l), m, \phi \wedge \neg c)$
+   \RETURN {\tt symsample}$(\x{succ_f}(l), m, \phi \wedge \neg c)$
  \ENDIF
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
 
-\subsubsection{stoppingpath}
+$\newline$
 
-First explain stoppingPath, since it is arguably also part of symex itself: finite paths not an issue, but infinite paths, i.e. loops on input, must be stopped  {\bf but this needs to move to background really, since the algorithm there is never going to terminate}
+In the following we will handle all the methods mentioned in the above algorithm: {\tt stoppingPath}, {\tt selectBranch}, {\tt stoppingSearch} and {\tt processPath}. At a high-level {\tt symsample} is called from the initial state of the program and with {\tt true} as the current path condition and returns one path which is then processed. Once a path is processed a check is made to see if the complete analysis can stop. Within {\tt symsample}we first check to see if the search needs to be stopped, otherwise we decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in Algorithm~\ref{alg-symexe} where both branches could be taken if they were both satisfiable. 
 
-\subsubsection{selectBranch}
+\subsubsection{stoppingPath} is the same as in the original symbolic execution algorithm and is there to handle loops conditioned on input variables, since these can cause infinite executions. However, since some paths might now be truncated before reaching its target property, we introduce three types of paths, (1) success paths that reach the target property and the property evaluates to true, (2) failure paths, that reaches the property but the property fails and  (3) grey paths that got truncated before reaching the property. We consider these as three disjoint sets of paths and calculate the cumulative probability of success (i.e. the reliability of the code), failure and grey paths.  Grey paths can be handled optimistically (grouped with the success paths), pessimistically (grouped with the failure paths) or kept separate and be used as a measure for how confident we are in our estimates (for example if the grey paths probability is very low, we are more confident). 
 
-\begin{itemize}
-\item If we sample exhaustively then we could pick branches any which way we want to, but we have to record which ones we have picked to allow termination [ note we will explain this in the processPath section this requires us to explain the counting and subtracting values etc.
-\item to do a proper monte carlo simulation we need to consider the counts of each branch
-\item could be elaborate here and use heuristics
-\item what if the branch is nondeterministic?
-\end{itemize}
+\subsubsection{selectBranch}  In the context of symbolic execution, we define a sample as the
+simulation of one symbolic path. Whenever a branch is encountered during such simulation, the decision to proceed along either of the alternative branches has to be taken according to the probability
+of satisfying the corresponding branch conditions. To calculate these we calculate the number of solutions for each path condition as described at the beginning of this section. at each branching point we therefore have the count for the PC that reached the branching point ($\sharp(\phi)$) and the counts for the path condition for both branches ($\sharp(\phi \wedge c)$ and $\sharp(\phi \wedge \neg c)$). The probability for the true branch is thus $Pr(\x{succ_t}(l)) = \sharp(\phi \wedge c)/\sharp(\phi)$ and for the false branch it is $Pr(\x{succ_f}(l)) = \sharp(\phi \wedge \neg c)/\sharp(\phi)$.  
 
-\subsubsection{stoppingSearch}
+%Note that it might seem excessive to calculate these probabilities, to enable sampling, but fortunately they are also required for the probabilistic analysis in general, discussed next.
 
-\begin{itemize}
-\item now we have to consider the domain coverage, i.e. stopping when we have searched a pre-defined level of the domain, this needs to include the discussion about gray paths
-\item also need to talk about the statistical approach from FSE paper, hopefully Antonio can do this, the SA contingent is not capable!
-\item need to mention sample with replacement here as well
-\end{itemize}
+%\begin{itemize}
+%\item If we sample exhaustively then we could pick branches any which way we want to, but we have to record which ones we have picked to allow termination [ note we will explain this in the processPath section this requires us to explain the counting and subtracting values etc.
+%\item to do a proper monte carlo simulation we need to consider the counts of each branch
+%\item could be elaborate here and use heuristics
+%\item what if the branch is nondeterministic?
+%\end{itemize}
 
-\subsubsection{processPath}
-\begin{itemize}
-\item it checks the property of interest
-\item Now we need to discuss the parts about storing the branch and the counts etc. i.e. the non replacement and termination issues
-\end{itemize}
+\subsubsection{processPath} calculates the probability for the path being processed and checks whether the path falls into the success, failure or grey set. Note that many of these calculations have already been preformed during the {\tt selectBranch} and caching is used to eliminate duplication. 
+
+In addition to the probability calculations, another import task performed here is to handle sampling without replacement. More specifically, how to ensure an exhaustive analysis can be done even when certain behaviours have very small probability (and thus would be hard to sample in a purely Monte Carlo fashion). We leverage the counts we store for each path condition to ensure no path is sampled twice (when we don't want replacement). Whenever a path is finished being explored, we subtract the final PC's count from all the PC counts along the current path back to the root. Note these counts are being used by {\tt selectBranch} to calculate the conditional probabilities at a branch, and thus it changes the distribution of the probabilities. More importantly, if a count becomes zero it will never be sampled. As more of the paths of the program is analysed zero are being propagated up the tree until the root node's count becomes zero at which point all paths have been explored. 
+
+\subsubsection{stoppingSearch} uses either a measure of confidence based on the percentage of the input domain that has been explored, or, a statistical measure of confidence. 
+
+Enough confidence exist about the portion of the input domain that has been analysed when  $1 - Pr(\x{success}) + Pr(\x{failure}) < \epsilon$.  If we treat grey paths separately this means $Pr(\x{grey}) < \epsilon$. Where $\epsilon$ is provided by the user, and is typically very small. Note that although it is shown that {\tt stoppingSearch} takes the path as input, in reality it just reuses the results computed during the {\tt processPath}. 
+
+{\bf Antonio can you help out with the statistical portion}
+
+%\begin{itemize}
+%\item now we have to consider the domain coverage, i.e. stopping when we have searched a pre-%defined level of the domain, this needs to include the discussion about gray paths
+%\item also need to talk about the statistical approach from FSE paper, hopefully Antonio can do this, the SA contingent is not capable!
+%\item need to mention sample with replacement here as well
+%\end{itemize}
+
 
 \subsection{Nondeterminism}
 
@@ -112,143 +139,115 @@ Can't think of a good name for this section now.
 \item discussion about input partitions if not going in the next section by Corina
 \end{itemize}
 
-\subsection{Added by Corina}
-\subsection{Symbolic Execution}
-Symbolic Execution~\cite{King1976,clarke76:system} is a program
-analysis technique that executes programs on unspecified inputs, by
-using symbolic inputs instead of concrete data. The state of a
-symbolically executed program is defined by the (symbolic) values of
-the program variables, a \emph{path condition} ($PC$), and a program
-counter. The path condition is a (quantifier-free) boolean formula
-over the symbolic inputs; it accumulates constraints on
-the inputs to follow that path. The program counter defines the next
-statement to be executed. Dynamic symbolic execution (or dynamic test generation or concolic execution)~\cite{godefroid05:dart,Cute,BitBlaze} is a variant of symbolic execution that builds path conditions along concrete program runs and systematically negates and solves collected constraints to drive the execution along different program paths. A key advantage of the technique is the ability of use execution data when symbolic constraints can not be solved. Further the technique has been shown to scale well in practice~\cite{SAGEsummaries}.
-
-A \emph{symbolic execution tree} characterizes the execution paths
-followed during symbolic execution. The tree nodes 
-represent program states and the arcs the transitions between
-states due to the execution of program instructions. Typical applications 
-of symbolic execution include test case
-generation and error detection, with many tools available
-\cite{SPF,godefroid05:dart,tillman-halleux-tap2008,Klee}.
-%Symbolic execution of looping programs may result in an infinite
-%symbolic execution tree. For this reason, symbolic execution is
-%typically run with a (user-specified) bound on the search depth.
-
-Our previous work on probabilistic software analysis used
-the symbolic execution tool Symbolic Java PathFinder (SPF)~\cite{SPF}, 
-part of the Java PathFinder open-source verification framework. 
-However, our algorithms are applicable in the context
-of other languages for which symbolic execution tools exists such as
-Klee~\cite{Klee} for C. 
-
-\subsection{Probabilistic Software Analysis} 
-%Code-level probabilistic analysis is an active area of research with 
-%techniques based on abstract interpretation~\cite{Monniaux2000,CousotESOP12}, 
-%static analysis~\cite{adje-etal-vstte13,Rajamani1,Rajamani2} and symbolic
-%execution~\cite{ISSTA12,PLDI13}.  All these techniques target 
-%sequential code and they differ in the type of input
-%distributions they consider, the language features supported, and
-%the approach used to calculate the number of solutions.
+%\subsection{Added by Corina}
 %
-We will build on our previous work
-from~\cite{geldenhuys-etal-issta2012,filieri-etal-icse2013,Borges2014PLDI}, that handles numeric constraints and
-complex data structures as inputs (the latter is not described here,
-for brevity). The goal of the analysis is: (1) to identify the 
-symbolic constraints characterizing the inputs that make the 
-execution satisfy a given property, and then (2) to quantify the 
-probability of satisfying the constraints.
-For simplicity, we assume the satisfaction of the target property to be 
-characterized by the occurrence of a target event (e.g. successful 
-termination or failure), but our work extends to bounded 
-LTL~\cite{Zuliani2010} as well. 
-
-
-The analysis works with a limited budget of symbolic paths, obtained with a bounded symbolic execution of the program. 
- Some of these paths lead to
-failure and some of them to success (termination without failure). 
-These path conditions are classified in two disjoint sets: 
-$\textit{PC}^s=\{\textit{PC}_1^s, 
-\textit{PC}_2^s, \ldots , \textit{PC}_m^s\}$ and
-$\textit{PC}^f=\{\textit{PC}_1^f, 
-\textit{PC}_2^f, \ldots , \textit{PC}_p^f\}$.
-The path conditions 
-may not cover the full input domain due to inherent incompleteness in the analysis (e.g. due to non-terminating loops or non-exhaustive path exploration) -- these remaining paths are called  {\em grey} paths and are used in~\cite{filieri-etal-icse2013} to quantify the confidence one can put in the bounded symbolic analysis.
-
-\subsubsection{Probabilistic Usage Profiles} 
-
-The constraints generated with symbolic execution are analyzed to
-quantify the likelihood of an input to satisfy them, where the inputs
-are distributed according to given {\em usage
-profiles}~\cite{filieri-etal-icse2013}. A usage profile is a probabilistic
-characterization of the software interactions with the external world,
-e.g. the users or the physical execution environment.  It assigns to
-each valid combination of inputs its probability to occur during
- execution. 
- %Usage profiles can come from monitoring the usage of
-% actual or similar systems or expert and domain knowledge (physical
-% phenomena). 
-In~\cite{filieri-etal-icse2013} we assumed that the usage profiles
-are given but part of the proposed project will investigate techniques for the 
-automated inference of compact usage profiles from the usage data 
-available and from the analysis of the program itself.
-
-In~\cite{filieri-etal-icse2013}, we also assumed that all the input variables
-range over finite discrete domains, whose joining is generically
-indicated as $D$. We relaxed this assumption in more recent work~\cite{Borges2014PLDI}. We profile the expected usage for the program through a profile
-$\textit{UP}$, which is a set of pairs $\langle
-c_i, p_i \rangle$ where $c_i$ is a \emph{usage scenario} defined as a
-(constraint representing a) subset of $D$ and $p_i$ ($p_i\geq 0$) is
-the probability that a user input belongs to $c_i$. We further
-require, for simplicity, $\{c_i\}$ to be a complete partition of $D$,
-and thus $\sum_i p_i=1$. Intuitively, $UP$ is the distribution over
-the input space. Notice that $c_i$ could contain even a single element
-of $D$, allowing for the finest grained specifications of
-$\textit{UP}$.
-
-Given the output of symbolic execution, the probability of success can
-be defined as the probability of executing the program ($P$) with
-an input satisfying any of the successful path conditions, given the
-profile $UP$. This definition can be formalized as
-$\textit{Pr}^s(P)=\sum_{i} \textit{Pr}(\textit{PC}_i^s \ | \ \textit{UP})$.
-An analogous definition is provided for the probability of failure,
-$\textit{Pr}^f(P)$. The probability of grey paths is $1-(\textit{Pr}^s(P)+\textit{Pr}^f(P))$ and it
-quantifies the ratio of elements
-of the input domain for which neither success nor failure have been
-revealed for the current analysis. This information is a measure of
-the confidence we can put on the probability estimation, under
-the current exploration bound.
-
-\subsubsection{Computing Probabilities using Model Counting} 
-To compute the probabilities of path conditions, we use a
-quantification procedure for the generated constraints.
-In~\cite{filieri-etal-icse2013} we used model counting techniques,
-i.e. LattE~\cite{deLoera-etal-2012}, to estimate (algorithmically) the exact
-number of points of a bounded (possibly very large) discrete domain
-that satisfy linear constraints.  In more recent work~\cite{Borges2014PLDI},  
-we developed quantification procedures for
-the analysis of programs that have mixed integer and floating point
-constraints of arbitrary complexity.
-
-To compute the estimated probability of
-success (or failure)  we use the fact that $UP$
-defines a partition of the input domain and then, from the law of total
-probability~\cite{pestman2009}:
-$\textit{Pr}(\textit{PC} \ | \ \textit{UP}) =  \sum_{i} \textit{Pr}(\textit{PC} \ | \ c_i) \cdot p_i$.
-Furthermore, from the definition of conditional probability~\cite{pestman2009}:
-$\textit{Pr}(\textit{PC} |c_i) = \textit{Pr}(\textit{PC} \wedge c_i) / \textit{Pr}(c_i)$. 
-
-To use model-counting techniques for the computation of the
-conditional probabilities, let us define for a constraint $c$ the
-function $\sharp(c)$ that returns the number of elements of $D$
-satisfying $c$. $\sharp(\cdot)$ is always a finite non negative
-integer because we assumed $D$ finite and countable. Under this same
-assumption, $\textit{Pr}(c)$ is, by definition~\cite{pestman2009},
-$\sharp(c) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty
-input domain).  Thus, one can express the probability of success as:
-\setlength\abovedisplayskip{-1pt}
-\setlength\belowdisplayskip{-2pt}
-\begin{equation*}
-\textit{Pr}^s(P)=\sum_{i} \textit{Pr}(\textit{PC}_i^s \ | \ \textit{UP})=
- \sum_{i} \sum_{j} \textit{Pr}(\textit{PC}_i^s \ | \ c_j) \cdot p_j= \sum_{i} \sum_{j} \frac{\sharp(\textit{PC}_i^s \land c_j)}{\sharp(c_j)} \cdot p_j
-\end{equation*}
+%\subsection{Probabilistic Software Analysis} 
+%%Code-level probabilistic analysis is an active area of research with 
+%%techniques based on abstract interpretation~\cite{Monniaux2000,CousotESOP12}, 
+%%static analysis~\cite{adje-etal-vstte13,Rajamani1,Rajamani2} and symbolic
+%%execution~\cite{ISSTA12,PLDI13}.  All these techniques target 
+%%sequential code and they differ in the type of input
+%%distributions they consider, the language features supported, and
+%%the approach used to calculate the number of solutions.
+%%
+%We will build on our previous work
+%from~\cite{geldenhuys-etal-issta2012,filieri-etal-icse2013,Borges2014PLDI}, that handles numeric constraints and
+%complex data structures as inputs (the latter is not described here,
+%for brevity). The goal of the analysis is: (1) to identify the 
+%symbolic constraints characterizing the inputs that make the 
+%execution satisfy a given property, and then (2) to quantify the 
+%probability of satisfying the constraints.
+%For simplicity, we assume the satisfaction of the target property to be 
+%characterized by the occurrence of a target event (e.g. successful 
+%termination or failure), but our work extends to bounded 
+%LTL~\cite{Zuliani2010} as well. 
+%
+%
+%The analysis works with a limited budget of symbolic paths, obtained with a bounded symbolic execution of the program. 
+% Some of these paths lead to
+%failure and some of them to success (termination without failure). 
+%These path conditions are classified in two disjoint sets: 
+%$\textit{PC}^s=\{\textit{PC}_1^s, 
+%\textit{PC}_2^s, \ldots , \textit{PC}_m^s\}$ and
+%$\textit{PC}^f=\{\textit{PC}_1^f, 
+%\textit{PC}_2^f, \ldots , \textit{PC}_p^f\}$.
+%The path conditions 
+%may not cover the full input domain due to inherent incompleteness in the analysis (e.g. due to non-terminating loops or non-exhaustive path exploration) -- these remaining paths are called  {\em grey} paths and are used in~\cite{filieri-etal-icse2013} to quantify the confidence one can put in the bounded symbolic analysis.
+%
+%\subsubsection{Probabilistic Usage Profiles} 
+%
+%The constraints generated with symbolic execution are analyzed to
+%quantify the likelihood of an input to satisfy them, where the inputs
+%are distributed according to given {\em usage
+%profiles}~\cite{filieri-etal-icse2013}. A usage profile is a probabilistic
+%characterization of the software interactions with the external world,
+%e.g. the users or the physical execution environment.  It assigns to
+%each valid combination of inputs its probability to occur during
+% execution. 
+% %Usage profiles can come from monitoring the usage of
+%% actual or similar systems or expert and domain knowledge (physical
+%% phenomena). 
+%In~\cite{filieri-etal-icse2013} we assumed that the usage profiles
+%are given but part of the proposed project will investigate techniques for the 
+%automated inference of compact usage profiles from the usage data 
+%available and from the analysis of the program itself.
+%
+%In~\cite{filieri-etal-icse2013}, we also assumed that all the input variables
+%range over finite discrete domains, whose joining is generically
+%indicated as $D$. We relaxed this assumption in more recent work~\cite{Borges2014PLDI}. We profile the expected usage for the program through a profile
+%$\textit{UP}$, which is a set of pairs $\langle
+%c_i, p_i \rangle$ where $c_i$ is a \emph{usage scenario} defined as a
+%(constraint representing a) subset of $D$ and $p_i$ ($p_i\geq 0$) is
+%the probability that a user input belongs to $c_i$. We further
+%require, for simplicity, $\{c_i\}$ to be a complete partition of $D$,
+%and thus $\sum_i p_i=1$. Intuitively, $UP$ is the distribution over
+%the input space. Notice that $c_i$ could contain even a single element
+%of $D$, allowing for the finest grained specifications of
+%$\textit{UP}$.
+%
+%Given the output of symbolic execution, the probability of success can
+%be defined as the probability of executing the program ($P$) with
+%an input satisfying any of the successful path conditions, given the
+%profile $UP$. This definition can be formalized as
+%$\textit{Pr}^s(P)=\sum_{i} \textit{Pr}(\textit{PC}_i^s \ | \ \textit{UP})$.
+%An analogous definition is provided for the probability of failure,
+%$\textit{Pr}^f(P)$. The probability of grey paths is $1-(\textit{Pr}^s(P)+\textit{Pr}^f(P))$ and it
+%quantifies the ratio of elements
+%of the input domain for which neither success nor failure have been
+%revealed for the current analysis. This information is a measure of
+%the confidence we can put on the probability estimation, under
+%the current exploration bound.
+%
+%\subsubsection{Computing Probabilities using Model Counting} 
+%To compute the probabilities of path conditions, we use a
+%quantification procedure for the generated constraints.
+%In~\cite{filieri-etal-icse2013} we used model counting techniques,
+%i.e. LattE~\cite{deLoera-etal-2012}, to estimate (algorithmically) the exact
+%number of points of a bounded (possibly very large) discrete domain
+%that satisfy linear constraints.  In more recent work~\cite{Borges2014PLDI},  
+%we developed quantification procedures for
+%the analysis of programs that have mixed integer and floating point
+%constraints of arbitrary complexity.
+%
+%To compute the estimated probability of
+%success (or failure)  we use the fact that $UP$
+%defines a partition of the input domain and then, from the law of total
+%probability~\cite{pestman2009}:
+%$\textit{Pr}(\textit{PC} \ | \ \textit{UP}) =  \sum_{i} \textit{Pr}(\textit{PC} \ | \ c_i) \cdot p_i$.
+%Furthermore, from the definition of conditional probability~\cite{pestman2009}:
+%$\textit{Pr}(\textit{PC} |c_i) = \textit{Pr}(\textit{PC} \wedge c_i) / \textit{Pr}(c_i)$. 
+%
+%To use model-counting techniques for the computation of the
+%conditional probabilities, let us define for a constraint $c$ the
+%function $\sharp(c)$ that returns the number of elements of $D$
+%satisfying $c$. $\sharp(\cdot)$ is always a finite non negative
+%integer because we assumed $D$ finite and countable. Under this same
+%assumption, $\textit{Pr}(c)$ is, by definition~\cite{pestman2009},
+%$\sharp(c) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty
+%input domain).  Thus, one can express the probability of success as:
+%\setlength\abovedisplayskip{-1pt}
+%\setlength\belowdisplayskip{-2pt}
+%\begin{equation*}
+%\textit{Pr}^s(P)=\sum_{i} \textit{Pr}(\textit{PC}_i^s \ | \ \textit{UP})=
+% \sum_{i} \sum_{j} \textit{Pr}(\textit{PC}_i^s \ | \ c_j) \cdot p_j= \sum_{i} \sum_{j} \frac{\sharp(\textit{PC}_i^s \land c_j)}{\sharp(c_j)} \cdot p_j
+%\end{equation*}
