@@ -37,21 +37,18 @@ point.
 
 Within this bag of execution traces which reach point $u$, we want to 
 find the portion of traces which satisfy some data flow fact $d$.  
-The ratio of the satisfying portion to the size of the trace bags
+The ratio of the satisfying portion to the size of the trace bag
 gives us the probability of fact $d$ holding at point $u$.
 
-{\sl 
-Fragments. 
+The expected frequency is computed as the result of a
+sum-over-all-paths (a generalized variant of Kildall's
+meet-over-all-paths value).
 
-Kildall's general framework for computing fixpoints
-over this annotated flow graph.
-
-This assumes execution history does not matter (analysis is path 
-insensitive).
-Later work (Mehofer) adds some path sensitivity, but as Ramalingam's
-framework deals with exploded control flow graphs, a fully 
+Ramalingam's work assumes execution history does not matter 
+(the analysis is path insensitive).
+Later work (Mehofer) adds some path sensitivity, but as both
+frameworks deals with exploded control flow graphs, a fully 
 path-sensitive approach is not tractable.
-}
 
 \subsection{Data Probabilities}
 
