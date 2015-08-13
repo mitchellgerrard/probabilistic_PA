@@ -99,7 +99,11 @@ that location by computing the greatest lower bound with $t$.
 If that results in a new abstract state for the successor then
 the successor is stored for future processing.  When the algorithm
 terminates it computes for each location $l$ an approximation,
-$a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$, of the MOP solution.
+$a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$, 
+of the MOP solution.
+The nature of the approximation assures that $a[l]$ degines
+invariant properties that hold prior to executing statement $l$.
+
 
 \subsubsection{Model Checking}
 \mycomment{Matt: will flesh this out if the above seems workable; I'm
