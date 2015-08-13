@@ -56,38 +56,79 @@ $\gamma : \mathcal{A} \mapsto 2^\mathcal{C}$,
 serve to relate the concrete and abstract domains such that 
 $\forall c \in \mathcal{C} : \alpha(c) \in \mathcal{A}$ and $c \in \gamma(\alpha(c))$.
 Such an abstract domain is typically partially ordered, $\sqsupseteq$,
-such that 
+so that 
 $\forall a,a' \in \mathcal{A} :  a \sqsupseteq a' \implies \gamma(a) \supseteq \gamma(a')$.
+Moreover, it is equipped with a meet operator, $\sqcap$, which
+computes greatest lower bounds and a maximal
+value, $\top \in \mathcal{A}$, such that 
+$\forall a \in \mathcal{A} : a \sqcap \top = a$
 
-Data flow analysis (and abstract interpretation) can be viewed as a
-non-standard interpretation of program executions over an abstract
-domain.  The semantics of program statements is lifted to operate
+\subsubsection{Data Flow Analysis}
+Data flow analyses (and abstract interpretations) are 
+non-standard interpretations of program executions over an abstract domain.  
+The semantics of program statements is lifted to operate
 on a set of states, encoded as an element of the abstract domain,
-rather than a single concrete state.  For a program statement $\tau$,
+rather than a single concrete state.  
+For a program statement $\tau$,
 $\tau^\#$ defines its abstract semantics such that
 $\forall c, c' \in \mathcal{C} : \tau(c) = c' \implies \tau^\#(\alpha(c)) \sqsupseteq \alpha(c')$.  This implies the classic overapproximating correctness
 relation for abstracted program statements:
 $\tau^\# \sqsupseteq \alpha \circ \tau \circ \gamma$.
 
+Conceptually for a program trace, $tr_i$, the sequence of 
+statements, $[\tau_1,\ldots,\tau_n]$, defining the trace can
+be interpreted functionally, $tr_i^\# = \tau_{n}^\# \circ \ldots \tau_1^\#$,
+and evaluated, $tr_i^\#(\iota)$,
+to overapproximate the program states reached by the trace; 
+hhere $\iota$ is the abstract state describing the initial program states.
+The information from all traces, $T(l)$, leading to a program location, $l$, 
+could then be combined, $\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$, to 
+compute invariant properties that hold prior to executing $l$; this
+is refered to as the meet-over-paths (MOP) solution.
+
+This is impractical and instead the abstract states that hold at a
+program location can be computed using Algorithm~\ref{alg-dfa}.
+The algorithm stores abstract states, $a$, for each location, initializing
+the first location to $\iota$, then proceeds along the control
+flow relation of the program to approximate the effects of program
+statements.  It removes a new location, $l$, and computes the abstract
+state that approximates the post-state of executing the operation
+at that location -- storing it in a temporary $t$.  Then for
+all control flow successors it updates the abstract state for
+that location by computing the greatest lower bound with $t$.
+If that results in a new abstract state for the successor then
+the successor is stored for future processing.  When the algorithm
+terminates it computes for each location $l$ an approximation,
+$a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$, of the MOP solution.
+
+\subsubsection{Model Checking}
+\mycomment{Matt: will flesh this out if the above seems workable; I'm
+a bit worried about space}
+
+\subsubsection{Symbolic Execution}
 \mycomment{Matt: add definitions of underapproximation and whatever
-else symbolic execution needs}
-
-\mycomment{Matt: develop a figure which shows pseudo code for model checking,
-data flow analysis, and symbolic execution side by side}
-
-\mycomment{Matt: walk through an explanation of that figure which
-is where we will define what a fixpoint is}
+else symbolic execution needs; walk through updated algorithm}
 
 \noindent\begin{minipage}[t]{0.32\textwidth}
 \begin{algorithm}[H]
-\renewcommand{\thealgorithm}{}
+%\renewcommand{\thealgorithm}{}
+\renewcommand{\algorithmicindent}{0.6em}
 \floatname{algorithm}{Alg.}
-\caption{{\tt mc}$(l,m_0)$}
-\label{mc}
+\caption{{\tt dfa}$(l_0,a)$}
+\label{alg-dfa}
 \begin{algorithmic}
- \WHILE{$\neg branch(l)$}
-   \STATE $m \gets m\lrangle{v, e}$
-   \STATE $l \gets next(l)$
+ \STATE $a[l_0] \gets \iota$
+ \STATE $\forall l \not= l_0 : a[l] \gets \top$
+ \STATE $w \gets \{l_0\}$
+ \WHILE{$w \not= \emptyset$}
+   \STATE $l \gets remove(w)$
+   \STATE $t \gets {op(l)}^{\#}(a[l])$
+   \FOR{$l' \in succ(l)$}
+     \STATE $a[l'] \gets (o \gets a[l']) \sqcap t$
+     \IF{$a[l'] \not= o$}
+       \STATE $w \gets w \cup \{l'\}$
+     \ENDIF
+   \ENDFOR
  \ENDWHILE
 \end{algorithmic}
 \end{algorithm}
@@ -95,14 +136,15 @@ is where we will define what a fixpoint is}
 \hfill
 \begin{minipage}[t]{0.32\textwidth}
 \begin{algorithm}[H]
-\renewcommand{\thealgorithm}{}
+%\renewcommand{\thealgorithm}{}
+\renewcommand{\algorithmicindent}{0.6em}
 \floatname{algorithm}{Alg.}
-\caption{{\tt dfa}$(l,m_0)$}
-\label{mc}
+\caption{{\tt mc}$(l,u)$}
+\label{alg-mc}
 \begin{algorithmic}
  \WHILE{$\neg branch(l)$}
    \STATE $m \gets m\lrangle{v, e}$
-   \STATE $l \gets next(l)$
+   \STATE $l \gets succ(l)$
  \ENDWHILE
 \end{algorithmic}
 \end{algorithm}
@@ -110,24 +152,25 @@ is where we will define what a fixpoint is}
 \hfill
 \begin{minipage}[t]{0.32\textwidth}
 \begin{algorithm}[H]
-\renewcommand{\thealgorithm}{}
+%\renewcommand{\thealgorithm}{}
+\renewcommand{\algorithmicindent}{0.6em}
 \floatname{algorithm}{Alg.}
 \caption{{\tt symx}$(l,m,\phi)$}
-\label{symexe}
+\label{alg-symexe}
 \begin{algorithmic}
  \WHILE{$\neg branch(l)$}
-   \STATE $m \gets m\lrangle{v, e}$
-   \STATE $l \gets next(l)$
+   \STATE $m \gets \x{op}(l)(m)$
+   \STATE $l \gets \x{succ}(l)$
  \ENDWHILE
 
- \STATE $c \gets m[\x{cond}(l)]$
+ \STATE $c \gets \x{cond}(l)(m)]$
 
  \IF{SAT$(\phi \wedge c)$}
-   \STATE {\tt symx}$(\x{target}(l), m, \phi \wedge c)$
+   \STATE {\tt symx}$(\x{succ_t}(l), m, \phi \wedge c)$
  \ENDIF
 
  \IF{SAT$(\phi \wedge \neg c)$}
-   \STATE {\tt symx}$(\x{next}(l), m, \phi \wedge \neg c)$
+   \STATE {\tt symx}$(\x{succ_f}(l), m, \phi \wedge \neg c)$
  \ENDIF
 \end{algorithmic}
 \end{algorithm}

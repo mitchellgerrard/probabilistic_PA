@@ -28,6 +28,18 @@
 \newcommand\x[1]{\ensuremath{\mathit{#1}}}
 \newcommand\lrangle[1]{\ensuremath{\langle#1\rangle}}
 
+\makeatletter
+\providecommand{\bigsqcap}{%
+  \mathop{%
+    \mathpalette\@updown\bigsqcup
+  }%
+}
+\newcommand*{\@updown}[2]{%
+  \rotatebox[origin=c]{180}{$\m@th#1#2$}%
+}
+\makeatother
+
+
 %\usepackage{url}
 %\urldef{\mailsa}\path|{dwyer, mgerrard}@cse.unl.edu|    
 %\newcommand{\keywords}[1]{\par\addvspace\baselineskip
@@ -83,7 +95,7 @@ contain at least 70 and at most 150 words. It should be written using the
 \input{introduction.tex}
 \input{background.tex}
 \input{computing_prob.tex}
-\input{prob_dfa2.tex}
+\input{prob_dfa.tex}
 \input{prob_mc.tex}
 \input{prob_symex.tex}
 \input{prob_spec.tex}
