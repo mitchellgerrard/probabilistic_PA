@@ -174,6 +174,25 @@ is safely modeled by one of these tuples.
 
 \subsection{More and varied probabilistic data flow analyses}
 
+There has been recent work which explores computing ``expectation
+invariants."
+Instead of giving safe bounds on an over-approximation of a set
+of states, this approach computes the long-run expected value of
+some property.
+This is similar to the work of Di Pierro, but uses different 
+theoretical machinery, such as fixed points and martingales.
+
+The idea of a ``probabilistic program" has been generalized from
+Kozen's original semantics to include conditioning on program
+observations.
+In this setting, if a program trace does not match an observation
+at a given point, that trace is not considered, and a new ``sample"
+of the program is run. 
+The program now implicitly specifies a probability distribution
+conditioned on these observations.
+Data flow analyses have recently been adapted to perform Bayesian
+inference on this new class of probabilistic programs.
+
 \ignore{
 \subsection{Meta-comments}
 
