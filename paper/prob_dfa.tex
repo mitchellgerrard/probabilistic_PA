@@ -82,20 +82,6 @@ an expression (i.e., rand call).
 We examine techniques that use the framework of abstract
 interpretation.
 
-We cannot go over the details of probabilistic semantics here, but there
-are a few modifications to the abstract semantics of a
-traditional imperitive program (see Hankin's WHILE language) 
-which we will point out.
-One is the addition of a random number generator primitive; it
-is possible and straightforward to approximate a safe upper
-bound on this generator.
-Approximations on loop semantics are dealt with in a safe way
-using ``suitable" widening operators instead of fixed points.
-We explain how conditionals are treated in the following
-graphical example.
-
-\mycomment{Mitch: insert example}
-
 How do the classical abstract domains work in a
 probabilistic setting?
 We will focus on one technique developed by Monniaux
@@ -119,6 +105,36 @@ $(a_j,w_j) \in ap$ then $c \in \gamma(a_i) \wedge
 c \in \gamma(a_j) \implies Pr(c) \le w_i + w_j$.
 The concretization function maps from a set of abstract
 values to a weight function.
+
+We cannot go over the details of probabilistic semantics here, but there
+are a few modifications to the abstract semantics of a
+traditional imperitive program (see Hankin's WHILE language) 
+which we will point out.
+One is the addition of a random number generator primitive; it
+is possible and straightforward to approximate a safe upper
+bound on this generator.
+Approximations on loop semantics are dealt with in a safe way
+using ``suitable" widening operators instead of fixed points.
+
+Conditionals can be seen as applying a filter to
+the abstract domain on the execution environment to the
+true branch and on the complement of this environment to the
+false branch, and combining the two results.
+This filter is only applied to the first component of
+the tuple (the traditional elements of an abstract domain), 
+and leaves the weight unchanged.
+For instance, consider the abstract domain of integer intervals 
+defined by $[-10,10]$, whose intervals have associated weights
+defined below. 
+If a dataflow fact of $([-5,5],0.1)$ holds before a conditional of 
+{\tt if(x<0)\{...\}}, after applying the filter on the true branch, 
+we get ($[-5,-1]$,0.1) 
+On the false branch, we consider the complemented environment of
+$\{([-10,-6],0.3),([6,10],0.3)\}$; after applying the filter, 
+we get $([6,10],0.3)$.
+Combining these two results, our abstract domain after the
+conditional becomes $\langle([-5,-1],0.1),([6,10],0.3)\rangle$.
+The space is reduced; the weights remain the same.
 
 An example will be helpful (simplified from Monniaux's (2004)).
 We will work with the abstract domain of intervals in $\mathcal{R}$,
