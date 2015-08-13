@@ -40,9 +40,22 @@ find the portion of traces which satisfy some data flow fact $d$.
 The ratio of the satisfying portion to the size of the trace bag
 gives us the probability of fact $d$ holding at point $u$.
 
-The expected frequency is computed as the result of a
-sum-over-all-paths (a generalized variant of Kildall's
-meet-over-all-paths value).
+To compute this expected frequency, Ramalingam uses a slightly
+modified version of Kildall's dataflow analysis framework.
+Instead of the usual semilattice with an idempotent meet
+operation, we use the non-idempotent addition operator.
+The restricted properties of the meet operation can be
+relaxed because instead of computing invariant dataflow
+fact, we only want the summation of probabilities of all
+traces reaching a certain point.
+The expected frequencies may now be computed as the least
+fixed point using the same iterative algorithm presented
+in the background; the quantity becomes a
+{\sl sum-over-all-paths} instead of a {\sl meet-over-all-paths}.
+
+\mycomment{Mitch: Ramalingam also deals with a slight variation
+on a lattice, but his variation is close enough to a traditional
+lattice that I don't think we need to mention this?}
 
 Ramalingam's work assumes execution history does not matter 
 (the analysis is path insensitive).
