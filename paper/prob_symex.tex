@@ -89,16 +89,29 @@ Enough confidence exist about the portion of the input domain that has been anal
 %\item need to mention sample with replacement here as well
 %\end{itemize}
 
+\subsection{Handling nondeterminism}
 
-\subsubsection{Handling nondeterminism}
+Handling nondeterminism within the systems being analysed has been studied in \cite{Filieri2013} in the context of scheduling choices in concurrent programs. The approach was to determine the schedule giving the highest (or lowest) reliability. More recently an approach based on value iteration learning was presented in \cite{Luckow2014} to handle the problem in a more general fashion.
 
-Here we will not say much but refer to our previous work in the ICSE paper and then the more elaborate approach in the ASE paper.
-\mycomment{Matt: there will be a discussion of this in the other sections
-and we can link up to that to eliminate redundancy.  We should mention
-that ours is the only work on this and that it uses a 
-value iteration learning approach}
+\subsection{More and varied probabilistic symbolic execution}
 
-\subsubsection{More and varied probabilistic symbolic execution}
+\subsubsection{Brief History}
+Probabilistic symbolic execution was introduced in \cite{Geldenhuys2012} where the approach was to do model counting (using LattE) on-the-fly during symbolic execution (as in Algorithm~\ref{alg-symexe}). This work was extended in \cite{Filieri2013} to collect path conditions from symbolic execution and then calculate the reliability of the code. This work also showed how usage profiles can be handled. In both these works it is important to observe that all paths of the program is analysed and thus the probability calculations are precise. 
 
-\mycomment{There was a paper by http://dl.acm.org/citation.cfm?id=2462179
-that we should discuss.  Any others in this subsection?}
+The work in \cite{Sankaranarayanan2013} was the first to apply sampling of paths during static analysis to provide a probability calculation with a certain confidence. They applied the approach to calculate bounds on the probability of assertions holding in the code. In \cite{Filieri2014} an approach similar to Algorithm~\ref{alg-pse} was used to also sample paths and then use Bayesian estimation and hypothesis testing. This paper also introduced the subtraction of the counts to ensure rare events can be sampled (see {\tt processPath above}). 
+
+Another important dimension to consider is how to count the solutions for constraints in various domains. The work so far described has mostly focussed on linear integer arithmetic, since the theory is decidable and thus often used as the basis for symbolic execution tools. Fortunately, as already mentioned, efficient model counters also exist for this domain (such as LattE\cite{} and Barvinok\cite{}). In \cite{Borges2014} non-linear and bounded floating-point domains are handled giving accurate estimates of the size of the solution space. Counting the solutions to constraints complex data-structures, such as objects in Java, are addressed in \cite{Filieri2015}. New domains such counting the solutions to string domains \cite{Aydin2015} and the more general all solutions to a SAT formula (\#SAT) \cite{Chakraborty2014} has recently been proposed. 
+
+\subsubsection{Future Directions}
+
+There are many applications for probabilistic symbolic execution, but most work so far has focussed just on the probability of failure/success of a program under varying input distributions; i.e. the focus has mainly been on reliability. 
+
+Program understanding has been touched on in \cite{Geldenhuys2012} and \cite{Filieri2015} where errors are found by observing unexpected probabilities for certain behaviours. This area should be studied more and useful visualisations for probabilities should be investigated. 
+
+Probabilistic symbolic execution is particularly well suited for quantifying the difference between two versions of a program~\cite{Filieri2015b}. This makes it an ideal approach to rank how close a program is to a given oracle program, which has applications in mutation analysis, program repair, approximate computing or even in marking student assignments. 
+
+Probabilistic programming is becoming very popular \cite{Gordon2014}, but the current approaches mainly focus on sampling, whereas a more accurate approach would be to use probabilistic symbolic execution. 
+
+
+
+ 
