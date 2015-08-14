@@ -1,27 +1,15 @@
 \section{Probabilistic Symbolic Execution}
 \label{sec:pse}
 
-Symbolic execution (section~\ref{sec:back:symexe}) produces path conditions (PCs), i.e. constraints on the inputs, that characterises how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not, since it if not then that path doesn't need to be analysed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the probability of a target property being satisfied. 
+Symbolic execution (section~\ref{sec:back:symexe}) produces path conditions (PCs), i.e., constraints on the inputs, that characterise how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analysed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
 
-For simplicity we will assume we are working with a uniform usage profile for the program under analysis, i.e. all input values are equally likely. Note that arbitrary usage profiles can be embedded in the code, hence this assumption is not a restriction on the generality of the approach. {\bf this now needs to link to somewhere where we discuss this}. Another simplifying assumption is that all the input variables range over finite discrete domains, whose joining is generically indicated as $D$~\cite{filieri-etal-icse2013}. Again this is not a general restriction and we relaxed this assumption in more recent work~\cite{Borges2014PLDI}.
+For simplicity we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. {\bf this now needs to link to somewhere where we discuss this}. Another simplifying assumption is that all the input variables range over finite discrete domains; the combined input domain is denoted by $D$~\cite{filieri-etal-icse2013}. Again, this is not a general restriction and we relax this assumption in more recent work~\cite{Borges2014PLDI}.
 
 \mycomment{For Antonio: this discussion moves to your section}
 \subsubsection{Computing Probabilities using Model Counting} 
-To compute the probabilities of path conditions, we use a
-quantification procedure for the generated constraints.
-In~\cite{filieri-etal-icse2013} we used model counting techniques,
-i.e. LattE~\cite{deLoera-etal-2012}, to estimate (algorithmically) the exact
-number of points of a bounded (possibly very large) discrete domain
-that satisfy linear constraints.  In more recent work~\cite{Borges2014PLDI},  
-we developed quantification procedures for
-the analysis of programs that have mixed integer and floating point
-constraints of arbitrary complexity.
+To compute the probabilities of path conditions, we use a quantification procedure for the generated constraints. In~\cite{filieri-etal-icse2013} we use model counting techniques; libraries such as LattE~\cite{deLoera-etal-2012}, algorithmically calculate the exact number of points inside a bounded (possibly very large) region described by linear constraints over a discrete domain.  In more recent work~\cite{Borges2014PLDI}, we develop quantification procedures for the analysis of programs that have mixed integer and floating point constraints of arbitrary complexity.
 
-To use model counting techniques to compute path condition ($pc$) probability ($Pr(pc)$) we define a counting function,  $\sharp(pc)$, that returns the number of elements of $D$ satisfying $pc$. $\sharp(\cdot)$ is always a finite non negative
-integer because we assumed $D$ finite and countable. Under this same
-assumption, $\textit{Pr}(pc)$ is, by definition~\cite{pestman2009},
-$\sharp(pc) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty
-input domain). 
+To use model counting techniques to compute the probability $\x{Pr}(\x{pc})$ of path condition \x{pc}, we define a counting function, $\sharp(\x{pc})$, that returns the number of elements of $D$ that satisfy $\x{pc}$. Because we assume that $D$ is finite and countable, $\sharp(\cdot)$ always produces a finite non-negative integer, and $\x{Pr}(\x{pc})$ is, by definition~\cite{pestman2009}, $\sharp(\x{pc}) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty input domain). 
 
 \subsection{Approach}
 
