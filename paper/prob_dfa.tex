@@ -195,15 +195,15 @@ have not yet demonstrated the scalability of the approach.
 More recent work has explored computing an alternative probabilistic
 property called {\sl expectation invariants} \cite{chakarov2014expectation}.
 This approach uses an iterative data flow analysis to 
-computes a bound on the long-run expected value of
-some program expression, e.g. $E[f(uniform(0,10))] < 7$ states that
-over a sufficiently large number of runs $f$ when called with
-a uniformly distributed number in the range $[0,10]$ will return
-a value less than 7.
+compute a bound on the long-run expected value of
+some program expression, e.g. $E[f(uniform(0,10))] < 7$ states that,
+over a sufficiently large number of runs, when $f$ is called with
+a uniformly distributed number in the range $[0,10]$, it will return
+an average value less than 7.
 
 The idea of a ``probabilistic program" has been generalized from
 Kozen's original semantics to include conditioning on program
-observations.
+observations~\cite{Gordon2014}.
 In this setting, the program implicitly specifies a probability 
 distribution conditioned on these stated observations.
 Data flow analyses have recently been adapted to perform Bayesian
