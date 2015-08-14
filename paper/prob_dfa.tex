@@ -60,7 +60,7 @@ lattice that I don't think we need to mention this?}
 
 Ramalingam's work assumes execution history does not matter 
 (the analysis is path insensitive).
-Later work (Mehofer) adds some path sensitivity \cite{mehofer2001novel}, 
+Later work adds some path sensitivity \cite{mehofer2001novel}, 
 but as both frameworks deals with exploded control flow graphs, a fully 
 path-sensitive approach is not tractable.
 
@@ -68,10 +68,10 @@ path-sensitive approach is not tractable.
 
 Within the last 15 years, research in probabilistic data flow analysis
 began incorporating probabilistic information directly into
-the semantics of a program.
+the semantics of a program \cite{monniaux2000abstract}.
 This is typically done using a variation on Kozen's 
-probabilistic semantics alongside traditional data
-flow techniques.
+probabilistic semantics \cite{kozen1981semantics} 
+alongside traditional data flow techniques.
 Embedding probabilities into the semantics allows probabilistic
 information to influence how both control {\sl and} data structure
 probabilities are computed during the analysis.
