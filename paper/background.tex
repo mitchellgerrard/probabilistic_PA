@@ -89,6 +89,48 @@ $\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$
 defines invariant properties that hold prior to executing $l$; this
 is refered to as the meet-over-paths (MOP) solution~\cite{Kildall}.
 
+Introduce control flow graphs and talk about branch modeling.
+\begin{figure}[t]
+\begin{tikzpicture}[]
+  \node {\texttt{x$<$8}}
+     child {
+        node[xshift=0mm, yshift=0mm] {\texttt{S1}}
+        edge from parent
+        node[left] {\tiny ${\cal X} < 8$}
+     }
+     child {
+        node[xshift=0mm, yshift=0mm] {\texttt{S2}}
+        edge from parent
+        node[right] {\tiny $\neg {\cal X} < 8$}
+     };
+  \node[xshift=30mm] {\texttt{x$<$8}}
+     child {
+        node[xshift=0mm, yshift=0mm] {\texttt{S1}}
+        edge from parent
+     }
+     child {
+        node[xshift=0mm, yshift=0mm] {\texttt{S2}}
+        edge from parent
+     };
+  \node[xshift=60mm] {\texttt{x$<$8}}
+     child {
+        node[xshift=0mm, yshift=0mm] {\texttt{S1}}
+        edge from parent
+        node[left] {\tiny $0.8$}
+     }
+     child {
+        node[xshift=0mm, yshift=0mm] {\texttt{S2}}
+        edge from parent
+        node[right] {\tiny $0.2$}
+     };
+\end{tikzpicture}
+\caption{Branch Modeling Approaches}
+\label{fig:branches}
+\end{figure}
+Figure~\ref{fig:branches} illustrates three approaches for
+modeling the program fragment: \texttt{if (x < 8) S1 else S2}.
+
+
 Generating the set of traces for non-trivial programs is impractical 
 and instead abstract states can be combined, via $\sqcap$, wherever
 traces merge in the control flow to compute the maximum fix point (MFP)
