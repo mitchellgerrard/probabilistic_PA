@@ -41,7 +41,8 @@ The ratio of the satisfying portion to the size of the trace bag
 gives us the probability of fact $d$ holding at point $u$.
 
 To compute this expected frequency, Ramalingam uses a slightly
-modified version of Kildall's dataflow analysis framework.
+modified version of Kildall's dataflow analysis framework
+~\cite{ramalingam1996data}.
 Instead of the usual semilattice with an idempotent meet
 operation, we use the non-idempotent addition operator.
 The restricted properties of the meet operation can be
@@ -59,8 +60,8 @@ lattice that I don't think we need to mention this?}
 
 Ramalingam's work assumes execution history does not matter 
 (the analysis is path insensitive).
-Later work (Mehofer) adds some path sensitivity, but as both
-frameworks deals with exploded control flow graphs, a fully 
+Later work (Mehofer) adds some path sensitivity \cite{mehofer2001novel}, 
+but as both frameworks deals with exploded control flow graphs, a fully 
 path-sensitive approach is not tractable.
 
 \subsection{Data Probabilities}
@@ -85,7 +86,8 @@ interpretation.
 How do the classical abstract domains work in a
 probabilistic setting?
 We will focus on one technique developed by Monniaux
-that requires little change to the classical domain.
+that requires little change to the classical domain 
+\cite{monniaux2001backwards}.
 The key difference between the classical and the probabilistic 
 case is that in the probabilistic case, 
 an abstract domain has a weight attached to any of its subsets.
@@ -183,7 +185,7 @@ is safely modeled by one of these tuples.
 \subsection{More and varied probabilistic data flow analyses}
 
 Bounds on the probability of a state property have been well studied.
-Di Pierro et al. \cite{DiPierro} aim to estimate the probability of a property,
+Di Pierro et al. \cite{di2013probabilistic} aim to estimate the probability of a property,
 rather than bound it.  They formulate their an abstract 
 domain over vector spaces, instead of lattices, and use
 the Moore-Penrose pseudo-inverse instead of the usual fixed point.
@@ -191,7 +193,7 @@ While shown to be effective on small programs, the space
 complexity of vector space encodings and lack of tool support
 have not yet demonstrated the scalability of the approach.
 More recent work has explored computing an alternative probabilistic
-property called {\sl expectation invariants} \cite{Chakarov}.
+property called {\sl expectation invariants} \cite{chakarov2014expectation}.
 This approach uses an iterative data flow analysis to 
 computes a bound on the long-run expected value of
 some program expression, e.g. $E[f(uniform(0,10))] < 7$ states that
@@ -205,5 +207,5 @@ observations.
 In this setting, the program implicitly specifies a probability 
 distribution conditioned on these stated observations.
 Data flow analyses have recently been adapted to perform Bayesian
-inference on this new class of probabilistic programs~\cite{Nori}.
-
+inference on this new class of probabilistic 
+programs~\cite{claret2013bayesian}.  
