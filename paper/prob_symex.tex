@@ -1,20 +1,11 @@
 \section{Probabilistic Symbolic Execution}
 \label{sec:pse}
 
-%\subsection{Introduction}
-%\begin{itemize}
-%\item symex produces PCs and interested in SAT/UNSAT and solutions
-%\item now we are interested in number of solutions, given a profile
-%\item ISSUE: we assume uniform, but where will non-uniform be described?
-%\item we can use model counting to count solutions for a PC (given uniform)
-%\item dividing the solution count by the domain count gives probability of the PC holding
-%\item call this probabilistic symbolic execution
-%\end{itemize}
-
 Symbolic execution (section~\ref{sec:back:symexe}) produces path conditions (PCs), i.e. constraints on the inputs, that characterises how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not, since it if not then that path doesn't need to be analysed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the probability of a target property being satisfied. 
 
 For simplicity we will assume we are working with a uniform usage profile for the program under analysis, i.e. all input values are equally likely. Note that arbitrary usage profiles can be embedded in the code, hence this assumption is not a restriction on the generality of the approach. {\bf this now needs to link to somewhere where we discuss this}. Another simplifying assumption is that all the input variables range over finite discrete domains, whose joining is generically indicated as $D$~\cite{filieri-etal-icse2013}. Again this is not a general restriction and we relaxed this assumption in more recent work~\cite{Borges2014PLDI}.
 
+\mycomment{For Antonio: this discussion moves to your section}
 \subsubsection{Computing Probabilities using Model Counting} 
 To compute the probabilities of path conditions, we use a
 quantification procedure for the generated constraints.
@@ -31,18 +22,6 @@ integer because we assumed $D$ finite and countable. Under this same
 assumption, $\textit{Pr}(pc)$ is, by definition~\cite{pestman2009},
 $\sharp(pc) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty
 input domain). 
-
-\subsection{Applications}
-
-\begin{itemize}
-\item knowing the probability of a PC
-\item low-level: probability of a path, reaching a location, returning a value, failing an assertion,... 
-\item that can lead to...
-\item reliability of a piece of code
-\item program understanding
-\item program equivalence
-\item domain coverage
-\end{itemize}
 
 \subsection{Approach}
 

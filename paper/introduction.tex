@@ -12,39 +12,6 @@ detection -- and verification of the absence of specific classes of faults.
 There are extremely well-developed frameworks for defining
 and implementing such analyses.  In this paper we focus on three
 such frameworks: data flow analysis, model checking, and symbolic execution.
-\ignore{
-Conceptually, data flow analyses,
-typically, operate on a faithful representation of 
-program control flow and lift reasoning about program
-variables from individual values to sets of values the
-variable may hold.
-Rich frameworks for defining \cite{Hecht,Kildall,Cousot} and 
-implementing \cite{SOOT,others} data flow analyses are in wide-spread use.
-
-In model checking, a program's behavior is represented as a 
-state transition system whose paths can then be analyzed for
-conformance with specified properties.  A key element of all
-effective software model checking approaches \cite{SLAM,others}
-is the abstraction of data and control so as to retain just the
-information needed to check the property of interest.
-Rich model checking frameworks \cite{SMV,SPIN} have existed
-for decades and adaptations of those to target program analysis
-have grown in number and capability since 2000 \cite{JPF,SLAM,others}.
-
-Symbolic execution generalizes the execution of a program from
-a single input vector to a set of input vectors which are represented
-by symbolic expressions with associated logical constraints.  
-Like the abstractions in data flow analysis
-and model checking these symbolic expressions permit sets of values
-to be operated on together which greatly reduces the cost of program analysis.
-Originally developed in the early 1970s \cite{King}, symbolic
-execution was not considered a practical program analysis approach
-until researchers began to leverage recent advances in 
-automated deduction \cite{SAT}.  Since the late 2000s,
-several frameworks for symbolic execution \cite{SPF,KLEE} have
-been developed and hundreds of researchers and developers have
-applied them.
-}
 
 The power of these analysis techniques, and what distinguishes them from
 simply running a program and observing its behavior, is in their
@@ -105,6 +72,12 @@ recent paper by Gordon, Henzinger, Nori and Rajamani \cite{ICSE2014}
 for discussion of these more general programs.}. 
 What has lagged behind is work developing frameworks for 
 defining and implementing static analysis techniques for such programs.
+
+What would such analyses have to offer?
+\mycomment{Matt: add the laundry list of questions that might be
+posed.   reliability, probability of failure, program equivalence,
+a new coverage measure, more informative than a failed sound analysis
+(i.e., saying a property fails to hold just means Pr<1), ...}
 
 In this paper, we survey work on adapting model checking, data flow analysis, 
 and symbolic execution, to consider probabilistic information.

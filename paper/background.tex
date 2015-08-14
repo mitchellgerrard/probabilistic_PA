@@ -10,21 +10,21 @@
 
 We focus in this paper on programs that draw input variables
 from given probability distributions, or equivalently that make
-calls on functions returning values drawn from given distributions
-such as those provided by the C++ \texttt{<random>} library.
+calls on functions returning values drawn from given distributions,
+such as those provided by NetLogo which supports
+uniform, normal, Poisson, exponential and gamma distributions.
 \mycomment{We should pull an example from one of the later sections
 back here to illustrate the idea.}
 
 While researchers have developed analyses that consider a wide
-range of program properties, in this survey
+range of program properties, here
 we restrict our attention to program
 properties that can be encoded as boolean predicates that
 can be embedded in the program,
 e.g., \texttt{assert} statements, to simplify the explanation
 of how probabilities are incorporated into the analyses.
 These are refered to as \textit{invariant properties} since
-they are intended to hold at every state reached
-in all program program executions
+they are intended to hold whenever reached in all program program executions
 
 \subsection{Programs and Program Analyses}
 A program defines a set of execution \textit{traces} each of
@@ -48,7 +48,7 @@ abstractions that \textit{underapproximate} the set of program states.
 With overapproximating analyses it is common to define an \textit{abstract
 domain}, $\mathcal{A}$, 
 which symbolically represents a set of concrete states which 
-are said to be defined over the \textit{concrete domain}, $\mathcal{A}$.
+are said to be defined over the \textit{concrete domain}, $\mathcal{C}$.
 For any reachable state of a program a pair of abstraction 
 and concretization functions, 
 $\alpha : \mathcal{C} \mapsto \mathcal{A}$ and  
@@ -58,13 +58,15 @@ $\forall c \in \mathcal{C} : \alpha(c) \in \mathcal{A}$ and $c \in \gamma(\alpha
 Such an abstract domain is typically partially ordered, $\sqsupseteq$,
 so that 
 $\forall a,a' \in \mathcal{A} :  a \sqsupseteq a' \implies \gamma(a) \supseteq \gamma(a')$.
-Moreover, it is equipped with a meet operator, $\sqcap$, which
-computes greatest lower bounds and a maximal
-value, $\top \in \mathcal{A}$, such that 
-$\forall a \in \mathcal{A} : a \sqcap \top = a$
+Moreover, equiping it with a meet operator, $\sqcap$, which
+computes greatest lower bounds, and a maximal
+value, $\top \in \mathcal{A}$ such that 
+$\forall a \in \mathcal{A} : a \sqcap \top = a$, makes the
+abstract domain a meet semi-lattice.
 
 \subsubsection{Data Flow Analysis}
-Data flow analyses (and abstract interpretations) are 
+Data flow analyses~\cite{Kildall} 
+(and analyses built using abstract interpretation~\cite{Cousot}) perform
 non-standard interpretations of program executions over an abstract domain.  
 The semantics of program statements is lifted to operate
 on a set of states, encoded as an element of the abstract domain,
@@ -77,18 +79,20 @@ $\tau^\# \sqsupseteq \alpha \circ \tau \circ \gamma$.
 
 Conceptually for a program trace, $tr_i$, the sequence of 
 statements, $[\tau_1,\ldots,\tau_n]$, defining the trace can
-be interpreted functionally, $tr_i^\# = \tau_{n}^\# \circ \ldots \tau_1^\#$,
+be interpreted functionally, $tr_i^\# = \tau_{n}^\# \circ \ldots \circ \tau_1^\#$,
 and evaluated, $tr_i^\#(\iota)$,
 to overapproximate the program states reached by the trace; 
-hhere $\iota$ is the abstract state describing the initial program states.
-The information from all traces, $T(l)$, leading to a program location, $l$, 
-could then be combined, $\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$, to 
-compute invariant properties that hold prior to executing $l$; this
-is refered to as the meet-over-paths (MOP) solution.
+here $\iota$ is the abstract state describing the initial program states.
+Given an overapproximation of the set of traces, $T(l)$, leading to a 
+program location, $l$, 
+$\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$ 
+defines invariant properties that hold prior to executing $l$; this
+is refered to as the meet-over-paths (MOP) solution~\cite{Kildall}.
 
-This is impractical and instead the abstract states that hold at a
-program location can be computed using Algorithm~\ref{alg-dfa}.
-\mycomment{reference Kildall's framework}
+Generating the set of traces for non-trivial programs is impractical 
+and instead abstract states can be combined, via $\sqcap$, wherever
+traces merge in the control flow to compute the maximum fix point (MFP)
+as illustrated in Algorithm~\ref{alg-dfa}.
 The algorithm stores abstract states, $a$, for each location, initializing
 the first location to $\iota$, then proceeds along the control
 flow relation of the program to approximate the effects of program
@@ -100,28 +104,28 @@ that location by computing the greatest lower bound with $t$.
 If that results in a new abstract state for the successor then
 the successor is stored for future processing.  When the algorithm
 terminates it computes for each location $l$ an approximation,
-$a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$, 
-of the MOP solution.
-The nature of the approximation assures that $a[l]$ degines
-invariant properties that hold prior to executing statement $l$.
+$a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$.
+The nature of the MFP approximation assures that $a[l]$ defines
+invariant properties that hold prior to executing statement $l$, however,
+it fail to include some actual invariant properties.
 
+Data flow analysis tools and toolkits exist for many popular 
+languages~\cite{SOOT,WALA,others}
+and have been used primarily for program optimization and
+verifying program conformance with, implicit and explicit,
+assertional specifications.
 
 \subsubsection{Model Checking}
-\mycomment{Matt: will flesh this out if the above seems workable; I'm
-a bit worried about space}
+\mycomment{Matt: waiting for the probabilistic section to be fleshed out
+to backfill this}
 
-\subsubsection{Symbolic Execution}
-\label{sec:back:symexe}
-
-\mycomment{Matt: add definitions of underapproximation and whatever
-else symbolic execution needs; walk through updated algorithm}
-
+\begin{figure}[t]
 \noindent\begin{minipage}[t]{0.32\textwidth}
 \begin{algorithm}[H]
 %\renewcommand{\thealgorithm}{}
 \renewcommand{\algorithmicindent}{0.6em}
 \floatname{algorithm}{Alg.}
-\caption{{\tt dfa}$(l_0,a)$}
+\caption{{\tt dfa}$(\iota,a)$}
 \label{alg-dfa}
 \begin{algorithmic}
  \STATE $a[l_0] \gets \iota$
@@ -137,93 +141,108 @@ else symbolic execution needs; walk through updated algorithm}
      \ENDIF
    \ENDFOR
  \ENDWHILE
+ \STATE $\forall l : \x{check}(a[l],\phi)$
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}%
 \hfill
-\begin{minipage}[t]{0.32\textwidth}
+\begin{minipage}[t]{0.29\textwidth}
 \begin{algorithm}[H]
 %\renewcommand{\thealgorithm}{}
 \renewcommand{\algorithmicindent}{0.6em}
 \floatname{algorithm}{Alg.}
-\caption{{\tt mc}$(l,u)$}
+\caption{{\tt mc}$(s,seen)$}
 \label{alg-mc}
 \begin{algorithmic}
- \WHILE{$\neg branch(l)$}
-   \STATE $m \gets m\lrangle{v, e}$
-   \STATE $l \gets succ(l)$
- \ENDWHILE
+ \IF{$s \not\in seen$}
+   \STATE $seen \gets seen \cup \{s\}$
+   \STATE $\x{check}(L(s),\phi)$
+   \FOR{$s' : R(s,s')$}
+     \STATE {\tt mc}$(s',seen)$
+   \ENDFOR
+ \ENDIF
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}%
 \hfill
-\begin{minipage}[t]{0.32\textwidth}
+\begin{minipage}[t]{0.34\textwidth}
 \begin{algorithm}[H]
 %\renewcommand{\thealgorithm}{}
 \renewcommand{\algorithmicindent}{0.6em}
 \floatname{algorithm}{Alg.}
-\caption{{\tt symx}$(l,m,\phi)$}
+\caption{{\tt symx}$(l,m,pc)$}
 \label{alg-symexe}
 \begin{algorithmic}
- \WHILE{$\neg branch(l)$}
+ \WHILE{$\neg \x{branch}(l)$}
    \STATE $m \gets \x{op}(l)(m)$
    \STATE $l \gets \x{succ}(l)$
+   \STATE $\x{check}(l,m,\phi)$
  \ENDWHILE
 
- \STATE $c \gets $
+ \STATE $c \gets \x{cond}(l)$
 
- \IF{SAT$(\phi \wedge c)$}
-   \STATE {\tt symx}$(\x{succ_t}(l), m, \phi \wedge c)$
+ \IF{SAT$(pc \wedge c)$}
+   \STATE {\tt symx}$(\x{succ_t}(l), m, pc \wedge c)$
  \ENDIF
 
- \IF{SAT$(\phi \wedge \neg c)$}
-   \STATE {\tt symx}$(\x{succ_f}(l), m, \phi \wedge \neg c)$
+ \IF{SAT$(pc \wedge \neg c)$}
+   \STATE {\tt symx}$(\x{succ_f}(l), m, pc \wedge \neg c)$
  \ENDIF
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
+\end{figure}
 
-{\bf added by Corina, needs to aligned with algorithm}
+\subsubsection{Symbolic Execution}
+Like data flow analysis, symbolic execution~\cite{King1976,clarke76:system} 
+performs a non-standard interpretation of program executions using 
+a symbolic abstraction of program states.
+Algorithm~\ref{alg-symx} sketches the symbolic execution algorithm.
+The algorithm records the current program location, $l$,
+and a map, $m$, that records symbolic expressions encoding the
+values of program memory.  In addition a \textit{path condition}, $pc$,
+accumulates symbolic expressions that encode branch constraints 
+taken along a trace.  The analysis is initiated with the first
+program location, $l_0$, an empty map, and $pc = true$.
 
-%\subsection{Symbolic Execution}
-Symbolic Execution~\cite{King1976,clarke76:system} is a program
-analysis technique that executes programs on unspecified inputs, by
-using symbolic inputs instead of concrete data. The state of a
-symbolically executed program is defined by the (symbolic) values of
-the program variables, a \emph{path condition} ($PC$), and a program
-counter. The path condition is a (quantifier-free) boolean formula
-over the symbolic inputs; it accumulates constraints on
-the inputs to follow that path. The program counter defines the next
-statement to be executed. Dynamic symbolic execution (or dynamic test generation or concolic execution)~\cite{godefroid05:dart,Cute,BitBlaze} is a variant of symbolic execution that builds path conditions along concrete program runs and systematically negates and solves collected constraints to drive the execution along different program paths. A key advantage of the technique is the ability of use execution data when symbolic constraints can not be solved. Further the technique has been shown to scale well in practice~\cite{SAGEsummaries}.
+Sequences of program statements are interpreted by applying the operation
+at each program location, $op(l)$, to update the map.  
+An operation that reads from an input generates a fresh symbolic
+variable which is unconstrained.  
+When a branching statement is encountered the symbolic expression encoding
+the branch condition is computed, $c$, and a check is performed
+to determine whether the current trace, encoded by $pc$, can be
+extended with $c$ or its negation.  
+This is achieved by formulating the constraints
+as a satisfiability query -- if the formula encoding branch constraints
+is satisfiable then it there must exist an input that will follow the trace.
+The trace is extended, recursively, following the feasible branch outcomes
+in a depth-first manner.
 
-A \emph{symbolic execution tree} characterizes the execution paths
-followed during symbolic execution. The tree nodes 
-represent program states and the arcs the transitions between
-states due to the execution of program instructions. Typical applications 
-of symbolic execution include test case
-generation and error detection, with many tools available
-\cite{SPF,godefroid05:dart,tillman-halleux-tap2008,Klee}.
-%Symbolic execution of looping programs may result in an infinite
-%symbolic execution tree. For this reason, symbolic execution is
-%typically run with a (user-specified) bound on the search depth.
+While this algorithm is capable of computing an \textit{exact} symbolic
+approximation of the set of program states on a trace reaching $l$, in
+practice symbolic execution computes an underapproximation.
+Programs with looping behavior that is determined by input values 
+may result in an infinite symbolic execution tree. 
+For this reason, symbolic execution is
+typically run with a (user-specified) bound on the search depth, thus
+some paths may be unexplored.   Moreover, there may be path constraints
+for which efficient satisfiable checking is not possible.  Variants of
+symbolic execution~\cite{godefroid05:dart,Cute,BitBlaze} 
+address this by replacing problematic $pc$ constraints with equality
+constraints based on values collected by executing the program along the trace.
 
-Our previous work on probabilistic software analysis used
-the symbolic execution tool Symbolic Java PathFinder (SPF)~\cite{SPF}, 
-part of the Java PathFinder open-source verification framework. 
-However, our algorithms are applicable in the context
-of other languages for which symbolic execution tools exists such as
-Klee~\cite{Klee} for C. 
-
-
-
+Symbolic execution tools and toolkits exist for many popular 
+languages~\cite{SPF,godefroid05:dart,tillman-halleux-tap2008,Klee}
+and have been used primarily for test generation and fault detection.
 
 \subsection{Probabilities and Probabilistic Models}
+
 The probability of an event $e$ is written $Pr(e)$.
 
 Define and explain the following
 \begin{itemize}
-\item probability measure
-\item rewards/costs
+\item basic definitions that you think we need
 \item discrete time Markov chain
 \item discrete time Markov decision process
 \end{itemize}

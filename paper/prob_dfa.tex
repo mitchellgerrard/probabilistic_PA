@@ -155,7 +155,9 @@ probability of violation $\phi$ is less than $0.0001\%$}.
 Dually, other approaches have
 used lower probability bounds as their correctness criterion.
 
-\subsection{Modeling Nondeterminism}
+\subsection{Handling nondeterminism}
+\mycomment{Matt: I am working in this section - reading on last paper before
+I edit}
 
 There are variations of uncertainty,
 and not every program property should be modeled by a
@@ -180,157 +182,28 @@ is safely modeled by one of these tuples.
 
 \subsection{More and varied probabilistic data flow analyses}
 
-There has been recent work which explores computing {\sl expectation
-invariants}.
-Instead of giving safe bounds on an over-approximation of a set
-of states, this approach computes the long-run expected value of
-some property, e.g. 
-{\sl this variable will be an even integer at this program point
-$67\%$ of the time}.
-Chakarov et al. compute this using an iterative analyis within
-abstract interpretation.
-Using a different approach, Di Pierro et al. define the abstract 
-domain over vector spaces, instead of lattices.
-The dataflow information is collected using the Moore-Penrose
-pseudo-inverse instead of the usual fixed point.
-The matrices quickly become large; it is not clear how this
-approach scales with bigger programs.
+Bounds on the probability of a state property have been well studied.
+Di Pierro et al. \cite{DiPierro} aim to estimate the probability of a property,
+rather than bound it.  They formulate their an abstract 
+domain over vector spaces, instead of lattices, and use
+the Moore-Penrose pseudo-inverse instead of the usual fixed point.
+While shown to be effective on small programs, the space
+complexity of vector space encodings and lack of tool support
+have not yet demonstrated the scalability of the approach.
+More recent work has explored computing an alternative probabilistic
+property called {\sl expectation invariants} \cite{Chakarov}.
+This approach uses an iterative data flow analysis to 
+computes a bound on the long-run expected value of
+some program expression, e.g. $E[f(uniform(0,10))] < 7$ states that
+over a sufficiently large number of runs $f$ when called with
+a uniformly distributed number in the range $[0,10]$ will return
+a value less than 7.
 
 The idea of a ``probabilistic program" has been generalized from
 Kozen's original semantics to include conditioning on program
 observations.
 In this setting, the program implicitly specifies a probability 
 distribution conditioned on these stated observations.
-The distribution is discovered by running (sampling) the program many
-times; if some program trace does not match an observation
-at a given point, that trace is not considered, and a new ``sample"
-of the program is run. 
 Data flow analyses have recently been adapted to perform Bayesian
-inference on this new class of probabilistic programs.
+inference on this new class of probabilistic programs~\cite{Nori}.
 
-\ignore{
-\subsection{Meta-comments}
-
-We have chosen to organize the work on prob. data flow analysis based 
-on how the probabilistic information is incorporated into the analysis
-(e.g., probabilities on data, probabilities on control)
-and on the nature of approximation in the analysis, 
-i.e., underapproximation, overapproximation, or "tight" approximation.
-
-We plan a separate discussion of how non-deterministic choice is
-handled in data flow analysis.
-
-Finally, we plan a brief mention of work that does not fit into 
-"basic probabilistic program" category, i.e., programs that use
-conditioning.
-
-We would be interested in exposing other dimensions ASAP.  Specifically,
-are there different dimensions that might arise due to thinking about 
-model checking or symbolic execution?
-
-\subsection{Required Terminology}
-
-The following terms/concepts should be defined earlier in the paper
-since we will need them in this section.
-
-\begin{enumerate}
-
- \item probabilistic program
- \item concrete domain
- \item abstract domain
- \item fixpoint
- \item abstract interpretation/data flow analysis
- \item program trace
- \item path
- \item conditioned distribution
- \item Bayesian inference
-
-\end{enumerate}
-
-We expect that this will be done in the intro and background section.   With
-regards to that section it would be ideal if we could have a compact
-explanation of non-probabilistic data flow analyis/abstract interpretation,
-model checking, and symbolic execution with the attendant concepts.
-That will cover most of the above and then we can have a separate
-subsection of the background covering the probabilistic 
-concepts/terms/definitions.
-
-\subsection{The Outline}
-
-Probabilistic Data Flow Analysis Outline
-
-We are considering approaches that start from classical abstract domains.
-and characterize the probability of properties expressed as subsets
-of those domains holding at program points.
-  - this is equivalent to reasoning about the probability of assertions
-    holding or not (in prob sym exe) or probabilistic universal properties
-    (in prob model checking) 
-
-\begin{enumerate}
-
- \item Probabilities on control structure
-   \begin{enumerate}
-    \item probabilistic information explicitly annotates the control flow
-    structure of the program
-    \item Frequency analysis
-      \begin{enumerate}
-       \item Ramalingam
-       \item See if we can tie this approach to the linear
-  	  operators representing transfer functions
-  	  which both Monniaux and Di Pierro use
-      \end{enumerate}
-   \end{enumerate}
-
- \item Probabilities on data structure
-   \begin{enumerate}
-    \item probabilistic information annotates the data structure of the
-    program and its influence on control and data is computed through
-    the analysis
-    \item the rest of the approaches permit probabilistic information to
-    be defined as either an environment property (i.e., distribution
-    given for an input) or in the type of an expression (i.e., rand call)
-   \end{enumerate}
-
- \item Bounding property probabilities
-   \begin{enumerate}
-    \item Monniaux
-      \begin{enumerate}
-       \item From above
-       \item From below
-      \end{enumerate}
-   \end{enumerate}
-
- \item Estimating property probabilities
-   \begin{enumerate}
-    \item PAI
-     \begin{enumerate}
-      \item Di Pierro
-      \item "Tight" in a least-square sense
-     \end{enumerate}
-   \end{enumerate}
-
- \item Treating uncertainty expressed as non-determinism
-   \begin{enumerate}
-    \item Monniaux can do this 
-   \end{enumerate}
-
- \item Expanding the scope of analysis
-   \begin{enumerate}
-    \item ... to different probabilistic properties
-      \begin{enumerate}
-        \item Chakarov
-        \item Fixed Points
-        \item Martingales
-      \end{enumerate}
-    \item ... to more general probabilistic programs
-      \begin{enumerate}
-        \item Bayesian inference
-          \begin{enumerate}
-            \item Nori
-            \item Modern Probabilistic Programming Languages
-          \end{enumerate}
-      \end{enumerate}
-   \end{enumerate}
-
-\end{enumerate}
-}
