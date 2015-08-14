@@ -13,7 +13,7 @@ To use model counting techniques to compute the probability $\x{Pr}(\x{pc})$ of 
 
 \subsection{Approach}
 
-To allow for a more general description of the approach to probabilistic symbolic execution we modify Algorithm~\ref{alg-symexe}, to rather sample symbolic paths one at a time after which each path is processed. This processing includes the calculation of probabilities as described above. This modified algorithm allows is to better handle the case where only a subset of paths of the program is analysed. The interested reader is referred to \cite{FSE014} for a more detailed discussion of the precise algorithm.
+To allow for a more general description of the approach to probabilistic symbolic execution we modify Algorithm~\ref{alg-symexe}, to sample and process symbolic paths one at a time. This processing includes the calculation of probabilities as described above.  The modified algorithm (in Algorithms~\ref{alg-pse} and~\ref{alg-symsample}) allows us to better handle the case where only a subset of paths of the program is analysed. The interested reader is referred to \cite{FSE014} for a more detailed discussion of the precise algorithm.
 
 \begin{minipage}{0.4\textwidth}
 \begin{algorithm}[H]
@@ -32,9 +32,9 @@ To allow for a more general description of the approach to probabilistic symboli
 \begin{algorithm}[H]
 \floatname{algorithm}{Alg.}
 \caption{{\tt symsample}$(l,m,\phi)$}
-\label{alg-samplesym}
+\label{alg-symsample}
 \begin{algorithmic}
- \IF{$\x{stoppingPath}((\phi)$} 
+ \IF{$\x{stoppingPath}(\phi)$} 
  \RETURN $\phi$
  \ENDIF
  \WHILE{$\neg branch(l)$}
@@ -56,9 +56,9 @@ To allow for a more general description of the approach to probabilistic symboli
 
 $\newline$
 
-In the following we will handle all the methods mentioned in the above algorithm: {\tt stoppingPath}, {\tt selectBranch}, {\tt stoppingSearch} and {\tt processPath}. At a high-level {\tt symsample} is called from the initial state of the program and with {\tt true} as the current path condition and returns one path which is then processed. Once a path is processed a check is made to see if the complete analysis can stop. Within {\tt symsample}we first check to see if the search needs to be stopped, otherwise we decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in Algorithm~\ref{alg-symexe} where both branches could be taken if they were both satisfiable. 
+Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{processPath}. At a high level, {\tt symsample} is called from the initial state of the program with $\phi=\mathtt{true}$ as the current path condition;  it returns a single path which is then processed.  This is followed by a check to see if the analysis is complete and can stop. Within {\tt symsample} we first check to see if the search needs to be stopped; otherwise, we symbolically execute the program up to the next branching point and decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in Algorithm~\ref{alg-symexe} where both branches could be taken if they were both satisfiable. 
 
-\subsubsection{stoppingPath} is the same as in the original symbolic execution algorithm and is there to handle loops conditioned on input variables, since these can cause infinite executions. However, since some paths might now be truncated before reaching its target property, we introduce three types of paths, (1) success paths that reach the target property and the property evaluates to true, (2) failure paths, that reaches the property but the property fails and  (3) grey paths that got truncated before reaching the property. We consider these as three disjoint sets of paths and calculate the cumulative probability of success (i.e. the reliability of the code), failure and grey paths.  Grey paths can be handled optimistically (grouped with the success paths), pessimistically (grouped with the failure paths) or kept separate and be used as a measure for how confident we are in our estimates (for example if the grey paths probability is very low, we are more confident). 
+\subsubsection{stoppingPath} is the same as in the original symbolic execution algorithm and is there to handle loops conditioned on input variables, since these can cause infinite executions. However, since some paths might now be truncated before reaching its target property, we introduce three types of paths, (1) success paths that reach the target property and the property evaluates to true, (2) failure paths, that reaches the property but the property fails and  (3) grey paths that got truncated before reaching the property. We consider these as three disjoint sets of paths and calculate the cumulative probability of success (i.e., the reliability of the code), failure and grey paths.  Grey paths can be handled optimistically (grouped with the success paths), pessimistically (grouped with the failure paths) or kept separate and be used as a measure for how confident we are in our estimates (for example if the grey paths probability is very low, we are more confident). 
 
 \subsubsection{selectBranch}  In the context of symbolic execution, we define a sample as the
 simulation of one symbolic path. Whenever a branch is encountered during such simulation, the decision to proceed along either of the alternative branches has to be taken according to the probability
@@ -75,11 +75,11 @@ of satisfying the corresponding branch conditions. To calculate these we calcula
 
 \subsubsection{processPath} calculates the probability for the path being processed and checks whether the path falls into the success, failure or grey set. Note that many of these calculations have already been preformed during the {\tt selectBranch} and caching is used to eliminate duplication. 
 
-In addition to the probability calculations, another import task performed here is to handle sampling without replacement. More specifically, how to ensure an exhaustive analysis can be done even when certain behaviours have very small probability (and thus would be hard to sample in a purely Monte Carlo fashion). We leverage the counts we store for each path condition to ensure no path is sampled twice (when we don't want replacement). Whenever a path is finished being explored, we subtract the final PC's count from all the PC counts along the current path back to the root. Note these counts are being used by {\tt selectBranch} to calculate the conditional probabilities at a branch, and thus it changes the distribution of the probabilities. More importantly, if a count becomes zero it will never be sampled. As more of the paths of the program is analysed zero are being propagated up the tree until the root node's count becomes zero at which point all paths have been explored. 
+In addition to the probability calculations, another import task performed here is to handle sampling without replacement. More specifically, how to ensure an exhaustive analysis can be done even when certain behaviours have very small probability (and thus would be hard to sample in a purely Monte Carlo fashion). We leverage the counts we store for each path condition to ensure no path is sampled twice (when we don't want replacement). Whenever a path is finished being explored, we subtract the final PC's count from all the PC counts along the current path back to the root. Note these counts are being used by \x{selectBranch} to calculate the conditional probabilities at a branch, and thus it changes the distribution of the probabilities. More importantly, if a count becomes zero it will never be sampled. As more of the paths of the program is analysed zero are being propagated up the tree until the root node's count becomes zero at which point all paths have been explored. 
 
 \subsubsection{stoppingSearch} uses either a measure of confidence based on the percentage of the input domain that has been explored, or, a statistical measure of confidence. 
 
-Enough confidence exist about the portion of the input domain that has been analysed when  $1 - Pr(\x{success}) + Pr(\x{failure}) < \epsilon$.  If we treat grey paths separately this means $Pr(\x{grey}) < \epsilon$. Where $\epsilon$ is provided by the user, and is typically very small. Note that although it is shown that {\tt stoppingSearch} takes the path as input, in reality it just reuses the results computed during the {\tt processPath}. 
+Enough confidence exist about the portion of the input domain that has been analysed when  $1 - Pr(\x{success}) + Pr(\x{failure}) < \epsilon$.  If we treat grey paths separately this means $Pr(\x{grey}) < \epsilon$. Where $\epsilon$ is provided by the user, and is typically very small. Note that although it is shown that \x{stoppingSearch} takes the path as input, in reality it just reuses the results computed during the \x{processPath}. 
 
 {\bf Antonio can you help out with the statistical portion}
 
