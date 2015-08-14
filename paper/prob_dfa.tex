@@ -116,29 +116,19 @@ bound on this generator.
 Approximations on loop semantics are dealt with in a safe way
 using ``suitable" widening operators instead of fixed points.
 
-Conditionals can be seen as applying a filter to
-the abstract domain first on all execution environments which
-satisfy the conditional, then on all environments which  
-falsify the conditional; finally, we combine the two results.
-If the satisfying execution environment is viewed as a set
-of abstract states, then the falsifying environment
-is defined as the complement of that set within the domain of all
-possible execution environments.
-
-The conditional filter is only applied to the first component of
+Conditionals can be seen as filtering
+the abstract domain between those execution environments which
+satisfy the conditional and those which falsify the conditional. 
+The difference in the probabilistic abstract environment with weights 
+is that the filter is only applied to the first component of
 the tuple (the traditional elements of an abstract domain), 
 and leaves the weight unchanged.
-For instance, consider the abstract domain of integer intervals 
-defined by $[-10,10]$, whose intervals have associated weights
-defined below. 
-If a dataflow fact of $([-5,5],0.1)$ holds before a conditional of 
+For instance, consider the abstract domain of an interval of 
+integers defined by the tuple, $([-5,5],0.1)$. 
+If this domain holds before a conditional of 
 {\tt if(x<0)\{...\}}, after applying the filter on the true branch, 
 we get $([-5,-1],0.1)$. 
-On the false branch, we consider the complemented environment of
-$\{([-10,-6],0.1),([6,10],0.1)\}$; after applying the filter, 
-we get $([6,10],0.1)$.
-Combining these two results, our abstract domain after the
-conditional becomes $\langle([-5,-1],0.1),([6,10],0.1)\rangle$.
+After applying the filter on the false branch, we get $([0,5],0.1)$.
 The space is reduced; the weights remain the same.
 
 An example will be helpful (simplified from Monniaux's (2004)).
