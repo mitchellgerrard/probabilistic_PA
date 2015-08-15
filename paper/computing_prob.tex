@@ -16,3 +16,55 @@ Is there something better than relying on a person to write this down?
 I know there is tons of work published on this, but is there a simple
 approach we can describe or that you've used.}
 
+
+\begin{itemize}
+	\item Goal: given a finite set of variables $V=\{v_1, v_2, \dots, v_n\}$, where $v_i$ has domain $d_i$ and comes with a probability distribution $\mathcal{P}_i: d_i \to [0, 1]$, and given a constraint $\phi: V \to \{true, false\}$, compute the probability of $\phi$ being satisfied (i.e., return true).
+\end{itemize}
+
+\subsection{Exact and numerical approaches}
+	\begin{enumerate}
+		\item Finite domains
+			\begin{enumerate}
+				\item Linear integers (Latte, Barvinok, Omega for negation; used in our works)
+				\item Strings (bounds: \url{http://www.comp.nus.edu.sg/~shweta24/publications/smc\_pldi14.pdf} ; automata-based exact and upperbounds: \url{http://www.cs.ucsb.edu/~bultan/publications/model-counting.pdf}; we should also check the related work thereof)
+				\item Data structures (icse13 and spin15)
+				\item Sat and smt (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, \url{http://arxiv.org/pdf/1411.0659.pdf}; these papers should have been published, we should check related work in there)
+			\end{enumerate}
+		
+		\item Uncountable domains
+			\begin{enumerate}
+				\item Symbolic and numerical integration (interesting, but symbolic does not scale apart from a few simple cases, while numeric suffers for large cardinality of input domains; however: general, available off-the-shelf, parallelizable for numerical)
+			\end{enumerate}
+	\end{enumerate}
+
+
+\subsection{Sampling-based approaches}
+	\begin{itemize}
+		\item Sampling from uniform distributions (base case, best we can if no input distribution is available; based on classic probability, i.e., count success over total)
+		\item Discretization of non-uniform distributions (useful when a finite number of usage scenarios are available; can approximate any distribution with arbitrary accuracy; most straightforward when inferring distributions from past executions, i.e., histograms; it does not scale for fine-grained approximations)
+		\item Distribution-aware sampling (quite straightforward for distributions over numerical domains; requires more complex, unbiased, input generation techniques when sampling from other domains, e.g., data structures, but similar to random testing; scalability issues when sampling correlated input variables)
+      
+		\item Monte Carlo methods
+			\begin{itemize}
+				\item Hit or miss Monte Carlo
+				\item \mycomment{Anto: Mention Crude montecarlo for integration? Gibbs and MCMC sampling will be just mentioned; especially MCMC is used by the MSR guys}
+				\item Frequentist and Bayesian estimators (used in prob. model check.)
+					\begin{itemize}
+						\item historically frequentist first, with static bounds (based on Chernoff's) for prob MC; then sequential ratio tests, still frequentist.
+						\item Bayesian from CMU
+					\end{itemize}
+				\item The variance issue and convergence acceleration techniques (just a paragraph with some refs):
+					\begin{itemize}
+						\item Importance sampling (used in prob. model check.)
+						\item Importance slicing (used in prob. model check.)
+					\end{itemize}
+
+				\item Exploiting he law of total probability for composing different estimators: Interval constraints propagation (PLDI14) and statistical/exact (FSE14)
+				\item Dealing with nondeterminism (freq and bayesian in prob MC, ASE14)	
+			\end{itemize}
+			
+			\item approximate $\sharp$-sat and $\sharp$-smt (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, )
+
+
+		 
+	\end{itemize}
