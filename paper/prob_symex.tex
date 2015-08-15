@@ -81,7 +81,9 @@ In addition to the probability calculations, another import task performed here 
 
 Enough confidence exist about the portion of the input domain that has been analysed when  $1 - Pr(\x{success}) + Pr(\x{failure}) < \epsilon$.  If we treat grey paths separately this means $Pr(\x{grey}) < \epsilon$. Where $\epsilon$ is provided by the user, and is typically very small. Note that although it is shown that \x{stoppingSearch} takes the path as input, in reality it just reuses the results computed during the \x{processPath}. 
 
-{\bf Antonio can you help out with the statistical portion}
+\mycomment{Corina: Antonio can you help out with the statistical portion}
+
+
 
 %\begin{itemize}
 %\item now we have to consider the domain coverage, i.e. stopping when we have searched a pre-%defined level of the domain, this needs to include the discussion about gray paths
@@ -100,6 +102,8 @@ Probabilistic symbolic execution was introduced in \cite{Geldenhuys2012} where t
 
 The work in \cite{Sankaranarayanan2013} was the first to apply sampling of paths during static analysis to provide a probability calculation with a certain confidence. They applied the approach to calculate bounds on the probability of assertions holding in the code. In \cite{Filieri2014} an approach similar to Algorithm~\ref{alg-pse} was used to also sample paths and then use Bayesian estimation and hypothesis testing. This paper also introduced the subtraction of the counts to ensure rare events can be sampled (see {\tt processPath above}). 
 
+
+\mycomment{Anto: the next paragraph will be updated after completing sect 3}
 Another important dimension to consider is how to count the solutions for constraints in various domains. The work so far described has mostly focussed on linear integer arithmetic, since the theory is decidable and thus often used as the basis for symbolic execution tools. Fortunately, as already mentioned, efficient model counters also exist for this domain (such as LattE\cite{} and Barvinok\cite{}). In \cite{Borges2014} non-linear and bounded floating-point domains are handled giving accurate estimates of the size of the solution space. Counting the solutions to constraints complex data-structures, such as objects in Java, are addressed in \cite{Filieri2015}. New domains such counting the solutions to string domains \cite{Aydin2015} and the more general all solutions to a SAT formula (\#SAT) \cite{Chakraborty2014} has recently been proposed. 
 
 \subsubsection{Future Directions}
