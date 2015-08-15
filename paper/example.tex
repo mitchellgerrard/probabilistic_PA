@@ -3,24 +3,24 @@
 \centering
 \footnotesize
 \begin{lstlisting}[language=Java,basicstyle=\scriptsize\ttfamily]
-public static void testMethod1(int x) {
- if(Verify.getBoolean()) {
-  if(Verify.getBoolean()) {
+m(int x) {
+ if(drawBernoulli(0.5) == 1) {
+  if(drawBernoulli(0.5) == 1) {
    if(x <= 60)
-    ...println("success");
+    ...
    else
-    assert false;
+    assert false
   } else {
    if(x <= 30)
-    ...println("success");
+    ...
    else
-    assert false;
+    assert false
   }
  } else {
   if(x <= 55)
-   ...println("success");
+   ...
   else
-   assert false;
+   assert false
  }
 }
 \end{lstlisting}
