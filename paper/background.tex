@@ -1,22 +1,18 @@
 \section{Scope and Background}
 \label{sec:background}
 
-\ignore{
-\begin{enumerate}
-\item abstraction refinement
-\item fixpoint
-\end{enumerate}
-}
-
-\input{example}
+\input{example2}
 
 We focus in this paper on programs that draw input variables
 from given probability distributions, or equivalently that make
-calls on functions returning values drawn from given distributions,
-such as those provided by NetLogo which supports
-uniform, normal, Poisson, exponential and gamma distributions.
-\mycomment{We should pull an example from one of the later sections
-back here to illustrate the idea.}
+calls on functions returning values drawn from given distributions.
+The left side of Figure~\ref{fig:example} shows a method,
+\texttt{m}, that we will use to illustrate concepts in this paper.     
+It takes an integer variable, \texttt{x}, as input, then based on the 
+results of drawing values from a Bernoulli distribution
+and the value of the \texttt{x} it either performs its computation
+(which is unspecified and denoted with \texttt{...}) or triggers
+an assertion. 
 
 While researchers have developed analyses that consider a wide
 range of program properties, here
@@ -25,8 +21,16 @@ properties that can be encoded as boolean predicates that
 can be embedded in the program,
 e.g., \texttt{assert} statements, to simplify the explanation
 of how probabilities are incorporated into the analyses.
-These are refered to as \textit{invariant properties} since
-they are intended to hold whenever reached in all program program executions
+For the example, we are interested in reasoning about
+\textit{assertion freedom}, i.e., that the program does
+not reach a false assertion.
+In this example
+that can happen by reaching the implicit return from $m$
+and thereby by avoiding the three \texttt{assert} statements.
+
+A static analysis capable of reasoning about assert statements 
+can handle more general \textit{invariant properties}, i.e., 
+predicates that must hold whenever reached in all program program executions.  
 
 \subsection{Programs and Program Analyses}
 A program defines a set of execution \textit{traces} each of
@@ -35,12 +39,31 @@ the current program counter and a map from memory locations to values.
 A program \textit{satisfies} an invariant property if in all states in
 all traces the predicate evaluates to true, otherwise the program
 \textit{falsifies} the property.
+In the example, there are 6 traces half of which falsify the property.
+
+There are many different ways to represent the execution behavior
+of a program to enable analysis.  Immediately to the right of
+the code in Figure~\ref{fig:example} we show the control flow graph (CFG)
+which explicitly represents control successor relationships between
+statements.  A CFG models choice among successors as non-deterministic
+choice -- depicted by the lack of labels on the edges.
+We will also consider model that include probabilistic choice,
+e.g., defining the probability that a branch is taken; the
+upper right fragment of Figure~\ref{fig:example} shows probabilities
+that reflect the outcome of the Bernoulli draw.
+In addition, we will study models where 
+choice of successor is defined based on the semantics
+of program state, e.g., defining a condition under which the branch
+is taken; the lower right fragment of Figure~\ref{fig:example}
+shows logical conditions that 
+reflect the fact that the value of parameter $x$ must be
+less or equal to $60$ for control to traverse the branch.
 
 A key concept in the program analysis frameworks we survey is
 \textit{symbolic abstraction}.  A symbolic abstraction is a 
 representation of a set of states.  Abstractions can be encoded
-in a variety of forms, e.g., logical formula or binary
-decision diagrams \cite{BDD}.  
+in a variety of forms, e.g., logical formula \cite{bilateral}, binary
+decision diagrams \cite{BDD}, or custom representations \cite{Parma}.
 
 Analyses that seek to prove the satisfaction of properties generally
 define abstractions that \textit{overapproximate} the set of program
@@ -91,48 +114,6 @@ $\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$
 defines invariant properties that hold prior to executing $l$; this
 is refered to as the meet-over-paths (MOP) solution~\cite{Kildall}.
 
-Introduce control flow graphs and talk about branch modeling.
-\begin{figure}[t]
-\begin{tikzpicture}[]
-  \node {\texttt{x$<$8}}
-     child {
-        node[xshift=0mm, yshift=0mm] {\texttt{S1}}
-        edge from parent
-        node[left] {\tiny ${\cal X} < 8$}
-     }
-     child {
-        node[xshift=0mm, yshift=0mm] {\texttt{S2}}
-        edge from parent
-        node[right] {\tiny $\neg {\cal X} < 8$}
-     };
-  \node[xshift=30mm] {\texttt{x$<$8}}
-     child {
-        node[xshift=0mm, yshift=0mm] {\texttt{S1}}
-        edge from parent
-     }
-     child {
-        node[xshift=0mm, yshift=0mm] {\texttt{S2}}
-        edge from parent
-     };
-  \node[xshift=60mm] {\texttt{x$<$8}}
-     child {
-        node[xshift=0mm, yshift=0mm] {\texttt{S1}}
-        edge from parent
-        node[left] {\tiny $0.8$}
-     }
-     child {
-        node[xshift=0mm, yshift=0mm] {\texttt{S2}}
-        edge from parent
-        node[right] {\tiny $0.2$}
-     };
-\end{tikzpicture}
-\caption{Branch Modeling Approaches}
-\label{fig:branches}
-\end{figure}
-Figure~\ref{fig:branches} illustrates three approaches for
-modeling the program fragment: \texttt{if (x < 8) S1 else S2}.
-
-
 Generating the set of traces for non-trivial programs is impractical 
 and instead abstract states can be combined, via $\sqcap$, wherever
 traces merge in the control flow to compute the maximum fix point (MFP)
@@ -160,8 +141,26 @@ verifying program conformance with, implicit and explicit,
 assertional specifications.
 
 \subsubsection{Model Checking}
-\mycomment{Matt: waiting for the probabilistic section to be fleshed out
-to backfill this}
+When applied to software, model checking techniques operate on 
+labeled state transition
+systems which encode the behavior of a program.
+A transition system is defined as a tuple
+$(S,I,L,R)$ where $S$ is a set of states,
+$I \subseteq S$ is a set of initial states (if there is a single
+such state we denote it $s_0$), 
+$L : S \rightarrow 2^{AP}$ is a function that assigns
+sets of atomic propositions to a state, and
+$R : S \times S$ is the next state relation.
+
+A transition system generates sequences of states, or traces.
+Given a distinguished set of goal states, $G \subseteq S$,
+we can define $Tr(G) = \{s_0, \ldots, s_n \vert s_0 \in I \wedge
+s_n \in G \wedge \forall i \in [0,n-1] : (s_i,s_{i+1}) \in R$
+as the traces reaching a $G$-state.
+Determining the reachability of $G$-states is the goal of
+model checking algorithms.
+
+\mycomment{Matt: explain the algorithm}
 
 \begin{figure}[t]
 \noindent\begin{minipage}[t]{0.32\textwidth}
@@ -257,9 +256,15 @@ When a branching statement is encountered the symbolic expression encoding
 the branch condition is computed, $c$, and a check is performed
 to determine whether the current trace, encoded by $pc$, can be
 extended with $c$ or its negation.  
+In the example of Figure~\ref{fig:example}, on the left most trace through
+the control flow graph symbolic execution would use semantic
+condition shown in the lower right, $c \equiv {\cal X} \le 60$,
+and add it to the path condition -- which is initially $true$.
 This is achieved by formulating the constraints
 as a satisfiability query -- if the formula encoding branch constraints
 is satisfiable then it there must exist an input that will follow the trace.
+For the example, all of the 6 traces through the control flow graph 
+result in satisfiable path conditions.
 The trace is extended, recursively, following the feasible branch outcomes
 in a depth-first manner.
 
@@ -282,12 +287,85 @@ and have been used primarily for test generation and fault detection.
 
 \subsection{Probabilities and Probabilistic Models}
 
-The probability of an event $e$ is written $Pr(e)$.
+There is an enormous literature on probability and statistics
+that can be brought to bear in program analysis.  
+In this paper, we consider two types of discrete time models:
+Markov chains and Markov decision processes (MDP).
 
-Define and explain the following
-\begin{itemize}
-\item basic definitions that you think we need
-\item discrete time Markov chain
-\item discrete time Markov decision process
-\end{itemize}
+A \textit{distribution} over a set $S$ is given by a 
+function $\pi : S \rightarrow [0,1]$ where
+$\sum_{s \in S} \pi(s) = 1$.  For $s \in S$,
+$\pi(s)$ is said to be the probability of $s$ -- it is
+sometimes written Pr(s).
+The set of distributions for $S$ is denoted $D_S$.
+
+A Markov chain is a labeled transition system whose transition
+relation $R$ is replaced with a function
+$R : S \rightarrow D_S$ that defines for a given state
+the probability of moving to another state.
+The probability of executing a sequence of states $s = s_0, ..., s_n$, 
+is $Pr(s) = \prod_{i \in [0,n-1]} R(i)(i+1)$.
+The probability of reaching a state in an 
+a set of goal states, $G$, is 
+$Pr(G) = \sum_{s \in Tr(G)} Pr(s)$ where $Tr$ is generalized
+to Markov chains using a transition relation defined by 
+pairs with non-zero transition probability.
+
+
+The model fragment in the upper right corner of 
+Figure~\ref{fig:example} depicts a Markov chain fragment.
+It defines, for the set of states 
+that are at the first line in the program, 
+there is a 0.5 probability that they will transition to 
+the state representing the beginning of the then block
+and similarly for the beginninf of the else block.  The
+distribution indicates a 0 probability of moving to any
+other state.
+
+For this small example, if we were to assume a probability
+distribution on the input $x$, then it would be possible
+to compute the probability of taking every edge in the CFG.   
+This would be a Markov chain model of $m$ and it would replace
+all non-deterministic choice in the CFG with probabilistic choice.
+
+There are many situations where the removal of non-deterministic
+choice is impractical or undesirable.  For example, if the input
+distribution of $x$ is unknown then retaining non-deterministic
+choices for the conditionals testing that value would yield a
+faithful program model.  In addition, it may be desirable, for
+efficiency of analysis, to abstract program behavior and that
+abstraction may make it impossible to accurately compute the 
+probability of a transition.  An example of this is modeling
+the scheduler policy in reasoning about the behavior of a multi-threaded
+program.
+
+When non-determinism is included in a probabilistic state
+transition model it results in an MDP.  
+An MDP adds an additional structure $A$ that defines
+a set of (internal) actions which are used to model the
+selection among a set of possible next-state probability distributions.
+The transition relation
+for MDPs is generalized to $R : S \times A \times D_S$.
+When traversing a path in an MDP, in each state a choice
+from $A$ must be made in order to determine how to transition,
+probabilistically, to a next state.   That sequence of choices, 
+$\sigma \in A^*$, is termed a \textit{schedule} (or policy or 
+strategy) for the MDP.
+
+Given a fixed schedule an MDP reduces to a Markov chain, but
+the value in an MDP lies in its ability to provide upper and
+lower bounds on the behavior of the modeled system.
+For an MDP, let $Pr^{\sigma}(G)$ is the probability of reaching
+a $G$-state from an initial state using schedule $\sigma$ and
+is defined by $Pr(G)$ for the induced Markov chain.
+We can then define 
+$Pr^+(G) = \max_{\sigma} Pr^{\sigma}(G)$
+and
+$Pr^-(G) = \min_{\sigma} Pr^{\sigma}(G)$
+as the maximum and minimum probabilities of reaching a $G$-state
+in the MDP.  Any behavior expressable as a $G$-reachability property is
+captured by the MDP is bounded above and
+below by these quantities.
+
+
 

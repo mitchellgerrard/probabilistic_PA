@@ -1,0 +1,109 @@
+\begin{figure}[t]
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\footnotesize
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize\ttfamily]
+m(int x) {
+ if(drawBernoulli(0.5) == 1) {
+  if(drawBernoulli(0.5) == 1) {
+   if(x <= 60)
+    ...
+   else
+    assert false
+  } else {
+   if(x <= 30)
+    ...
+   else
+    assert false
+  }
+ } else {
+  if(x <= 55)
+   ...
+  else
+   assert false
+ }
+}
+\end{lstlisting}
+\vspace{-1.8in}
+\hspace{0.5in}
+\tikzstyle{every node}=[text width=10em, text centered, font=\scriptsize, inner sep=0pt]
+\begin{tikzpicture}[scale=0.38, level/.style={sibling distance = 15mm, level distance = 17mm}]
+  \node[yshift=0mm] {\texttt{if(drawB...}}
+   child{
+    node[xshift=-10mm] {\texttt{if(drawB...}}
+     child{
+      node[xshift=-8mm] {\texttt{if(x <= 60)}}
+       child{
+        node[name=e1,xshift=-3mm] {\texttt{...}}
+        edge from parent[->]
+       }
+       child{
+        node[xshift=3mm] {\texttt{assert...}}
+        edge from parent[->]
+       }
+      edge from parent[->]
+     }
+     child{
+      node[xshift=8mm] {\texttt{if(x <= 30)}}
+       child{
+        node[name=e2,xshift=-3mm] {\texttt{...}}
+        edge from parent[->]
+       }
+       child{
+        node[name=m1,xshift=3mm] {\texttt{assert...}}
+        edge from parent[->]
+       }
+      edge from parent[->]
+     }
+   }
+   child{
+    node[xshift=12mm] {\texttt{if(x <= 55)}}
+     child{
+      node[name=e3,xshift=-3mm] {\texttt{...}}
+      edge from parent[->]
+     }
+     child{
+      node[xshift=3mm] {\texttt{assert...}}
+      edge from parent[->]
+     }
+    edge from parent[->]
+   }
+;
+\node[name=r,yshift=-30mm] {\texttt{return}};
+\draw[->] (e1.south) to ($(r.north)+(-3mm,0)$);
+\draw[->] (e2.south) to ($(r.north)+(0,0)$);
+\draw[->] (e3.south) to ($(m1.east)+(0,0)$) to ($(r.north)+(3mm,0)$);
+
+  \node[xshift=40mm] {\texttt{if(drawB...}}
+    child{
+      node[xshift=-4mm] {}
+      edge from parent[->]
+      node[left,xshift=8mm] {\tiny Pr=0.5}
+    }
+    child{
+      node[xshift=4mm] {}
+      edge from parent[->]
+      node[right,xshift=-8mm] {\tiny Pr=0.5}
+  };
+
+  \node[xshift=40mm,yshift=-50] {\texttt{if(x <= 60)}}
+    child{
+      node[xshift=-4mm] {}
+      edge from parent[->]
+      node[left,xshift=8mm] {\tiny ${\cal X} \le 60$}
+    }
+    child{
+      node[xshift=4mm] {}
+      edge from parent[->]
+      node[right,xshift=-8mm] {\tiny $\neg({\cal X} \le 60)$}
+  };
+
+\end{tikzpicture}
+
+
+\end{minipage}%
+
+\caption{Example}
+\label{fig:example}
+\end{figure}
+
