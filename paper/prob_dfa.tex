@@ -119,6 +119,7 @@ the methods of Section~\ref{sec:counting} might be applied to
 achieve this and describe this further in Section~\ref{sec:future}.
 For sequential statements, weight components are propogated
 and abstract domain elements are updated by the underlying transformer.
+
 For conditionals, the transformer can be understood
 as filtering the abstract domain between those execution environments which
 satisfy the conditional and those which falsify the conditional. 
@@ -126,7 +127,6 @@ The difference in the probabilistic abstract environment with weights
 is that the filter is only applied to the first component of
 the tuple (the traditional elements of an abstract domain), 
 and leaves the weight unchanged.
-
 For instance, consider the abstract domain of an interval of 
 integers defined by the tuple, $([-5,5],0.1)$. 
 If this domain holds before a conditional of 
@@ -135,9 +135,13 @@ we get $([-5,-1],0.1)$.
 After applying the filter on the false branch, we get $([0,5],0.1)$.
 The space is reduced; the weights remain the same.
 
+Finally, reaching fixpoints for rich probabilistic abstract domains
+appears to require widening \cite{Monniaux,Esparza:SAS11} to be
+cost-effective.
+
 \subsection{Handling nondeterminism}
-\mycomment{Matt: I am working in this section - reading on last paper before
-I edit}
+\mycomment{Matt: more here with discussion of original Monniaux work,
+and the PRISM people's approach and VMCAI'10 and SAS'11 papers}
 
 There are variations of uncertainty,
 and not every program property should be modeled by a
