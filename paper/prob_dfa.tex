@@ -84,7 +84,7 @@ insight that most work in this area has built on
 The goal is to exploit the rich body of work on developing
 abstract domains and associated transformers and extend them
 so as to record sub-probability measures for the concrete values
-described by domain elements.
+described by domain elements.  
 
 A probabilistic abstract domain, $\mathcal{A}_p$, 
 is (an indexed) collection of pairs, 
@@ -93,13 +93,17 @@ such that $\forall (a,w) \in \mathcal{A}_p :
 \forall c \in \gamma(a) : Pr(c) \le w$ -- early work only
 considered \textit{weights} that define upper bounds on the 
 probability of a property. 
+To clarify, these weight components are \textit{not} bounds on the probability
+the abstract domain as a whole, but rather they bound the probability
+of each concrete element represented by the abstract domain.
+
 The literature has explored such constructions for both
 disjoint, i.e., $\forall a,a' \in \mathcal{A} : 
 \gamma(a) \cap \gamma(a') = \emptyset$, and non-disjoint abstract domains.
-
 The disjoint case is simpler in that once the analyses computes
 the abstracted weight for an abstract domain element there is
 no interaction among elements of $\mathcal{A}_p$ during analysis.
+
 In the case of non-disjoint domains and where a properties of interest
 does not reside entirely within one element of $\mathcal{A}$ it is
 necessary to consider domain element overlap. 
