@@ -1,0 +1,54 @@
+\begin{figure}[t]
+\tikzstyle{every node}=[text width=10em, text centered, font=\scriptsize, inner sep=0pt]
+\begin{tikzpicture}[scale=0.38, level/.style={sibling distance = 15mm, level distance = 17mm}]
+  \node[yshift=0mm] {\texttt{if(drawB...}}
+   child{
+    node[xshift=-10mm] {\texttt{if(drawB...}}
+     child{
+      node[xshift=-8mm] {\texttt{if(x <= 60)}}
+       child{
+        node[name=e1,xshift=-3mm] {\texttt{...}}
+        edge from parent[->] node[left,xshift=12mm] {0.6}
+       }
+       child{
+        node[xshift=3mm] {\texttt{assert...}}
+        edge from parent[->] node[right,xshift=-12mm] {0.4}
+       }
+      edge from parent[->] node[left,xshift=12mm] {0.5}
+     }
+     child{
+      node[xshift=8mm] {\texttt{if(x <= 30)}}
+       child{
+        node[name=e2,xshift=-3mm] {\texttt{...}}
+        edge from parent[->] node[left,xshift=12mm] {0.3}
+       }
+       child{
+        node[name=m1,xshift=3mm] {\texttt{assert...}}
+        edge from parent[->] node[right,xshift=-12mm] {0.7}
+       }
+      edge from parent[->] node[right,xshift=-12mm] {0.5}
+     }
+     edge from parent[->] node[left,xshift=12mm] {0.5}
+   }
+   child{
+    node[xshift=12mm] {\texttt{if(x <= 55)}}
+     child{
+      node[name=e3,xshift=-3mm] {\texttt{...}}
+      edge from parent[->] node[left,xshift=12mm] {0.55}
+     }
+     child{
+      node[xshift=3mm] {\texttt{assert...}}
+      edge from parent[->] node[right,xshift=-12mm] {0.45}
+     }
+    edge from parent[->] node[right,xshift=-12mm] {0.5}
+   }
+;
+\node[name=r,yshift=-30mm] {\texttt{return}};
+\draw[->] (e1.south) to ($(r.north)+(-3mm,0)$);
+\draw[->] (e2.south) to ($(r.north)+(0,0)$);
+\draw[->] (e3.south) to ($(m1.east)+(0,0)$) to ($(r.north)+(3mm,0)$);
+\end{tikzpicture}
+\caption{Probabilistic CFG}
+\label{fig:prob-cfg}
+\end{figure}
+

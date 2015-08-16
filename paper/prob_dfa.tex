@@ -1,26 +1,23 @@
 \section{Probabilistic Data Flow Analysis}
 \label{sec:pdfa}
 
-As we will see in all sections, probabilistic data flow
-analysis moves from the true/false nature of its classical
-counterpart to the probably-true/probably-false nature of
-a static analysis extended with probabilities.
-The shift from the qualitative to the quantitative allows
-you to incorporate probabilistic information into the
-analysis in different ways.
+The key challenge in probabilistic data flow analyses is
+determining how probabilities are incorporated into the control
+and data abstractions that form its fonudation.
 
-\subsection{Control Probabilities}
-
-Initial work in extending data flow analysis 
+\subsection{Control Flow Probabilities}
+Early work in extending data flow analysis 
 techniques with probabilities did not consider
-the semantics of the program; instead, already-given probabilities 
-were attached to nodes in that program's control flow graph.  
-The goal was to predict the probability of an expression evaluating 
+the semantics of the program. 
+Instead given probabilities 
+were attached to nodes in the program's control flow graph.  
+This allowed the analysis to estimate
+the probability of an expression evaluating 
 to some value or type at runtime, which could 
-allow you to perform useful program optimizations.
+allow useful program optimization.
 
-This approach begins with a control flow graph where each edge $e$ is 
-mapped to the probability that $e$ is taken during execution.
+This approach begins with a control flow graph where each edge is 
+mapped to the probability that it is taken during execution.
 The sum of all probabilities leaving any control flow node must be 1
 (excepting the exit node).
 These probabilities may be obtained through heuristics, profiling,
@@ -30,21 +27,19 @@ the control flow graph.
 The probability of executing that trace is expressed as the product of 
 edge probabilities along this path.
 So the probability of executing some program point can be seen as the
-summation of the probabilities of traces which can reach that program
-point.
+summation of the probabilities of traces which can reach that program point.
 
-\mycomment{Mitch: insert figure to make explanation more concise}
+\input{prob_cfg}
+Figure~\ref{fig:prob-cfg} shows the probabilistic CFG for the
+example from Figure~\ref{fig:example} given that input $x$
+is uniformly distributed in the range $[1,100]$.
 
-Within this bag of execution traces which reach point $u$, we want to 
-find the portion of traces which satisfy some data flow fact $d$.  
-The ratio of the satisfying portion to the size of the trace bag
-gives us the probability of fact $d$ holding at point $u$.
-
-To compute this expected frequency, Ramalingam uses a slightly
+To compute the probability of a data flow fact holding 
+at a program point, Ramalingam uses a slightly
 modified version of Kildall's dataflow analysis framework
 ~\cite{ramalingam1996data}.
 Instead of the usual semilattice with an idempotent meet
-operation, we use the non-idempotent addition operator.
+operation a non-idempotent addition operator is used.
 The restricted properties of the meet operation can be
 relaxed because instead of computing invariant dataflow
 fact, we only want the summation of probabilities of all
@@ -54,26 +49,24 @@ fixed point using the same iterative algorithm presented
 in the background; the quantity becomes a
 {\sl sum-over-all-paths} instead of a {\sl meet-over-all-paths}.
 
-\mycomment{Mitch: Ramalingam also deals with a slight variation
-on a lattice, but his variation is close enough to a traditional
-lattice that I don't think we need to mention this?}
-
-Ramalingam's work assumes execution history does not matter 
-(the analysis is path insensitive).
+Ramalingam's work assumes execution history does not matter --  
+the analysis is path insensitive.
 Later work adds some path sensitivity \cite{mehofer2001novel}, 
 but as both frameworks deals with exploded control flow graphs, a fully 
 path-sensitive approach is not tractable.
 
-\subsection{Data Probabilities}
-
+\subsection{Abstract Data Probabilities}
+Accurately estimating control flow probabilities is a significant
+challenge -- one which does not have an efficient and precise solution.
 Within the last 15 years, research in probabilistic data flow analysis
 began incorporating probabilistic information directly into
-the semantics of a program \cite{monniaux2000abstract}.
+the semantics of a program and then abstracting over 
+those semantics \cite{monniaux2000abstract,others}.
 This is typically done using a variation on Kozen's 
 probabilistic semantics \cite{kozen1981semantics} 
 alongside traditional data flow techniques.
 Embedding probabilities into the semantics allows probabilistic
-information to influence how both control {\sl and} data structure
+information to influence how both control {\sl and} data related
 probabilities are computed during the analysis.
 
 The remaining approaches in this section permit probabilistic
@@ -85,46 +78,55 @@ interpretation.
 
 How do the classical abstract domains work in a
 probabilistic setting?
-We will focus on one technique developed by Monniaux
-that requires little change to the classical domain 
-\cite{monniaux2001backwards}.
-The key difference between the classical and the probabilistic 
-case is that in the probabilistic case, 
-an abstract domain has a weight attached to any of its subsets.
-More formally
-$\mathcal{A}_p \equiv \mathcal{P}(\mathcal{A} \times \mathcal{R}^+)$, 
-i.e., a set of pairs $(a,w)$ where $a \in \mathcal{A}$ implicitly
-defines a set of concrete values, $\gamma(a)$, such that
-$\forall c \in \gamma(a) : Pr(c) \le w$.
+Monniaux \cite{monniaux2000abstract} developed the key 
+insight that most work in this area has built on 
+\cite{monniaux2001backwards,wachterVMCAI10,esparzaSAS11}.
+The goal is to exploit the rich body of work on developing
+abstract domains and associated transformers and extend them
+so as to record sub-probability measures for the concrete values
+described by domain elements.
 
-The valuation of any element in the concrete domain then 
-becomes the additive composition of weights of points in 
-the concrete domain which are represented by elements in
-the abstract domain.
-For instance if $ap \in \mathcal{A}_p$ is such that
-$(a_i,w_i) \in ap$ and 
-$(a_j,w_j) \in ap$ then $c \in \gamma(a_i) \wedge
-c \in \gamma(a_j) \implies Pr(c) \le w_i + w_j$.
-The concretization function maps from a set of abstract
-values to a weight function.
+A probabilistic abstract domain, $\mathcal{A}_p$, 
+is (an indexed) collection of pairs, 
+$\mathcal{A} \times [0,1]$,
+such that $\forall (a,w) \in \mathcal{A}_p : 
+\forall c \in \gamma(a) : Pr(c) \le w$ -- early work only
+considered \textit{weights} that define upper bounds on the 
+probability of a property. 
+The literature has explored such constructions for both
+disjoint, i.e., $\forall a,a' \in \mathcal{A} : 
+\gamma(a) \cap \gamma(a') = \emptyset$, and non-disjoint abstract domains.
 
-We cannot go over the details of probabilistic semantics here, but there
-are a few modifications to the abstract semantics of a
-traditional imperitive program (see Hankin's WHILE language) 
-which we will point out.
-One is the addition of a random number generator primitive; it
-is possible and straightforward to approximate a safe upper
-bound on this generator.
-Approximations on loop semantics are dealt with in a safe way
-using ``suitable" widening operators instead of fixed points.
+The disjoint case is simpler in that once the analyses computes
+the abstracted weight for an abstract domain element there is
+no interaction among elements of $\mathcal{A}_p$ during analysis.
+In the case of non-disjoint domains and where a properties of interest
+does not reside entirely within one element of $\mathcal{A}$ it is
+necessary to consider domain element overlap. 
+Given a property $p$ an upper approximation of its probability 
+at a program location with probabilistic abstract domain
+value $pa = \{(a_1,w_1), ..., (a_n,w_n)\}$
+is given by $\sum_{j \in \{ i \vert (a_i,w_i) \in pa \wedge   
+p \cap \gamma(a_i) \not= \emptyset\}} w_j$.
 
-Conditionals can be seen as filtering
-the abstract domain between those execution environments which
+The design of probabilistic abstract transformers, as with 
+classic abstract transformers, can be subtle.
+For statements that generate variables drawn from a probability
+distribution an upper approximation of the distribution for
+regions of the abstract domain is required.  The literature
+has constructed these using ad-hoc techniques, but we believe
+the methods of Section~\ref{sec:counting} might be applied to 
+achieve this and describe this further in Section~\ref{sec:future}.
+For sequential statements, weight components are propogated
+and abstract domain elements are updated by the underlying transformer.
+For conditionals, the transformer can be understood
+as filtering the abstract domain between those execution environments which
 satisfy the conditional and those which falsify the conditional. 
 The difference in the probabilistic abstract environment with weights 
 is that the filter is only applied to the first component of
 the tuple (the traditional elements of an abstract domain), 
 and leaves the weight unchanged.
+
 For instance, consider the abstract domain of an interval of 
 integers defined by the tuple, $([-5,5],0.1)$. 
 If this domain holds before a conditional of 
@@ -132,30 +134,6 @@ If this domain holds before a conditional of
 we get $([-5,-1],0.1)$. 
 After applying the filter on the false branch, we get $([0,5],0.1)$.
 The space is reduced; the weights remain the same.
-
-An example will be helpful (simplified from Monniaux's (2004)).
-We will work with the abstract domain of intervals in $\mathcal{R}$,
-Consider the following C-like program, where {\tt centered\_uniform()}
-and {\tt abs(x)} return a {\tt double} uniformly distributed in 
-$[-1,1]$ and the absolute value of {\tt x}, respectively.
-
-{\tt double x;\\
-     .../* A */\\
-     x = centered\_uniform();\\
-     if(abs(x) <= 1) \{ /* B */ \}}
-
-We want to find a weight function which, for any element in the
-concrete domain, sums up the weights of the corresponding elements
-in the abstract domain.
-
-\mycomment{Mitch : should our example include overlapping intervals
-to highlight the ``summation" aspect of the weight function?}
-
-This correctness criterion is given as an upper bound on the
-probability of some outcome in the program, e.g. {\sl the
-probability of violation $\phi$ is less than $0.0001\%$}.
-Dually, other approaches have
-used lower probability bounds as their correctness criterion.
 
 \subsection{Handling nondeterminism}
 \mycomment{Matt: I am working in this section - reading on last paper before
