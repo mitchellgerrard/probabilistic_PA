@@ -3,7 +3,7 @@
 
 The key challenge in probabilistic data flow analyses is
 determining how probabilities are incorporated into the control
-and data abstractions that form its fonudation.
+and data abstractions that form its foundation.
 
 \subsection{Control Flow Probabilities}
 Early work in extending data flow analysis 
@@ -80,11 +80,17 @@ How do the classical abstract domains work in a
 probabilistic setting?
 Monniaux \cite{monniaux2000abstract} developed the key 
 insight that most work in this area has built on 
-\cite{monniaux2001backwards,wachterVMCAI10,esparzaSAS11}.
+\cite{monniaux2001backwards,wachter2010best,esparza2011probabilistic}.
 The goal is to exploit the rich body of work on developing
 abstract domains and associated transformers and extend them
 so as to record sub-probability measures for the concrete values
 described by domain elements.  
+
+\mycomment{Mitch: we should define sub-probability measure here or
+in the background}
+
+\mycomment{Mitch: should we motivate the use of sub-probability
+measures in place of probability measures?}
 
 A probabilistic abstract domain, $\mathcal{A}_p$, 
 is (an indexed) collection of pairs, 
@@ -100,14 +106,24 @@ of each concrete element represented by the abstract domain.
 The literature has explored such constructions for both
 disjoint, i.e., $\forall a,a' \in \mathcal{A} : 
 \gamma(a) \cap \gamma(a') = \emptyset$, and non-disjoint abstract domains.
+<<<<<<< Updated upstream
 The disjoint case is simpler in that once the analyses computes
 the abstracted weight for an abstract domain element there is
 no interaction among elements of $\mathcal{A}_p$ during analysis.
 
 In the case of non-disjoint domains and where a properties of interest
+=======
+
+The disjoint case is simpler in that once the analysis computes
+the abstracted weight for an abstract domain element there is
+no interaction among elements of $\mathcal{A}_p$ during analysis.
+In the case of non-disjoint domains and where a property of interest
+>>>>>>> Stashed changes
 does not reside entirely within one element of $\mathcal{A}$ it is
 necessary to consider domain element overlap. 
-Given a property $p$ an upper approximation of its probability 
+\mycomment{Mitch: should we insert a brief informal sentence on
+the summation of overlapping domain element weights?}
+Given a property $p$, an upper approximation of its probability 
 at a program location with probabilistic abstract domain
 value $pa = \{(a_1,w_1), ..., (a_n,w_n)\}$
 is given by $\sum_{j \in \{ i \vert (a_i,w_i) \in pa \wedge   
@@ -140,7 +156,7 @@ After applying the filter on the false branch, we get $([0,5],0.1)$.
 The space is reduced; the weights remain the same.
 
 Finally, reaching fixpoints for rich probabilistic abstract domains
-appears to require widening \cite{Monniaux,Esparza:SAS11} to be
+appears to require widening \cite{monniaux2000abstract,esparza2011probabilistic} to be
 cost-effective.
 
 \subsection{Handling nondeterminism}
