@@ -10,16 +10,45 @@ intuitions that are often missing in the detailed presentation of
 techniques, quite helpful in understanding them.
 
 \subsection{Where do the probabilities come from?}
+There are two perspectives adopted in the literature.
+Programs are implicitly probabilistic because the distributions
+from which input values are drawn are not specified in the program,
+but are characteristic of the execution environment.
+Alternately, programs are explicitly probabilistic in that the statements
+within the program define the input probability distributions.
+More generally a program might combine both implicit and explicit
+probabilistic calls.  Method $m$ in Figure~\ref{fig:example}
+is an example of such a combined probabilistic program.
+
+It is possible to transform explicit probabilistic constructs,
+by introducing auxiliary input variables and then specifying
+their distributions.   For the example, this would result
+in the addition of two integer input variables 
+\begin{quote}
+\texttt{m(int x, int b1, int b2) \{...} 
+\end{quote}
+where the two instances of
+\texttt{drawBernoulli(0.5)} expressions would be replaced
+by \texttt{b1} and \texttt{b2}, respectively.  The input
+distribution for these auxiliary inputs would then be specified
+as a set of pairs,
+\[
+\{ (\lambda x.x<0,0), (\lambda x.x=0,0.5), (\lambda x.x=1,0.5), (\lambda x.x>0,0) \}
+\]
+where the first component defines the characteristic function
+of a set of values and the second component defines the probability
+of a value in that set.
 
 \subsection{What does the analysis compute?}
-There are two perspective adopted in the literature.
-(1) One can view a probabilistic program as a transformer on probability
+There are two perspectives adopted in the literature.
+One can view a probabilistic program as a transformer on probability
 distributions and compute the probability distribution, over the
 concrete domain, that holds at a program state.
-(2) View a probabilistic program as a program whose inputs happen
+Alternatively, one can view a probabilistic program as a program whose inputs happen
 to vary in some principled way and compute program properties, 
 properties of sets of concrete domain elements, along with a characterization
 of how that property varies with varying input.
+\mycomment{Matt: working here}
 
 \ignore{
 example showing a negation function with drawBernoulli(0.25)
