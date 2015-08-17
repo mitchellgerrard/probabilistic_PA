@@ -25,68 +25,69 @@ To simplify the notation, we will focus on implicit probabilistic constructs, as
 
 \mycomment{Anto: check definitions of model counting and solution space quantification}
 
-Let us on a first hand assume a uniform distribution over all the possible input values, i.e., each valid input has the same probability. We will relax this assumption later in this section. 
 
 %Some techniques allow for bounding the probability value within a certain interval; 
 
 \subsection{Exact and numeric computation}\label{sec:computingprobabilitiesExact}
 
+% OUTLINE
+%	\begin{enumerate}
+%		\item Finite domains
+%			\begin{enumerate}
+%				\item Linear integers (Latte, Barvinok, Omega for negation; used in our works)
+%				\item Strings (bounds: \url{http://www.comp.nus.edu.sg/~shweta24/publications/smc\_pldi14.pdf} ; automata-based exact and upperbounds: \url{http://www.cs.ucsb.edu/~bultan/publications/model-counting.pdf}; we should also check the related work thereof)
+%				\item Data structures (icse13 and spin15)
+%				\item Sat and smt (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, \url{http://arxiv.org/pdf/1411.0659.pdf}; these papers should have been published, we should check related work in there)
+%			\end{enumerate}
+%		
+%		\item Uncountable domains
+%			\begin{enumerate}
+%				\item Symbolic and numerical integration (interesting, but symbolic does not scale apart from a few simple cases, while numeric suffers for large cardinality of input domains; however: general, available off-the-shelf, parallelizable for numerical)
+%			\end{enumerate}
+%	\end{enumerate}
+
 \paragraph{Finite domains.} 
 
-If the input domain is finite, classic probability can be used to reduce the computation of $Pr(\phi)$ to a counting problem:
-
+If the input domain is finite, classic probability can be used to reduce the computation of $Pr(\phi)$ to a counting problem (let us on a first hand assume a uniform distribution over all the possible input values, i.e., each valid input has the same probability):
+%
 \begin{equation}\label{eq:counting}
 	Pr(\phi) = \frac{\sharp(\phi \land D)}{\sharp(D)}
 \end{equation}
-
+%
 \noindent where $\sharp(\cdot)$ counts the number of inputs satisfying the argument constraint, $D$ has been overloaded to represent the finite domain as a constraint ($\sharp(D)$ is a short form for the size of the domain)\footnote{More precisely, Equation~\eqref{eq:counting} represents the probability of satisfying the constraint $\phi$ conditioned to the fact that the input is within the prescribed domain $D$.}. For example, considering a single integer input variable $x$ taking values between $1$ and $10$ uniformly, $\sharp(D)=10$ and $\sharp(x\leq5 \land D)=5$ leading to a probability of $.5$ of satisfying the constraint.
 
 An efficient implementations of $\sharp(\cdot)$ are available for several classes of model counting problems:
 
 \begin{itemize}
-	\item \textbf{Linear integer arithmetics}: the conjunction of linear constraints over a finite integer domain geometrically defines a multi-dimensional lattice bounded by a convex polytope~\cite{de2008computationalGeometry}. To count the number of points composing this structure, an efficient solution has been proposed by Barvinok in~\cite{barvinok1994polynomial}. This algorithm is grounded on the construction of generating functions suitable for solving the counting problem in polynomial time with respect to the number of variables and the number of constraints. Notably, besides the number of bits required to represent the numerical values, the complexity of this algorithm does not depend on the actual size of the variable domains. This makes the computation feasible for very large input domains, allowing its application to probabilistic program analysis. Several implementations of this algorithm are available, the two most popular being LattE XXX and Barvinok XXX. When disjunctions appear in the constraint, these have to be preprocessed before applying Barvinok's algorithm (e.g., using the Omega libraryXXX). This normalization increases the overall complexity of model counting, however, several optimizations can be leveraged to reduce the computational effort (we will discuss some later in Section~\ref{sec:computingprobabilitiesOptimizations}). Barvinok algorithm has been used for probabilistic program analysis in XXXISTA12,ICSE13...
+	\item \textbf{Linear integer arithmetics}: the conjunction of linear constraints over a finite integer domain geometrically defines a multi-dimensional lattice bounded by a convex polytope~\cite{de2008computationalGeometry}. To count the number of points composing this structure, an efficient solution has been proposed by Barvinok in~\cite{barvinok1994polynomial}. This algorithm is grounded on the construction of generating functions suitable for solving the counting problem in polynomial time with respect to the number of variables and the number of constraints. Notably, besides the number of bits required to represent the numerical values, the complexity of this algorithm does not depend on the actual size of the variable domains. This makes the computation feasible for very large input domains, allowing its application to probabilistic program analysis. Several implementations of this algorithm are available, the two most popular being LattE~\cite{LattESoftware} and Barvinok~\cite{verdoolaegesoftware}. When disjunctions appear in the constraint, these have to be preprocessed before applying Barvinok's algorithm (e.g., using the Omega library~\cite{Omega1996}). This normalization increases the overall complexity of model counting, however, several optimizations can be leveraged to reduce the computational effort (we will discuss some later in Section~\ref{sec:computingprobabilitiesOptimizations}). Barvinok algorithm has been used for probabilistic program analysis in \cite{Geldenhuys2012,Filieri2013,Filieri2015}.
 
-	\item \textbf{Bounded data structures}: data structures are usually composed by a structural dimension, e.g., lists or tree, and by a payload stored in each node of the structure. The level of decoupling between structure and payload differs case by case, for example a list of integers may be sorted or not. Early work on complexity analysis explored the use of generating functions for representing the number of valid instances of a given data structure without explicitly enumerating them XXX. However, despite its computational efficiency, this approach requires a significant amount of human work because the construction of these generating functions can hardly be automatized from source code. For the sake of generality, early work in probabilistic program analysis XXXICSE13 used enumeration-based approaches, such as Korat XXX. This technique relies on the formalization of both the invariants characterizing the valid structures and of the constraints to be counted as executable boolean methods, and then generates all the instances for which these methods return true. The generation is enhanced with smart pruning techniques to reduce the actual exploration space, although their complexity still leaves most realistic programs out of reach. A recent approach proposed in XXXSPIN15 decouples the structural part and the payload, employing the partial enumeration of the former and the use of more efficient model counting techniques for the latter, whenever possible. For example, an acyclic sorted list of integers between 1 and 10 having at most 3 elements would require the enumeration of 4 different structural configuration (including the empty list) and the evaluation of 8 linear integer constraints (which can be computed with Barvinok's algorithm), instead of exploring all 1111 possible instances.
+	\item \textbf{Bounded data structures}: data structures are usually composed by a structural dimension, e.g., lists or tree, and by a payload stored in each node of the structure. The level of decoupling between structure and payload differs case by case, for example a list of integers may be sorted or not. Early work on complexity analysis explored the use of generating functions for representing the number of valid instances of a given data structure without explicitly enumerating them (e.g.,~\cite{flajolet1985mathematical}). However, despite its computational efficiency, this approach requires a significant amount of human work because the construction of these generating functions can hardly be automatized from source code. For the sake of generality, early work in probabilistic program analysis~\cite{Filieri2013} used enumeration-based approaches, such as Korat~\cite{Korat2002}. This technique relies on the formalization of both the invariants characterizing the valid structures and of the constraints to be counted as executable boolean methods, and then generates all the instances for which these methods return true. The generation is enhanced with smart pruning techniques to reduce the actual exploration space, although their complexity still leaves most realistic programs out of reach. A recent approach proposed in~\cite{Filieri2015} decouples the structural part and the payload, employing the partial enumeration of the former and the use of more efficient model counting techniques for the latter, whenever possible. For example, an acyclic sorted list of integers between 1 and 10 having at most 3 elements would require the enumeration of 4 different structural configuration (including the empty list) and the evaluation of 8 linear integer constraints (which can be computed with Barvinok's algorithm), instead of exploring all 1111 possible instances.
 
-	\item \textbf{Regular expressions}: a variety of practically relevant constraints on strings can be formalized as matching with a regular expression XXXXPLDI14,CAV15. If the (maximum) length of the string is bounded, the number of instances matching a regular expression can be counted exactly with an automata-based approach. The regular expression is first transformed into the corresponding accepting automata. Then, an exponential generating function is automatically constructed to count the accepting runs of the automata up to a certain length, without the need to enumerate all of them explicitly. The technique is actually more general and can be used for any constraint whose satisfaction can be reduced to counting the accepting runs of a finite state automata. For more general constraints, called pseudo-relational, the exact count is not computable, though its value can be bounded in a finite interval allowing, in some cases, for best- or worst-case analysis XXXXCAV15.
+	\item \textbf{Regular expressions}: a variety of practically relevant constraints on strings can be formalized as matching with a regular expression~\cite{Luu2014,Aydin2015}. If the (maximum) length of the string is bounded, the number of instances matching a regular expression can be counted exactly with an automata-based approach. The regular expression is first transformed into the corresponding accepting automata. Then, an exponential generating function is automatically constructed to count the accepting runs of the automata up to a certain length, without the need to enumerate all of them explicitly. The technique is actually more general and can be used for any constraint whose satisfaction can be reduced to counting the accepting runs of a finite state automata. For more general constraints, called pseudo-relational, the exact count is not computable, though its value can be bounded in a finite interval allowing, in some cases, for best- or worst-case analysis~\cite{Aydin2015}.
 	
-	\item \textbf{SAT and SMT}: 
+	\item \textbf{SAT and SMT}: \mycomment{TBD (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, \url{http://arxiv.org/pdf/1411.0659.pdf}; these papers should have been published, we should check related work in there)}
 
 \end{itemize}
 
 
-\paragraph{Infinite domains}
-When dealing with uncountable
+\paragraph{Floating-point numbers.} 
+Floating-point numbers are usually abstracted as real numbers for analysis purposes. Computing the probability of satisfying a constraints over reals requires refining Equation~\ref{eq:counting} to cope with the density of the domain. In particular, the counting function $\sharp(\phi)$ has to be replaced by the integration of an indicator function on $\phi$, i.e., a function returning $1$ for all the inputs satisfying $\phi$ \cite{Borges2014}. This integration can be performed exactly only for a limited number of cases, where symbolic integration is possible. For all the other cases, only numerical integration is possible. A number of commercial and open-source tools can be used for this purpose, however 1) numerical computations are accurate up to a certain bound, and 2) they do not scale when the cardinality of the input domain grows. In these cases sampling-based methods are preferable. 
 
+\paragraph{Handling input distributions.} 
+For finite domains, we assume, without loss of generality, the input distribution to be specified on a finite partition $D^1, D^2, \dots, D^n$ of the input domain $D$ (i.e., $\cup_i D^i \equiv D$ and $D^i \cap D^j \neq \emptyset \implies i=j$) via the probability function $Pr(D^i)$. We assume elements within the same set $D^i$ to have the same probability. The case of uniform distribution described so far corresponds to the partition with cardinality 1, i.e., the whole domain.
+ 
+Since the elements of the partition are disjoint by construction, we can exploit the law of total probability to extend Equation~\eqref{eq:counting} to include the information about the input distribution:
+%
+\begin{equation}\label{eq:countingInputDistribution}
+	Pr(\phi) = \sum_i \frac{\sharp(\phi \land D^i)}{\sharp(D^i)} \cdot Pr(D^i)
+\end{equation}
+%
+\noindent where $D^i$ has again been overloaded to represent the constraint of an element belonging to $D^i$.
 
+Formalizing the input distribution on a finite partition of the input domain is general enough to capture every valid distribution on the inputs, including possible correlations or functional dependencies among the input variables. However, the finer the specification of the input distribution, the more complex the computation of Equation~\eqref{eq:countingInputDistribution}, which, in the worst case, may require the computation of $|D|$ addends \cite{Borges2014}. While this worst case is unlikely to occur (also due to the optimization strategies that will be described later), more efficient probability computations are possible employing distribution-aware sampling-based methods, which will be described in the next section.
 
 \subsection{Sampling-based methods}\label{sec:computingprobabilitiesSampling}
 
-\subsection{Arbitrary input distributions}\label{sec:computingprobabilitiesInputDistributions}
-
-\subsection{Optimizations}\label{sec:computingprobabilitiesOptimizations}
-
-
-
-\subsubsection{Finite domains}\label{sec:exactComputationFinite}
-
-	\begin{enumerate}
-		\item Finite domains
-			\begin{enumerate}
-				\item Linear integers (Latte, Barvinok, Omega for negation; used in our works)
-				\item Strings (bounds: \url{http://www.comp.nus.edu.sg/~shweta24/publications/smc\_pldi14.pdf} ; automata-based exact and upperbounds: \url{http://www.cs.ucsb.edu/~bultan/publications/model-counting.pdf}; we should also check the related work thereof)
-				\item Data structures (icse13 and spin15)
-				\item Sat and smt (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, \url{http://arxiv.org/pdf/1411.0659.pdf}; these papers should have been published, we should check related work in there)
-			\end{enumerate}
-		
-		\item Uncountable domains
-			\begin{enumerate}
-				\item Symbolic and numerical integration (interesting, but symbolic does not scale apart from a few simple cases, while numeric suffers for large cardinality of input domains; however: general, available off-the-shelf, parallelizable for numerical)
-			\end{enumerate}
-	\end{enumerate}
-
-
-\subsection{Sampling-based approaches}\label{sec:approximateComputation}
 	\begin{itemize}
 		\item Sampling from uniform distributions (base case, best we can if no input distribution is available; based on classic probability, i.e., count success over total)
 		\item Discretization of non-uniform distributions (useful when a finite number of usage scenarios are available; can approximate any distribution with arbitrary accuracy; most straightforward when inferring distributions from past executions, i.e., histograms; it does not scale for fine-grained approximations)
@@ -95,7 +96,7 @@ When dealing with uncountable
 		\item Monte Carlo methods
 			\begin{itemize}
 				\item Hit or miss Monte Carlo
-				\item \mycomment{Anto: Mention Crude montecarlo for integration? Gibbs and MCMC sampling will be just mentioned; especially MCMC is used by the MSR guys}
+				%\item \mycomment{Anto: Mention Crude montecarlo for integration? Gibbs and MCMC sampling will be just mentioned; especially MCMC is used by the MSR guys}
 				\item Frequentist and Bayesian estimators (used in prob. model check.)
 					\begin{itemize}
 						\item historically frequentist first, with static bounds (based on Chernoff's) for prob MC; then sequential ratio tests, still frequentist.
@@ -112,7 +113,12 @@ When dealing with uncountable
 			\end{itemize}
 			
 			\item approximate $\sharp$-sat and $\sharp$-smt (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, )
-
-
-		 
 	\end{itemize}
+
+
+
+
+
+\subsection{Optimizations}\label{sec:computingprobabilitiesOptimizations}
+
+Divide and conquer from icse13 and and sensitivity-aware sampling from fse15
