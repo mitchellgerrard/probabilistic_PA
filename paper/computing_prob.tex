@@ -35,7 +35,7 @@ Let us on a first hand assume a uniform distribution over all the possible input
 If the input domain is finite, classic probability can be used to reduce the computation of $Pr(\phi)$ to a counting problem:
 
 \begin{equation}\label{eq:counting}
-	Pr(\models \phi) = \frac{\sharp(\phi \land D)}{\sharp(D)}
+	Pr(\phi) = \frac{\sharp(\phi \land D)}{\sharp(D)}
 \end{equation}
 
 \noindent where $\sharp(\cdot)$ counts the number of inputs satisfying the argument constraint, $D$ has been overloaded to represent the finite domain as a constraint ($\sharp(D)$ is a short form for the size of the domain)\footnote{More precisely, Equation~\eqref{eq:counting} represents the probability of satisfying the constraint $\phi$ conditioned to the fact that the input is within the prescribed domain $D$.}. For example, considering a single integer input variable $x$ taking values between $1$ and $10$ uniformly, $\sharp(D)=10$ and $\sharp(x\leq5 \land D)=5$ leading to a probability of $.5$ of satisfying the constraint.
@@ -47,12 +47,17 @@ An efficient implementations of $\sharp(\cdot)$ are available for several classe
 
 	\item \textbf{Bounded data structures}: data structures are usually composed by a structural dimension, e.g., lists or tree, and by a payload stored in each node of the structure. The level of decoupling between structure and payload differs case by case, for example a list of integers may be sorted or not. Early work on complexity analysis explored the use of generating functions for representing the number of valid instances of a given data structure without explicitly enumerating them XXX. However, despite its computational efficiency, this approach requires a significant amount of human work because the construction of these generating functions can hardly be automatized from source code. For the sake of generality, early work in probabilistic program analysis XXXICSE13 used enumeration-based approaches, such as Korat XXX. This technique relies on the formalization of both the invariants characterizing the valid structures and of the constraints to be counted as executable boolean methods, and then generates all the instances for which these methods return true. The generation is enhanced with smart pruning techniques to reduce the actual exploration space, although their complexity still leaves most realistic programs out of reach. A recent approach proposed in XXXSPIN15 decouples the structural part and the payload, employing the partial enumeration of the former and the use of more efficient model counting techniques for the latter, whenever possible. For example, an acyclic sorted list of integers between 1 and 10 having at most 3 elements would require the enumeration of 4 different structural configuration (including the empty list) and the evaluation of 8 linear integer constraints (which can be computed with Barvinok's algorithm), instead of exploring all 1111 possible instances.
 
-	\item 
+	\item \textbf{Regular expressions}: a variety of practically relevant constraints on strings can be formalized as matching with a regular expression XXXXPLDI14,CAV15. If the (maximum) length of the string is bounded, the number of instances matching a regular expression can be counted exactly with an automata-based approach. The regular expression is first transformed into the corresponding accepting automata. Then, an exponential generating function is automatically constructed to count the accepting runs of the automata up to a certain length, without the need to enumerate all of them explicitly. The technique is actually more general and can be used for any constraint whose satisfaction can be reduced to counting the accepting runs of a finite state automata. For more general constraints, called pseudo-relational, the exact count is not computable, though its value can be bounded in a finite interval allowing, in some cases, for best- or worst-case analysis XXXXCAV15.
+	
+	\item \textbf{SAT and SMT}: 
 
 \end{itemize}
 
 
-\paragraph{Uncountable domains}
+\paragraph{Uncountable numeric domains}
+When dealing with uncountable
+
+
 
 \subsection{Sampling-based methods}\label{sec:computingprobabilitiesSampling}
 
