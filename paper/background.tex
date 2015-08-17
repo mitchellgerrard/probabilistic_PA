@@ -216,10 +216,13 @@ model checking algorithms.
 \caption{{\tt symx}$(l,m,pc)$}
 \label{alg-symexe}
 \begin{algorithmic}
+\IF{$\x{stoppingPath}(pc)$} 
+ \RETURN
+ \ENDIF
  \WHILE{$\neg \x{branch}(l)$}
    \STATE $m \gets \x{op}(l)(m)$
    \STATE $l \gets \x{succ}(l)$
-   \STATE $\x{check}(l,m,\phi)$
+   \STATE $\x{check}(l,m,pc)$
  \ENDWHILE
 
  \STATE $c \gets \x{cond}(l)$
@@ -275,7 +278,7 @@ Programs with looping behavior that is determined by input values
 may result in an infinite symbolic execution tree. 
 For this reason, symbolic execution is
 typically run with a (user-specified) bound on the search depth, thus
-some paths may be unexplored.   Moreover, there may be path constraints
+some paths may be unexplored (checked in {\tt stoppingPath}).   Moreover, there may be path constraints
 for which efficient satisfiable checking is not possible.  Variants of
 symbolic execution~\cite{godefroid05:dart,Cute,BitBlaze} 
 address this by replacing problematic $pc$ constraints with equality
