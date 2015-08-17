@@ -5,7 +5,91 @@ Symbolic execution (section~\ref{sec:back:symexe}) produces path conditions (PCs
 
 For simplicity we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. {\bf this now needs to link to somewhere where we discuss this}. Another simplifying assumption is that all the input variables range over finite discrete domains; the combined input domain is denoted by $D$~\cite{filieri-etal-icse2013}. Again, this is not a general restriction and we relax this assumption in more recent work~\cite{Borges2014PLDI}.
 
+\begin{minipage}{0.3\textwidth}
+\begin{algorithm}[H]
+\floatname{algorithm}{Alg.}
+\caption{{\tt distr}$(b_0,b_1,x)$}
+\label{alg-pse}
+\begin{algorithmic}
+  \STATE $\triangleright\quad b_0,b_1\in\{0,\ldots,9\}$
+  \IF{$b_0<5$}
+    \IF{$b_1<5$}
+      \IF{$x\le60$}
+        \STATE $\ldots A$
+      \ELSE
+        \STATE \textbf{assert} \FALSE
+      \ENDIF
+    \ELSE
+      \IF{$x\le30$}
+        \STATE $\ldots B$
+      \ELSE
+        \STATE \textbf{assert} \FALSE
+      \ENDIF
+    \ENDIF
+  \ELSE
+    \IF{$x\le55$}
+      \STATE $\ldots C$
+    \ELSE
+      \STATE $\ldots D$
+    \ENDIF
+  \ENDIF
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\def\llabel#1{\makebox(0,0)[r]{\small\strut#1\space}}
+\def\rlabel#1{\makebox(0,0)[l]{\small\strut\space#1}}
+\def\nlabel#1{\begin{picture}(0,0)%
+  \put(0,0){\circle{10}}\put(0,0){\makebox(0,0){\small#1}}\end{picture}}
+\def\mlabel#1{\begin{picture}(0,0)%
+  \put(0,0){\circle{14}}\put(0,0){\makebox(0,0){\small#1}}\end{picture}}
+\begin{picture}(250,260)%\put(0,0){\framebox(250,260){}}%
+  \put(140,240){\begin{picture}(0,0)
+    \put(0,0){\nlabel{1}}
+    \put(-3.00,-4.00){\line(-3,-4){54.00}}
+    \put(-15,-20){\llabel{$b_0<5$}}
+    \put(-60,-80){\begin{picture}(0,0)
+      \put(0,0){\nlabel{2}}
+      \put(-2.24,-4.47){\line(-1,-2){35.53}}
+      \put(-10,-20){\llabel{$b_1<5$}}
+      \put(-40,-80){\begin{picture}(0,0)
+        \put(0,0){\nlabel{3}}
+        \put(-1.21,-4.85){\line(-1,-4){17.09}}
+        \put(-5,-20){\llabel{$x\le60$}}
+        \put(-20,-80){\mlabel{$A$}}
+        \put(1.21,-4.85){\line(1,-4){17.09}}
+        \put(5,-20){\rlabel{$x>60$}}
+        \put(20,-80){\mlabel{$A'$}}
+        \end{picture}}
+      \put(2.24,-4.47){\line(1,-2){35.53}}
+      \put(10,-20){\rlabel{$b_1\ge5$}}
+      \put(40,-80){\begin{picture}(0,0)
+        \put(0,0){\nlabel{4}}
+        \put(-1.21,-4.85){\line(-1,-4){17.09}}
+        \put(-7,-30){\llabel{$x\le30$}}
+        \put(-20,-80){\mlabel{$B$}}
+        \put(1.21,-4.85){\line(1,-4){17.09}}
+        \put(7,-30){\rlabel{$x>30$}}
+        \put(20,-80){\mlabel{$B'$}}
+        \end{picture}}
+      \end{picture}}
+    \put(3.00,-4.00){\line(3,-4){54.00}}
+    \put(15,-20){\rlabel{$b_0\ge5$}}
+    \put(60,-80){\begin{picture}(0,0)
+      \put(0,0){\nlabel{5}}
+      \put(-1.21,-4.85){\line(-1,-4){17.09}}
+      \put(-10,-20){\llabel{$x\le55$}}
+      \put(-20,-80){\mlabel{$C$}}
+        \put(1.21,-4.85){\line(1,-4){17.09}}
+      \put(10,-20){\rlabel{$x>55$}}
+      \put(20,-80){\mlabel{$D$}}
+      \end{picture}}
+    \end{picture}}
+\end{picture}
+\end{minipage}
+
 \mycomment{For Antonio: this discussion moves to your section}
+
 \subsubsection{Computing Probabilities using Model Counting} 
 To compute the probabilities of path conditions, we use a quantification procedure for the generated constraints. In~\cite{filieri-etal-icse2013} we use model counting techniques; libraries such as LattE~\cite{deLoera-etal-2012}, algorithmically calculate the exact number of points inside a bounded (possibly very large) region described by linear constraints over a discrete domain.  In more recent work~\cite{Borges2014PLDI}, we develop quantification procedures for the analysis of programs that have mixed integer and floating point constraints of arbitrary complexity.
 
@@ -14,6 +98,8 @@ To use model counting techniques to compute the probability $\x{Pr}(\x{pc})$ of 
 \subsection{Approach}
 
 To allow for a more general description of the approach to probabilistic symbolic execution we modify Algorithm~\ref{alg-symexe}, to sample and process symbolic paths one at a time. This processing includes the calculation of probabilities as described above.  The modified algorithm (in Algorithms~\ref{alg-pse} and~\ref{alg-symsample}) allows us to better handle the case where only a subset of paths of the program is analysed. The interested reader is referred to \cite{FSE014} for a more detailed discussion of the precise algorithm.
+
+Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{processPath}. At a high level, {\tt symsample} is called from the initial state of the program with $\phi=\mathtt{true}$ as the current path condition;  it returns a single path which is then processed.  This is followed by a check to see if the analysis is complete and can stop. Within {\tt symsample} we first check to see if the search needs to be stopped; otherwise, we symbolically execute the program up to the next branching point and decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in Algorithm~\ref{alg-symexe} where both branches could be taken if they were both satisfiable. 
 
 \begin{minipage}{0.4\textwidth}
 \begin{algorithm}[H]
@@ -55,8 +141,6 @@ To allow for a more general description of the approach to probabilistic symboli
 \end{minipage}
 
 $\newline$
-
-Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{processPath}. At a high level, {\tt symsample} is called from the initial state of the program with $\phi=\mathtt{true}$ as the current path condition;  it returns a single path which is then processed.  This is followed by a check to see if the analysis is complete and can stop. Within {\tt symsample} we first check to see if the search needs to be stopped; otherwise, we symbolically execute the program up to the next branching point and decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in Algorithm~\ref{alg-symexe} where both branches could be taken if they were both satisfiable. 
 
 \subsubsection{stoppingPath} is the same as in the original symbolic execution algorithm and is there to handle loops conditioned on input variables, since these can cause infinite executions. However, since some paths might now be truncated before reaching its target property, we introduce three types of paths, (1) success paths that reach the target property and the property evaluates to true, (2) failure paths, that reaches the property but the property fails and  (3) grey paths that got truncated before reaching the property. We consider these as three disjoint sets of paths and calculate the cumulative probability of success (i.e., the reliability of the code), failure and grey paths.  Grey paths can be handled optimistically (grouped with the success paths), pessimistically (grouped with the failure paths) or kept separate and be used as a measure for how confident we are in our estimates (for example if the grey paths probability is very low, we are more confident). 
 
