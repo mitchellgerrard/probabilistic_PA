@@ -1,0 +1,42 @@
+\section{Overview}
+\label{sec:overview}
+
+The literature on incorporating probabilistic techniques into 
+program analysis is large and growing, technically deep, and quite
+varied.  In this paper we cannot hope to cover all of it, but our
+intention is to expose key similarities and differences between 
+families of approaches and, in doing so, provide the reader with
+intuitions that are often missing in the detailed presentation of
+techniques, quite helpful in understanding them.
+
+\subsection{Where do the probabilities come from?}
+
+\subsection{What does the analysis compute?}
+There are two perspective adopted in the literature.
+(1) One can view a probabilistic program as a transformer on probability
+distributions and compute the probability distribution, over the
+concrete domain, that holds at a program state.
+(2) View a probabilistic program as a program whose inputs happen
+to vary in some principled way and compute program properties, 
+properties of sets of concrete domain elements, along with a characterization
+of how that property varies with varying input.
+
+\ignore{
+example showing a negation function with drawBernoulli(0.25)
+and how it transforms a distribution
+
+show a program that tests whether the absolute value of a number
+is greater than 5 where the input is distributed according to N(0,1)
+}
+
+Within these there are different approaches taken to estimating
+these quantities.  Upper bounds, lower bounds, expectations, ...
+
+\subsection{Handling abstraction expressed through non-determinism}
+This cross-cutting theme is addressed in all program analyses that
+hope to scale. 
+
+All of the techniques use MDPs and then analyze maximal/minimal
+schedules.
+
+
