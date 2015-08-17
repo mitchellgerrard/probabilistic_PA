@@ -90,8 +90,8 @@ $\forall a \in \mathcal{A} : a \sqcap \top = a$, makes the
 abstract domain a meet semi-lattice.
 
 \subsubsection{Data Flow Analysis}
-Data flow analyses~\cite{Kildall} 
-(and analyses built using abstract interpretation~\cite{Cousot}) perform
+Data flow analyses~\cite{kildall1973unified} 
+(and analyses built using abstract interpretation~\cite{cousot1977abstract}) perform
 non-standard interpretations of program executions over an abstract domain.  
 The semantics of program statements is lifted to operate
 on a set of states, encoded as an element of the abstract domain,
@@ -112,7 +112,7 @@ Given an overapproximation of the set of traces, $T(l)$, leading to a
 program location, $l$, 
 $\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$ 
 defines invariant properties that hold prior to executing $l$; this
-is refered to as the meet-over-paths (MOP) solution~\cite{Kildall}.
+is refered to as the meet-over-paths (MOP) solution~\cite{kildall1973unified}.
 
 Generating the set of traces for non-trivial programs is impractical 
 and instead abstract states can be combined, via $\sqcap$, wherever
@@ -240,7 +240,7 @@ model checking algorithms.
 \end{figure}
 
 \subsubsection{Symbolic Execution}
-Like data flow analysis, symbolic execution~\cite{King1976,clarke76:system} 
+Like data flow analysis, symbolic execution~\cite{king1976symbolic,clarke1976system} 
 performs a non-standard interpretation of program executions using 
 a symbolic abstraction of program states.
 Algorithm~\ref{alg-symx} sketches the symbolic execution algorithm.
@@ -280,12 +280,12 @@ For this reason, symbolic execution is
 typically run with a (user-specified) bound on the search depth, thus
 some paths may be unexplored (checked in {\tt stoppingPath}).   Moreover, there may be path constraints
 for which efficient satisfiable checking is not possible.  Variants of
-symbolic execution~\cite{godefroid05:dart,Cute,BitBlaze} 
+symbolic execution~\cite{godefroid2005dart,sen2005cute,song2008bitblaze} 
 address this by replacing problematic $pc$ constraints with equality
 constraints based on values collected by executing the program along the trace.
 
 Symbolic execution tools and toolkits exist for many popular 
-languages~\cite{SPF,godefroid05:dart,tillman-halleux-tap2008,Klee}
+languages~\cite{pasareanu2010symbolic,godefroid2005dart,jamrozik2013generating,cadar2008klee}
 and have been used primarily for test generation and fault detection.
 
 \subsection{Probabilities and Probabilistic Models}
