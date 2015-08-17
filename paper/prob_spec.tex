@@ -20,7 +20,7 @@ For example, one can measure
 the frequency of values occurring within certain ranges
 during a mission to obtain realistic usage profiles. 
 Furthermore, as in the case of Probabilistic
-Programming~\cite{gordon-etal-icse-fose2014}, the code can also be
+Programming~\cite{Gordon2014}, the code can also be
 used to formalize the dynamics of a system, from biological processes
 to financial markets. In these cases probabilistic profiles can be
 either inferred through the analysis of experimental or historical
@@ -35,7 +35,7 @@ Such profiles can then be used for a new version or a similar system,
 to assess its probabilistic properties.
 
 In addition to the usage profiles that specify the distributions of
-the input data~\cite{ICSE13}, one can use stateful usage profiles
+the input data~\cite{filieri2013reliability}, one can use stateful usage profiles
 given as Discrete-Time Markov Chains (DTMC), for example.  Such
 profiles are useful for the class of systems that typically operate on
 sequences of inputs -- so called reactive programs.
@@ -51,7 +51,7 @@ Informally, DTMC are automata labeled with outgoing probabilities on
 their transitions.  DTMC are already a common formalism for expressing
 probabilistic usage models and we will employ inference procedures to
 build them automatically.  Such inference was presented in
-e.g. \cite{GhezziICSE14, Beschastnikh11}). It consumes logged data
+e.g. \cite{ghezzi2014mining, beschastnikh2011leveraging}). It consumes logged data
 which typically consists of a time series; each step encodes the value
 of the states observed at each time step. The states of the inferred
 model then represent ``abstractions'' of the state reported in the log
@@ -116,7 +116,7 @@ is similar except that the sum is maximized.
 
 When intra-distribution constraints are linear, this results
 in a linear programming problem.  There are numerous efficient solvers
-for these problems, e.g., CPLEX \cite{CPLEX}, that are known to
+for these problems, e.g., CPLEX \cite{cplex2009v12}, that are known to
 support upward of a billion variables -- subject to sufficient memory.
 For many systems we expect that the existence of partial distribution
 information
@@ -128,7 +128,7 @@ For the general (non-linear) case one can explore {\em learning
   techniques}, such as reinforcement learning or Monte-Carlo
 tree-search~\cite{sutton1998reinforcement} to iteratively compute
 best/worst profiles with respect to desired properties. We have
-already explored reinforcement learning in~\cite{Luckow2014ASE} to
+already explored reinforcement learning in~\cite{luckow2014probabilistic} to
 infer best/worst schedules in the context of probabilistic analysis of
 concurrent programs. A similar approach can be applied for profile
 inference as well. This is an interesting topic for future work.
