@@ -17,11 +17,53 @@ I know there is tons of work published on this, but is there a simple
 approach we can describe or that you've used.}
 
 
+Computing probabilities for probabilistic program analysis can usually be reduced to computing the probability of satisfying a boolean constraint over the program variables. In this section we will introduce some of the basic techniques currently used in program analysis. 
+
+To simplify the notation, we will focus on implicit probabilistic constructs, assuming the program under analysis has input variables $V=\{v_1, v_2, \dots, v_n\}$, where $v_i$ has domain $d_i$ and comes with a probability distribution $\mathcal{P}_i: d_i \to [0, 1]$. The input domain $D$ is defined as the cartesian product of the domains $d_i$, while the input distribution $\mathcal{P}$ is defined as the joint distribution over all the input variables $\prod_i \mathcal{P}_i(\bar{v_i})$. Given a constraint $\phi: V \to \{true, false\}$, our goal is to compute the probability $Pr(\phi)$ of satisfying $\phi$ given the input domains and probability distributions. This problem is usually referred to as model counting, when the input domains are countable, or solution space quantification, when the input domains are modeled as uncountable (e.g., abstracting floating-point numbers as reals).
+
+XXXXstruttura sezione
+\mycomment{Anto: check definitions of model counting and solution space quantification}
+
+Let us on a first hand assume a uniform distribution over all the possible input values, i.e., each valid input has the same probability. We will relax this assumption later in this section. 
+
+%Some techniques allow for bounding the probability value within a certain interval; 
+
+\subsection{Exact and numeric computation}\label{sec:computingprobabilitiesExact}
+
+\paragraph{Finite domains.} 
+
+If the input domain is finite, classic probability can be used to reduce the computation of $Pr(\phi)$ to a counting problem:
+
+\begin{equation}\label{eq:counting}
+	Pr(\models \phi) = \frac{\sharp(\phi \land D)}{\sharp(D)}
+\end{equation}
+
+\noindent where $\sharp(\cdot)$ counts the number of inputs satisfying the argument constraint, $D$ has been overloaded to represent the finite domain as a constraint ($\sharp(D)$ is a short form for the size of the domain)\footnote{More precisely, Equation~\eqref{eq:counting} represents the probability of satisfying the constraint $\phi$ conditioned to the fact that the input is within the prescribed domain $D$.}. For example, considering a single integer input variable $x$ taking values between $1$ and $10$ uniformly, $\sharp(D)=10$ and $\sharp(x\leq5 \land D)=5$ leading to a probability of $.5$ of satisfying the constraint.
+
+An efficient implementations of $\sharp(\cdot)$ are available for several classes of model counting problems:
+
 \begin{itemize}
-	\item Goal: given a finite set of variables $V=\{v_1, v_2, \dots, v_n\}$, where $v_i$ has domain $d_i$ and comes with a probability distribution $\mathcal{P}_i: d_i \to [0, 1]$, and given a constraint $\phi: V \to \{true, false\}$, compute the probability of $\phi$ being satisfied (i.e., return true).
+	\item \textbf{Linear integer arithmetics}: the conjunction of linear constraints over a finite integer domain geometrically defines a multi-dimensional lattice bounded by a convex polytope~\cite{de2008computationalGeometry}. To count the number of points composing this structure, an efficient solution has been proposed by Barvinok in~\cite{barvinok1994polynomial}. This algorithm is grounded on the construction of generating functions suitable for solving the counting problem in polynomial time with respect to the number of variables and the number of constraints. Notably, besides the number of bits required to represent the numerical values, the complexity of this algorithm does not depend on the actual size of the variable domains. This makes the computation feasible for very large input domains, allowing its application to probabilistic program analysis. Several implementations of this algorithm are available, the two most popular being LattE XXX and Barvinok XXX. When disjunctions appear in the constraint, these have to be preprocessed before applying Barvinok's algorithm (e.g., using the Omega libraryXXX). This normalization increases the overall complexity of model counting, however, several optimizations can be leveraged to reduce the computational effort (we will discuss some later in Section~\ref{sec:computingprobabilitiesOptimizations}). Barvinok algorithm has been used for probabilistic program analysis in XXXISTA12,ICSE13...
+
+	\item \textbf{Bounded data structures}: data structures are usually composed by a structural dimension, e.g., lists or tree, and by a payload stored in each node of the structure. The level of decoupling between structure and payload differs case by case, for example a list of integers may be sorted or not. Early work on complexity analysis explored the use of generating functions for representing the number of valid instances of a given data structure without explicitly enumerating them XXX. However, despite its computational efficiency, this approach requires a significant amount of human work because the construction of these generating functions can hardly be automatized from source code. For the sake of generality, early work in probabilistic program analysis XXXICSE13 used enumeration-based approaches, such as Korat XXX. This technique relies on the formalization of both the invariants characterizing the valid structures and of the constraints to be counted as executable boolean methods, and then generates all the instances for which these methods return true. The generation is enhanced with smart pruning techniques to reduce the actual exploration space, although their complexity still leaves most realistic programs out of reach. A recent approach proposed in XXXSPIN15 decouples the structural part and the payload, employing the partial enumeration of the former and the use of more efficient model counting techniques for the latter, whenever possible. For example, an acyclic sorted list of integers between 1 and 10 having at most 3 elements would require the enumeration of 4 different structural configuration (including the empty list) and the evaluation of 8 linear integer constraints (which can be computed with Barvinok's algorithm), instead of exploring all 1111 possible instances.
+
+	\item 
+
 \end{itemize}
 
-\subsection{Exact and numerical approaches}
+
+\paragraph{Uncountable domains}
+
+\subsection{Sampling-based methods}\label{sec:computingprobabilitiesSampling}
+
+\subsection{Arbitrary input distributions}\label{sec:computingprobabilitiesInputDistributions}
+
+\subsection{Optimizations}\label{sec:computingprobabilitiesOptimizations}
+
+
+
+\subsubsection{Finite domains}\label{sec:exactComputationFinite}
+
 	\begin{enumerate}
 		\item Finite domains
 			\begin{enumerate}
@@ -38,7 +80,7 @@ approach we can describe or that you've used.}
 	\end{enumerate}
 
 
-\subsection{Sampling-based approaches}
+\subsection{Sampling-based approaches}\label{sec:approximateComputation}
 	\begin{itemize}
 		\item Sampling from uniform distributions (base case, best we can if no input distribution is available; based on classic probability, i.e., count success over total)
 		\item Discretization of non-uniform distributions (useful when a finite number of usage scenarios are available; can approximate any distribution with arbitrary accuracy; most straightforward when inferring distributions from past executions, i.e., histograms; it does not scale for fine-grained approximations)
