@@ -21,7 +21,8 @@ Computing probabilities for probabilistic program analysis can usually be reduce
 
 To simplify the notation, we will focus on implicit probabilistic constructs, assuming the program under analysis has input variables $V=\{v_1, v_2, \dots, v_n\}$, where $v_i$ has domain $d_i$ and comes with a probability distribution $\mathcal{P}_i: d_i \to [0, 1]$. The input domain $D$ is defined as the cartesian product of the domains $d_i$, while the input distribution $\mathcal{P}$ is defined as the joint distribution over all the input variables $\prod_i \mathcal{P}_i(\bar{v_i})$. Given a constraint $\phi: V \to \{true, false\}$, our goal is to compute the probability $Pr(\phi)$ of satisfying $\phi$ given the input domains and probability distributions. This problem is usually referred to as model counting, when the input domains are countable, or solution space quantification, when the input domains are modeled as uncountable (e.g., abstracting floating-point numbers as reals).
 
-XXXXstruttura sezione
+\mycomment{Anto: Section outline to be added}
+
 \mycomment{Anto: check definitions of model counting and solution space quantification}
 
 Let us on a first hand assume a uniform distribution over all the possible input values, i.e., each valid input has the same probability. We will relax this assumption later in this section. 
@@ -54,7 +55,7 @@ An efficient implementations of $\sharp(\cdot)$ are available for several classe
 \end{itemize}
 
 
-\paragraph{Uncountable numeric domains}
+\paragraph{Infinite domains}
 When dealing with uncountable
 
 
