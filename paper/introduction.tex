@@ -5,7 +5,7 @@ Static program analyses aim to calculate properties of
 the possible executions of a program without ever running the program
 and have been an active topic of study since the 1960s \cite{First}.
 Initially developed to allow compilers to generate more efficient
-output programs, by the mid-1970s \cite{Fosdick} researchers had
+output programs, by the mid-1970s \cite{fosdick1976data} researchers had
 understood that such program analyses could be applied to fault
 detection -- and verification of the absence of specific classes of faults.
 
@@ -44,7 +44,7 @@ allowing any integer value or, perhaps, by applying
 some simple assumption, i.e., that income must be non-negative.
 Domain experts have studied income distributions and find that
 it varies according to a generalized beta distribution 
-\cite{IncomeDistribution}.  Can this type of information be 
+\cite{mcdonald1984some,thurow1970analyzing}.  Can this type of information be 
 exploited in a program analysis to speed analysis,
 to yield more useful analysis results, or to reason 
 about new types of program properties?
@@ -57,12 +57,13 @@ good average case performance -- and consequently as a defense against
 intolerable worst case performance.
 Programming such algorithms requires that primitives be available
 to draw values from probability distributions and there are many
-languages that provide such primitives \cite{NetLogo,others}.  
+languages that provide such primitives \cite{tisue2004netlogo,others}.  
 
 Regardless of whether information about the distribution of
 values is embedded within a program or stated as an input assumption,
 the semantics of these probabilistic programs is well-understood --
-and has long been studied \cite{kozen1981semantics,others}
+and has long been studied 
+\cite{kozen1981semantics,kozen1983probabilistic,jones1990probabilistic,morgan1996probabilistic}
 \footnote{In recent
 years, the term probabilistic program has been generalized beyond
 drawing inputs from probability distributions, which we
