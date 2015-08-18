@@ -5,7 +5,7 @@ Static program analyses aim to calculate properties of
 the possible executions of a program without ever running the program
 and have been an active topic of study since the 1960s \cite{First}.
 Initially developed to allow compilers to generate more efficient
-output programs by the mid-1970s \cite{Fosdick} researchers had
+output programs, by the mid-1970s \cite{Fosdick} researchers had
 understood that such program analyses could be applied to fault
 detection -- and verification of the absence of specific classes of faults.
 
@@ -26,9 +26,10 @@ when it is ported to an operating system with a different scheduler).
 
 Static analyses model uncertainty in program behavior
 through the use of various forms of abstraction and symbolic representation.
-For example, symbolic expressions with associated logical constraints 
-are used, in symbolic execution, to define abstract domains
-in data flow analysis, and for predicate abstraction in model checking, 
+For example, symbolic expressions are used to encode logical constraints 
+in symbolic execution, to define abstract domains
+in data flow analysis, and to capture sets of data values that may be input
+to a program in the predicate abstraction of model checking, 
 to capture sets of data values that may be input to a program.
 Non-deterministic choice is another widely used approach for modeling
 uncertainty -- for instance in modeling uncertain branch 
@@ -84,8 +85,8 @@ and symbolic execution to consider probabilistic information.
 We begin with a brief background that provides basic definitions
 related to static analysis and probabilities.
 Section~\ref{sec:computingprobabilities} discusses approaches that
-have been developed to reason about the probability of program
-related events, e.g., executing a path, taking a branch, or reaching a state.
+have been developed to reason about the probability of program-related 
+events, e.g., executing a path, taking a branch, or reaching a state.
 The following two sections, \ref{sec:pdfa}-\ref{sec:pse}, 
 survey work on probabilistic data flow analysis and probabilistic
 symbolic execution.  These sections seek to expose similarities
@@ -94,7 +95,7 @@ such as the \texttt{accuracy} of analysis results, i.e., how results
 are related to executable program behavior, 
 the aspects of behavior that are governed by probabilities, and
 the treatment of non-determinism -- which is a standard modeling
-approach in static-analysis.
+approach in static analysis.
 Section~\ref{sec:probspecs} surveys approaches to the cross-cutting
 issue of how probabilities can be specified or encoded for use
 in analyses.
