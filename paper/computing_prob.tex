@@ -81,38 +81,81 @@ Since the elements of the partition are disjoint by construction, we can exploit
 Formalizing the input distribution on a finite partition of the input domain is general enough to capture every valid distribution on the inputs, including possible correlations or functional dependencies among the input variables. However, the finer the specification of the input distribution, the more complex the computation of Equation~\eqref{eq:countingInputDistribution}, which, in the worst case, may require the computation of $|D|$ addends \cite{Borges2014}. While this worst case is unlikely to occur (also due to the optimization strategies that will be described later), more efficient probability computations are possible employing distribution-aware sampling-based methods, which will be described in the next section.
 
 \subsection{Sampling-based methods}\label{sec:computingprobabilitiesSampling}
+Exact methods may suffer two main limitations: 1) generality with respect to input domains and constraint classes and 2) scalability, either due to intrinsic complexity of their algorithm or to induced by the discretization of the input distributions. In many cases, sampling-based methods may be used to leverage both limitations.
 
-	\begin{itemize}
-		\item Sampling from uniform distributions (base case, best we can if no input distribution is available; based on classic probability, i.e., count success over total)
-		\item Discretization of non-uniform distributions (useful when a finite number of usage scenarios are available; can approximate any distribution with arbitrary accuracy; most straightforward when inferring distributions from past executions, i.e., histograms; it does not scale for fine-grained approximations)
-		\item Distribution-aware sampling (quite straightforward for distributions over numerical domains; requires more complex, unbiased, input generation techniques when sampling from other domains, e.g., data structures, but similar to random testing; scalability issues when sampling correlated input variables)
-      
-		\item Monte Carlo methods
-			\begin{itemize}
-				\item Hit or miss Monte Carlo
-				%\item \mycomment{Anto: Mention Crude montecarlo for integration? Gibbs and MCMC sampling will be just mentioned; especially MCMC is used by the MSR guys}
-				\item Frequentist and Bayesian estimators (used in prob. model check.)
-					\begin{itemize}
-						\item historically frequentist first, with static bounds (based on Chernoff's) for prob MC; then sequential ratio tests, still frequentist.
-						\item Bayesian from CMU
-					\end{itemize}
-				\item The variance issue and convergence acceleration techniques (just a paragraph with some refs):
-					\begin{itemize}
-						\item Importance sampling (used in prob. model check.)
-						\item Importance slicing (used in prob. model check.)
-					\end{itemize}
+In this section we will present sampling based methods for quantifying the probability of satisfying arbitrarily complex floating-point constraints. We will briefly discuss how to generalize to different domains at the end of the section.
 
-				\item Exploiting he law of total probability for composing different estimators: Interval constraints propagation (PLDI14) and statistical/exact (FSE14)
-				\item Dealing with nondeterminism (freq and bayesian in prob MC, ASE14)	
-			\end{itemize}
-			
-			\item approximate $\sharp$-sat and $\sharp$-smt (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, )
-	\end{itemize}
+Sampling-based probability computation rely on the application of Monte Carlo methods for estimating the probability of satisfying a given constraint. Monte Carlo estimation is a well developed field in Statistics, with countless applications in science and engineering XXX. In this section we will review the basics of Monte Carlo estimation while in Section~\ref{sec:computingprobabilitiesOptimizations} we will show how this general techniques can be tailored to probabilistic program analysis for more efficient quantification procedures.
+
+\paragraph{Hit-or-miss Monte Carlo.}
+
+As in the previous section, we will first introduce this quantification technique assuming a uniform input distributions over a convex domain. Consider for example the constraint $v_1 \leq -v_2 \land v_2 \leq v_1$, where both $v_1, v_2 \in [-1, 1] \cap \mathbb{R}$. For each value of $v_1$ and $v_2$, the constraint can be either true or false. To estimate the probability of satisfying the constraint (and in turn of violating it), we can define a suitable probabilistic model and then run a set of experiments to estimate its parameters.
+
+A suitable probabilistic model to represent the binary true/false outcome of an experiment is a Bernoulli distribution XXXX. This is a parametric distribution with a single parameter, let us call it $p$, representing the probability of observing the outcome true; the complementary outcome, false, will have probability $1-p$.
+
+The simplest way to estimate $p$ consists in generating $n$ independent random values for $v_1$ and $v_2$ and count how many of those values satisfy the constraint. More precisely, we can define an estimator $\hat{P}$ for the parameter $p$ which is the ratio between the number of experiments returning true and the total number of experiments, $n$. The most important properties of this estimator (that can be justified, for example, by the central limit theorem XXXX) are its expected value $E[\hat{P}]$, which is the most likely estimate, and its variance $Var[\hat{P}]$, which is an index of the uncertainty we have about our estimate after the experiments. Formally:
+%
+\begin{equation}\label{eq:mleEstimator}
+	E[\hat{P}] = \bar{x} \qquad Var[\hat{P}] = \frac{\bar{x} \cdot (1-\bar{x})}{n}
+\end{equation}
+%
+\noindent where $\bar{x}=\sum_{i=1}^n x_i$ and $x_i$ is $1$ if the $i$-th experiment retuned true and $0$ otherwise.
+
+The estimator $\hat{P}$ has tow important properties: it is unbiased, i.e., its expected value converges to the actual probability of satisfying the constraints when the number of experiments grows; it is consistent, i.e., its variance, and in turn our uncertainty about the result, decreases to 0 (as can be noted by the denominator $n$ in Equation~\eqref{eq:mleEstimator}).
+
+From the perspective of probabilistic program analysis, these two properties can be used to guarantee the asymptotic correctness of the computed probability, as well as to quantify the convergence of the estimation process. The variance can indeed be used to provide probabilistic guarantees on the correctness of the result in the form of confidence intervals XXX (assuming $n$ is large enough):
+
+\begin{equation}
+	Pr\Big( \bar{x} - z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\bar{x} \cdot (1-\bar{x})}{n}} \ \leq p \leq \ \bar{x} + z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\bar{x} \cdot (1-\bar{x})}{n}} \Big) = 1-\frac{\alpha}{2}
+\end{equation}
+
+\noindent where $z_{\frac{\alpha}{2}}$ is the $1-\frac{\alpha}{2}$ quantile of the standard Normal distribution XXX. For example, if we want to have a confidence of $99.9\%$ on our estimation, we will pick $z_{\frac{\alpha}{2}}=3.08$ and keep collecting samples until the length of the interval is acceptably small, i.e., the accuracy of the result is acceptable.
+
+XXXXParagraph on other bounds, hypothesis testing and Bayesian methods.
+
+
+\paragraph{Distribution-aware sampling.}
+
+\paragraph{Beyond floating-point numbers.}
+
+
+%	\begin{itemize}
+%		\item Sampling from uniform distributions (base case, best we can if no input distribution is available; based on classic probability, i.e., count success over total)
+%		\item Discretization of non-uniform distributions (useful when a finite number of usage scenarios are available; can approximate any distribution with arbitrary accuracy; most straightforward when inferring distributions from past executions, i.e., histograms; it does not scale for fine-grained approximations)
+%		\item Distribution-aware sampling (quite straightforward for distributions over numerical domains; requires more complex, unbiased, input generation techniques when sampling from other domains, e.g., data structures, but similar to random testing; scalability issues when sampling correlated input variables)
+%      
+%		\item Monte Carlo methods
+%			\begin{itemize}
+%				\item Hit or miss Monte Carlo
+%				%\item \mycomment{Anto: Mention Crude montecarlo for integration? Gibbs and MCMC sampling will be just mentioned; especially MCMC is used by the MSR guys}
+%				\item Frequentist and Bayesian estimators (used in prob. model check.)
+%					\begin{itemize}
+%						\item historically frequentist first, with static bounds (based on Chernoff's) for prob MC; then sequential ratio tests, still frequentist.
+%						\item Bayesian from CMU
+%					\end{itemize}
+%				\item The variance issue and convergence acceleration techniques (just a paragraph with some refs):
+%					\begin{itemize}
+%						\item Importance sampling (used in prob. model check.)
+%						\item Importance slicing (used in prob. model check.)
+%					\end{itemize}
+%
+%				\item Exploiting he law of total probability for composing different estimators: Interval constraints propagation (PLDI14) and statistical/exact (FSE14)
+%				\item Dealing with nondeterminism (freq and bayesian in prob MC, ASE14)	
+%			\end{itemize}
+%			
+%			\item approximate $\sharp$-sat and $\sharp$-smt (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, )
+%	\end{itemize}
 
 
 
 
 
 \subsection{Optimizations}\label{sec:computingprobabilitiesOptimizations}
+
+\paragraph{Divide and conquer.}
+
+\paragraph{Sampling effort allocation.}
+
+\paragraph{Interval constraint propagation.}
 
 Divide and conquer from icse13 and and sensitivity-aware sampling from fse15
