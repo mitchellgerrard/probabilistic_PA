@@ -63,8 +63,8 @@ less or equal to $60$ for control to traverse the branch.
 A key concept in the program analysis frameworks we survey is
 \textit{symbolic abstraction}.  A symbolic abstraction is a 
 representation of a set of states.  Abstractions can be encoded
-in a variety of forms, e.g., logical formula \cite{bilateral}, binary
-decision diagrams \cite{BDD}, or custom representations \cite{Parma}.
+in a variety of forms, e.g., logical formula \cite{thakur2012bilateral}, binary
+decision diagrams \cite{bryant1992symbolic}, or custom representations \cite{bagnara2008parma}.
 
 Analyses that seek to prove the satisfaction of properties generally
 define abstractions that \textit{overapproximate} the set of program
@@ -142,7 +142,7 @@ to as a \textit{false error} report and is due to the overapproximating
 nature of $\mathcal{A}$ and $\tau^\#$.
 
 Data flow analysis tools and toolkits exist for many popular 
-languages~\cite{SOOT,WALA,others}
+languages~\cite{vallee1999soot,fink2012wala,others}
 and have been used primarily for program optimization and
 verifying program conformance with (implicit and explicit)
 assertional specifications.
