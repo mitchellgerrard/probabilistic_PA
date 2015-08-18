@@ -5,11 +5,8 @@ Symbolic execution (section~\ref{sec:back:symexe}) produces path conditions (PCs
 
 For simplicity we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. {\bf this now needs to link to somewhere where we discuss this}. Another simplifying assumption is that all the input variables range over finite discrete domains; the combined input domain is denoted by $D$~\cite{filieri2013reliability}. Again, this is not a general restriction and we relax this assumption in more recent work~\cite{borges2014compositional}.
 
+\begin{figure}[t]
 \begin{minipage}{0.3\textwidth}
-\begin{algorithm}[H]
-\floatname{algorithm}{Alg.}
-\caption{{\tt distr}$(b_0,b_1,x)$}
-\label{alg-pse}
 \begin{algorithmic}
   \STATE $\triangleright\quad b_0,b_1\in\{0,\ldots,9\}$
   \IF{$b_0<5$}
@@ -30,11 +27,10 @@ For simplicity we assume we are working with a uniform usage profile for the pro
     \IF{$x\le55$}
       \STATE $\ldots C$
     \ELSE
-      \STATE $\ldots D$
+      \STATE \textbf{assert} \FALSE
     \ENDIF
   \ENDIF
 \end{algorithmic}
-\end{algorithm}
 \end{minipage}
 \begin{minipage}{0.6\textwidth}
 \def\llabel#1{\makebox(0,0)[r]{\small\strut#1\space}}
@@ -48,45 +44,58 @@ For simplicity we assume we are working with a uniform usage profile for the pro
     \put(0,0){\nlabel{1}}
     \put(-3.00,-4.00){\line(-3,-4){54.00}}
     \put(-15,-20){\llabel{$b_0<5$}}
+    \put(-25,-32){\llabel{$5000$}}
     \put(-60,-80){\begin{picture}(0,0)
       \put(0,0){\nlabel{2}}
       \put(-2.24,-4.47){\line(-1,-2){35.53}}
       \put(-10,-20){\llabel{$b_1<5$}}
+      \put(-17,-32){\llabel{$2500$}}
       \put(-40,-80){\begin{picture}(0,0)
         \put(0,0){\nlabel{3}}
         \put(-1.21,-4.85){\line(-1,-4){17.09}}
         \put(-5,-20){\llabel{$x\le60$}}
+        \put(-7,-32){\llabel{$1500$}}
         \put(-20,-80){\mlabel{$A$}}
         \put(1.21,-4.85){\line(1,-4){17.09}}
         \put(5,-20){\rlabel{$x>60$}}
+        \put(7,-32){\rlabel{$1000$}}
         \put(20,-80){\mlabel{$A'$}}
         \end{picture}}
       \put(2.24,-4.47){\line(1,-2){35.53}}
       \put(10,-20){\rlabel{$b_1\ge5$}}
+      \put(17,-32){\rlabel{$2500$}}
       \put(40,-80){\begin{picture}(0,0)
         \put(0,0){\nlabel{4}}
         \put(-1.21,-4.85){\line(-1,-4){17.09}}
         \put(-7,-30){\llabel{$x\le30$}}
+        \put(-9,-42){\llabel{$750$}}
         \put(-20,-80){\mlabel{$B$}}
         \put(1.21,-4.85){\line(1,-4){17.09}}
         \put(7,-30){\rlabel{$x>30$}}
+        \put(9,-42){\rlabel{$1750$}}
         \put(20,-80){\mlabel{$B'$}}
         \end{picture}}
       \end{picture}}
     \put(3.00,-4.00){\line(3,-4){54.00}}
     \put(15,-20){\rlabel{$b_0\ge5$}}
+    \put(25,-32){\rlabel{$5000$}}
     \put(60,-80){\begin{picture}(0,0)
       \put(0,0){\nlabel{5}}
       \put(-1.21,-4.85){\line(-1,-4){17.09}}
-      \put(-10,-20){\llabel{$x\le55$}}
+      \put(-5,-20){\llabel{$x\le55$}}
+      \put(-12,-32){\llabel{$2750$}}
       \put(-20,-80){\mlabel{$C$}}
-        \put(1.21,-4.85){\line(1,-4){17.09}}
-      \put(10,-20){\rlabel{$x>55$}}
-      \put(20,-80){\mlabel{$D$}}
+      \put(1.21,-4.85){\line(1,-4){17.09}}
+      \put(5,-20){\rlabel{$x>55$}}
+      \put(12,-32){\rlabel{$2250$}}
+      \put(20,-80){\mlabel{$C'$}}
       \end{picture}}
     \end{picture}}
 \end{picture}
 \end{minipage}
+\caption{Illustration of symbolic execution}
+\label{fig:symex:illus}
+\end{figure}
 
 \mycomment{For Antonio: this discussion moves to your section}
 
