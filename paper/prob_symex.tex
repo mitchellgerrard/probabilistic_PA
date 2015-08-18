@@ -1,9 +1,9 @@
 \section{Probabilistic Symbolic Execution}
 \label{sec:pse}
 
-Symbolic execution (section~\ref{sec:back:symexe}) produces path conditions (PCs), i.e., constraints on the inputs, that characterise how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analysed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
+Symbolic execution (Section~\ref{sec:back:symexe}) produces path conditions (PCs), i.e., constraints on the inputs, that characterise how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analysed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
 
-For simplicity we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. {\bf this now needs to link to somewhere where we discuss this}. Another simplifying assumption is that all the input variables range over finite discrete domains; the combined input domain is denoted by $D$~\cite{filieri2013reliability}. Again, this is not a general restriction and we relax this assumption in more recent work~\cite{borges2014compositional}.
+As in Section~\ref{sec:computingprobabilitiesExact}, for simplicity, we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. For example in Figure~\ref{fig:symex:illus} we use variables $b_0$ and $b_1$ to replace the two {\tt drawBernoulli} distributions from Figure~\ref{fig:example}. As in Section~\ref{sec:computingprobabilitiesExact}, $D$ represents the finite discrete domain of the variables.
 
 \begin{figure}[t]
 \begin{minipage}{0.3\textwidth}
@@ -97,16 +97,15 @@ For simplicity we assume we are working with a uniform usage profile for the pro
 \label{fig:symex:illus}
 \end{figure}
 
-\mycomment{For Antonio: this discussion moves to your section}
+%To compute the probabilities of path conditions, we use a quantification procedure for the generated constraints. In~\cite{filieri2013reliability} we use model counting techniques; libraries such as LattE~\cite{deloera2012software}, algorithmically calculate the exact number of points inside a bounded (possibly very large) region described by linear constraints over a discrete domain.  In more recent work~\cite{borges2014compositional}, we develop quantification procedures for the analysis of programs that have mixed integer and floating point constraints of arbitrary complexity.
 
-\subsubsection{Computing Probabilities using Model Counting} 
-To compute the probabilities of path conditions, we use a quantification procedure for the generated constraints. In~\cite{filieri2013reliability} we use model counting techniques; libraries such as LattE~\cite{deloera2012software}, algorithmically calculate the exact number of points inside a bounded (possibly very large) region described by linear constraints over a discrete domain.  In more recent work~\cite{borges2014compositional}, we develop quantification procedures for the analysis of programs that have mixed integer and floating point constraints of arbitrary complexity.
-
-To use model counting techniques to compute the probability $\x{Pr}(\x{pc})$ of path condition \x{pc}, we define a counting function, $\sharp(\x{pc})$, that returns the number of elements of $D$ that satisfy $\x{pc}$. Because we assume that $D$ is finite and countable, $\sharp(\cdot)$ always produces a finite non-negative integer, and $\x{Pr}(\x{pc})$ is, by definition~\cite{pestman1998mathematical}, $\sharp(\x{pc}) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty input domain). 
+%To use model counting techniques to compute the probability $\x{Pr}(\x{pc})$ of path condition \x{pc}, we define a counting function, $\sharp(\x{pc})$, that returns the number of elements of $D$ that satisfy $\x{pc}$. Because we assume that $D$ is finite and countable, $\sharp(\cdot)$ always produces a finite non-negative integer, and $\x{Pr}(\x{pc})$ is, by definition~\cite{pestman1998mathematical}, $\sharp(\x{pc}) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty input domain). 
 
 \subsection{Approach}
 
 To allow for a more general description of the approach to probabilistic symbolic execution we modify Algorithm~\ref{alg-symexe}, to sample and process symbolic paths one at a time. This processing includes the calculation of probabilities as described above.  The modified algorithm (in Algorithms~\ref{alg-pse} and~\ref{alg-symsample}) allows us to better handle the case where only a subset of paths of the program is analysed. The interested reader is referred to \cite{filieri2014statistical} for a more detailed discussion of the precise algorithm.
+
+When considering the example in Figure~\ref{fig:symex:illus} each of the $6$ paths from the root to the leaves can be sampled and the path condition describing that path will be the constraints along the path; for example the left most path will have $b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ as its path condition. 
 
 Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{processPath}. At a high level, {\tt symsample} is called from the initial state of the program with $\phi=\mathtt{true}$ as the current path condition;  it returns a single path which is then processed.  This is followed by a check to see if the analysis is complete and can stop. Within {\tt symsample} we first check to see if the search needs to be stopped; otherwise, we symbolically execute the program up to the next branching point and decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in Algorithm~\ref{alg-symexe} where both branches could be taken if they were both satisfiable. 
 
@@ -157,16 +156,11 @@ $\newline$
 simulation of one symbolic path. Whenever a branch is encountered during such simulation, the decision to proceed along either of the alternative branches has to be taken according to the probability
 of satisfying the corresponding branch conditions. To calculate these we calculate the number of solutions for each path condition as described at the beginning of this section. at each branching point we therefore have the count for the PC that reached the branching point ($\sharp(\phi)$) and the counts for the path condition for both branches ($\sharp(\phi \wedge c)$ and $\sharp(\phi \wedge \neg c)$). The probability for the true branch is thus $Pr(\x{succ_t}(l)) = \sharp(\phi \wedge c)/\sharp(\phi)$ and for the false branch it is $Pr(\x{succ_f}(l)) = \sharp(\phi \wedge \neg c)/\sharp(\phi)$.  
 
-%Note that it might seem excessive to calculate these probabilities, to enable sampling, but fortunately they are also required for the probabilistic analysis in general, discussed next.
-
-%\begin{itemize}
-%\item If we sample exhaustively then we could pick branches any which way we want to, but we have to record which ones we have picked to allow termination [ note we will explain this in the processPath section this requires us to explain the counting and subtracting values etc.
-%\item to do a proper monte carlo simulation we need to consider the counts of each branch
-%\item could be elaborate here and use heuristics
-%\item what if the branch is nondeterministic?
-%\end{itemize}
+In the example from Figure~\ref{fig:symex:illus} when we sample at node $3$, we have that the path condition at the node is $\phi = b_0 < 5 \wedge b_1 < 5$ and $\sharp(\phi) = 2500$. Taking the true branch ($b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ with a count of $1500$) will thus have probability $1500/2500 = 0.6$ and the false branch will be taken with probability $0.4$.  
 
 \subsubsection{processPath} calculates the probability for the path being processed and checks whether the path falls into the success, failure or grey set. Note that many of these calculations have already been preformed during the {\tt selectBranch} and caching is used to eliminate duplication. 
+
+Again in the example from Figure~\ref{fig:symex:illus} the paths ending at the labels $A', B' and C'$ indicate assertion failures and thus the probability of failure will be $1500/10000 + 1750/10000 + 2250/10000 = 0.55$.  Since there are no loops in the example the rest of the paths indicate success, which will have probability $0.45$.
 
 In addition to the probability calculations, another import task performed here is to handle sampling without replacement. More specifically, how to ensure an exhaustive analysis can be done even when certain behaviours have very small probability (and thus would be hard to sample in a purely Monte Carlo fashion). We leverage the counts we store for each path condition to ensure no path is sampled twice (when we don't want replacement). Whenever a path is finished being explored, we subtract the final PC's count from all the PC counts along the current path back to the root. Note these counts are being used by \x{selectBranch} to calculate the conditional probabilities at a branch, and thus it changes the distribution of the probabilities. More importantly, if a count becomes zero it will never be sampled. As more of the paths of the program is analysed zero are being propagated up the tree until the root node's count becomes zero at which point all paths have been explored. 
 
