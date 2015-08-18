@@ -9,7 +9,7 @@ and data abstractions that form its foundation.
 Early work in extending data flow analysis 
 techniques with probabilities did not consider
 the semantics of the program. 
-Instead given probabilities 
+Instead user-defined probabilities 
 were attached to nodes in the program's control flow graph.  
 This allowed the analysis to estimate
 the probability of an expression evaluating 
@@ -55,71 +55,85 @@ Later work adds some path sensitivity \cite{mehofer2001novel},
 but as both frameworks deals with exploded control flow graphs, a fully 
 path-sensitive approach is not tractable.
 
-\subsection{Abstract Data Probabilities}
+Ramalingam's sum-over-all-paths approach is reminiscent of
+the approach taken in probabilistic model checking of DTMCs.
+In that approach a system of linear equations is formulated
+whose solution computes the probability with which a property
+holds -- so called \textit{quantitative} properties in 
+PRISM \cite{PRISMmarktoberdorf}.   Ramalingam formulates an
+equivalent system of linear equations.  
+
+Both of these techniques rely on being able to annotate
+branch decisions in the program, or model in PRISM's case, 
+with probabilities.  When those decisions are governed by
+computed conditions over input variables the calculation of
+branch probabilities quickly becomes challenging -- as we will
+see in Section~\ref{sec:pse} the techniques from 
+Section~\ref{sec:computingprobabilities} can be applied to
+this problem.
+
+\ignore{
 Accurately estimating control flow probabilities is a significant
-challenge -- one which does not have an efficient and precise solution.
-Within the last 15 years, research in probabilistic data flow analysis
+challenge, but the techniques from Section~\ref{sec:computingprobabilities}
+offer one means of approaching that problem.
+}
+
+\subsection{Abstract Data Probabilities}
+Within the last 15 years, researchers 
 began incorporating probabilistic information directly into
 the semantics of a program and then abstracting over 
-those semantics \cite{monniaux2000abstract,others}.
+those semantics \cite{monniaux2000abstract,others}
+to enable data flow analysis.
 This is typically done using a variation on Kozen's 
 probabilistic semantics \cite{kozen1981semantics} 
 alongside traditional data flow techniques.
-Embedding probabilities into the semantics allows probabilistic
-information to influence how both control {\sl and} data related
-probabilities are computed during the analysis.
+Embedding probabilities into the semantics allows 
+the expression of both control and data influences on property
+probabilities computed during the analysis.
 
-The remaining approaches in this section permit probabilistic
-information to be defined as either an environment property
-(i.e., distribution given for an input) or in the type of
-an expression (i.e., rand call).
-We examine techniques that use the framework of abstract
-interpretation.
-
-How do the classical abstract domains work in a
-probabilistic setting?
-Monniaux \cite{monniaux2000abstract} developed the key 
-insight that most work in this area has built on 
-\cite{monniaux2001backwards,wachter2010best,esparza2011probabilistic}.
+\subsubsection{Abstracting Probability Distributions}
+The first work in this area, by 
+Monniaux \cite{monniaux2000abstract,monniaux2001backwards},
+developed the key insights that most work in this area has built on. 
 The goal is to exploit the rich body of work on developing
 abstract domains and associated transformers and extend them
-so as to record sub-probability measures for the concrete values
-described by domain elements.  
+so as to record bounds on probability measures for the concrete values
+described by domain elements.
 
-\mycomment{Mitch: we should define sub-probability measure here or
-in the background}
-
-\mycomment{Mitch: should we motivate the use of sub-probability
-measures in place of probability measures?}
-
-A probabilistic abstract domain, $\mathcal{A}_p$, 
-is (an indexed) collection of pairs, 
-$\mathcal{A} \times [0,1]$,
-such that $\forall (a,w) \in \mathcal{A}_p : 
-\forall c \in \gamma(a) : Pr(c) \le w$ -- early work only
-considered \textit{weights} that define upper bounds on the 
-probability of a property. 
-To clarify, these weight components are \textit{not} bounds on the probability
-the abstract domain as a whole, but rather they bound the probability
-of each concrete element represented by the abstract domain.
-
-The literature has explored such constructions for both
-disjoint, i.e., $\forall a,a' \in \mathcal{A} : 
-\gamma(a) \cap \gamma(a') = \emptyset$, and non-disjoint abstract domains.
-The disjoint case is simpler in that once the analyses computes
-the abstracted weight for an abstract domain element there is
-no interaction among elements of $\mathcal{A}_p$ during analysis.
-
-In the case of non-disjoint domains and where a properties of interest
-does not reside entirely within one element of $\mathcal{A}$ it is
-necessary to consider domain element overlap. 
-\mycomment{Mitch: should we insert a brief informal sentence on
-the summation of overlapping domain element weights?}
-Given a property $p$, an upper approximation of its probability 
+Monniaux's work took the view that probabilistic programs 
+effectively transform an input distribution into an output
+distribution.  More generally, they compute a distribution that
+characterizes each point in the program.   
+Here a probabilistic abstract domain, $\mathcal{A}_p$, 
+is (an indexed) collection of pairs, $\mathcal{A} \times [0,1]$.
+Given a concrete value $c$, 
+an upper approximation of its probability 
 at a program location with probabilistic abstract domain
 value $pa = \{(a_1,w_1), ..., (a_n,w_n)\}$
 is given by $\sum_{j \in \{ i \vert (a_i,w_i) \in pa \wedge   
-p \cap \gamma(a_i) \not= \emptyset\}} w_j$.
+c \in \gamma(a_i)\}} w_j$.   A concrete
+value may lie in a number of abstract domains defined by
+the probabilistic abstract domain value.  For each such abstract
+domain the associated probability \textit{weight} must be totalled
+to bound of the probability of the concrete value.
+
+To clarify, these weight components are \textit{not} bounds on the probability
+the abstract domain as a whole, but rather they bound the probability
+of each concrete element represented by the abstract domain.
+This simplifies the formulation of the probabilistic abstract
+transformers, i.e., the extension of $\tau^\#$ to account to 
+$\mathcal{A}_p$, as discussed below, but it means that additional
+work is required to compute the probability of a property holding.
+Fundamentally that requires estimating the size of the concretization
+of the abstract domain element and then multiplying by the computed bound for
+each concrete value.  
+
+Recall that the techniques from 
+Section~\ref{sec:computingprobabilities} can be applied to
+the problem of counting the concretization of an abstract domain element 
+that is encoded as a logical formula.  This may offer a potential
+connection between data flow analyses formulated over distributions
+and those formulated over abstract states -- which we discuss below.
 
 The design of probabilistic abstract transformers, as with 
 classic abstract transformers, can be subtle.
@@ -148,35 +162,14 @@ After applying the filter on the false branch, we get $([0,5],0.1)$.
 The space is reduced; the weights remain the same.
 
 Finally, reaching fixpoints for rich probabilistic abstract domains
-appears to require widening \cite{monniaux2000abstract,esparza2011probabilistic} to be
-cost-effective.
+appears to require widening \cite{monniaux2000abstract,esparza2011probabilistic} to be cost-effective.
 
-\subsection{Handling nondeterminism}
-\mycomment{Matt: more here with discussion of original Monniaux work,
-and the PRISM people's approach and VMCAI'10 and SAS'11 papers}
+\subsubsection{Probability for Abstract States}
 
-There are variations of uncertainty,
-and not every program property should be modeled by a
-probability distribution.
-For instance, a user may exploit an unlikely control sequence
-in a vending machine to get free candy bars. 
-If word gets out, the probability of
-this exploited behavior occurring is poorly modeled by a uniform 
-random distribution.
-It is better to treat this kind of input nondeterminisitically.
 
-In Monniaux's semantics, choices that can be tied to a known
-distribution are cleanly separated from those that cannot.
-A nondeterministic choice allows for independent outcomes, and
-this is modeled by lifting the singleton outcomes of deterministic
-semantics to powersets of outcomes.
-In the probabilistic setting, the elements of this powerset are
-tuples of the abstract domain and the associated weight, defined
-above.
-So for any nondeterminstic choice, the resulting computation 
-is safely modeled by one of these tuples.
 
-\subsection{More and varied probabilistic data flow analyses}
+\mycomment{Matt: discuss Di Pierro's latest work which defines
+abstract branch probabilities.}
 
 Bounds on the probability of a state property have been well studied.
 Di Pierro et al. \cite{di2013probabilistic} aim to estimate the probability of a property,
@@ -186,11 +179,40 @@ the Moore-Penrose pseudo-inverse instead of the usual fixed point.
 While shown to be effective on small programs, the space
 complexity of vector space encodings and lack of tool support
 have not yet demonstrated the scalability of the approach.
+
+
+\subsection{Handling nondeterminism}
+When abstraction of program choice are required or when 
+there is no basis for defining an input distribution programs,
+it is natural to use non-determinism to account for the uncertainty
+in program behavior.
+
+In Monniaux's semantics\cite{MonniauxMDP}, choices that can be tied to a known
+distribution are cleanly separated from those that cannot.
+A nondeterministic choice allows for independent outcomes, and
+this is modeled by lifting the singleton outcomes of deterministic
+semantics to powersets of outcomes.
+In the probabilistic setting, the elements of this powerset are
+tuples of the abstract domain and the associated weight, defined
+above.  So for any nondeterminstic choice, the resulting computation 
+is safely modeled by one of these tuples.  The challenge in the
+analysis is to select from among those tuples to compute a useful
+probability estimate.
+
+\mycomment{Matt: more here with discussion of original Monniaux work,
+add a very short discussion of the 2-player game approach then just
+mention these}
+\cite{PRISMabstraction,wachter2010best,esparza2011probabilistic}.
+
+\subsection{More and varied probabilistic data flow analyses}
+\mycomment{Go through most recent related work and characterize it
+here}
+
 More recent work has explored computing an alternative probabilistic
 property called {\sl expectation invariants} \cite{chakarov2014expectation}.
 This approach uses an iterative data flow analysis to 
 compute a bound on the long-run expected value of
-some program expression, e.g. $E[f(uniform(0,10))] < 7$ states that,
+some program expression, e.g. $E[f(\mathit{uniform}(0,10))] < 7$ states that,
 over a sufficiently large number of runs, when $f$ is called with
 a uniformly distributed number in the range $[0,10]$, it will return
 an average value less than 7.

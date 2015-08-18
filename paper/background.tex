@@ -39,7 +39,8 @@ the current program counter and a map from memory locations to values.
 A program \textit{satisfies} an invariant property if in all states in
 all traces the predicate evaluates to true, otherwise the program
 \textit{falsifies} the property.
-In the example, there are 6 traces half of which falsify the property.
+In the example, there are six traces half of which falsify the assertion
+freedom property.
 
 There are many different ways to represent the execution behavior
 of a program to enable analysis.  Immediately to the right of
@@ -116,7 +117,8 @@ is refered to as the meet-over-paths (MOP) solution~\cite{kildall1973unified}.
 
 Generating the set of traces for non-trivial programs is impractical 
 and instead abstract states can be combined, via $\sqcap$, wherever
-traces merge in the control flow to compute the maximum fix point (MFP)
+traces merge in the control flow and loops are processed
+repeatedly to compute the maximum fix point (MFP)
 as illustrated in Algorithm~\ref{alg-dfa}.
 The algorithm stores abstract states, $a$, for each location, initializing
 the first location to $\iota$, then proceeds along the control
@@ -130,9 +132,14 @@ If that results in a new abstract state for the successor then
 the successor is stored for future processing.  When the algorithm
 terminates it computes for each location $l$ an approximation,
 $a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$.
-The nature of the MFP approximation assures that $a[l]$ defines
-invariant properties that hold prior to executing statement $l$, however,
-it fail to include some actual invariant properties.
+
+While not traditionally a component of a data flow analysis a property,
+$\phi$, can be checked by relating it to abstract states.  Specifically,
+if $a[l] \implies \phi$ then $\phi$ is verified to hold whenever 
+location $l$ is reached.  However, it may be the case that $\phi$ holds
+at some location $l'$ but $a[l'] \centernot\implies \phi$ -- this is refered
+to as a \textit{false error} report and is due to the overapproximating
+nature of $\mathcal{A}$ and $\tau^\#$.
 
 Data flow analysis tools and toolkits exist for many popular 
 languages~\cite{SOOT,WALA,others}
@@ -140,6 +147,7 @@ and have been used primarily for program optimization and
 verifying program conformance with, implicit and explicit,
 assertional specifications.
 
+\ignore{
 \subsubsection{Model Checking}
 When applied to software, model checking techniques operate on 
 labeled state transition
@@ -161,9 +169,10 @@ Determining the reachability of $G$-states is the goal of
 model checking algorithms.
 
 \mycomment{Matt: explain the algorithm}
+}
 
 \begin{figure}[t]
-\noindent\begin{minipage}[t]{0.32\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
 \begin{algorithm}[H]
 %\renewcommand{\thealgorithm}{}
 \renewcommand{\algorithmicindent}{0.6em}
@@ -188,6 +197,7 @@ model checking algorithms.
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}%
+\ignore{
 \hfill
 \begin{minipage}[t]{0.29\textwidth}
 \begin{algorithm}[H]
@@ -207,8 +217,9 @@ model checking algorithms.
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}%
+}
 \hfill
-\begin{minipage}[t]{0.34\textwidth}
+\begin{minipage}[t]{0.4\textwidth}
 \begin{algorithm}[H]
 %\renewcommand{\thealgorithm}{}
 \renewcommand{\algorithmicindent}{0.6em}
@@ -222,7 +233,7 @@ model checking algorithms.
  \WHILE{$\neg \x{branch}(l)$}
    \STATE $m \gets \x{op}(l)(m)$
    \STATE $l \gets \x{succ}(l)$
-   \STATE $\x{check}(l,m,pc)$
+   \STATE $\x{check}(l,m,\phi)$
  \ENDWHILE
 
  \STATE $c \gets \x{cond}(l)$
@@ -284,6 +295,19 @@ symbolic execution~\cite{godefroid2005dart,sen2005cute,song2008bitblaze}
 address this by replacing problematic $pc$ constraints with equality
 constraints based on values collected by executing the program along the trace.
 
+It is straightforward to integrate the checking of a property,
+$\phi$, into this algorithm.  Specifically,
+if $m \implies \neg\phi$ then $\phi$ is falsified 
+when location $l$ is reached.    This does not mean that $\phi$
+fails to hold whenever $l$ is reached, but due to the underapproximation
+of symbolic execution there is guaranteed to be an execution for which
+it fails to hold.
+However, it may be the case that $\phi$ fails to hold
+on some trace reaching location $l$, but this may be missed
+due to the underapproximating nature of symbolic execution.
+In other words, if symbolic execution fails to find an error
+then one cannot conclude the lack of errror.
+
 Symbolic execution tools and toolkits exist for many popular 
 languages~\cite{pasareanu2010symbolic,godefroid2005dart,jamrozik2013generating,cadar2008klee}
 and have been used primarily for test generation and fault detection.
@@ -302,18 +326,23 @@ $\pi(s)$ is said to be the probability of $s$ -- it is
 sometimes written Pr(s).
 The set of distributions for $S$ is denoted $D_S$.
 
-A Markov chain is a labeled transition system whose transition
-relation $R$ is replaced with a function
-$R : S \rightarrow D_S$ that defines for a given state
+A Markov chain is a labeled transition system,
+$(S,I,L,R)$, where $S$ is a set of states,
+$I \subseteq S$ is a set of initial states (if there is a single
+such state we denote it $s_0$), 
+$L : S \rightarrow 2^{AP}$ is a function that assigns
+sets of atomic propositions to a state, and
+$R : S \rightarrow D_S$ defines for a given state
 the probability of moving to another state.
 The probability of executing a sequence of states $s = s_0, ..., s_n$, 
 is $Pr(s) = \prod_{i \in [0,n-1]} R(i)(i+1)$.
-The probability of reaching a state in an 
-a set of goal states, $G$, is 
-$Pr(G) = \sum_{s \in Tr(G)} Pr(s)$ where $Tr$ is generalized
-to Markov chains using a transition relation defined by 
-pairs with non-zero transition probability.
 
+Given a distinguished set of goal states, $G \subseteq S$,
+we can define $Tr(G) = \{s_0, \ldots, s_n \vert s_0 \in I \wedge
+s_n \in G \wedge \forall i \in [0,n-1] : R(s_i)(s_{i+1}) > 0$
+as the traces reaching a $G$-state.
+The probability of reaching a state in 
+a set of goal states, $G$, is $Pr(G) = \sum_{s \in Tr(G)} Pr(s)$.
 
 The model fragment in the upper right corner of 
 Figure~\ref{fig:example} depicts a Markov chain fragment.
@@ -369,6 +398,3 @@ as the maximum and minimum probabilities of reaching a $G$-state
 in the MDP.  Any behavior expressable as a $G$-reachability property is
 captured by the MDP is bounded above and
 below by these quantities.
-
-
-

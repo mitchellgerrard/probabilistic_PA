@@ -25,6 +25,7 @@
 \usepackage{listings}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{centernot}
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usetikzlibrary{shapes}
@@ -93,12 +94,21 @@ Corina Pasareanu\and Willem Visser}
 
 
 \begin{abstract}
-The abstract should summarize the contents of the paper and should
-contain at least 70 and at most 150 words. It should be written using the
-\emph{abstract} environment.
-\keywords{}
+This paper provides a survey of recent work on adapting 
+techniques for program analysis to compute probabilistic
+characterizations of program behavior.  We study how the
+frameworks of data flow analysis and symbolic execution have
+incorporated information about input probability distributions
+to quantify the likelyhood of properties of program states.
+We identify cross-cutting themes that relate and distinguish
+the variety of
+techniques that have been developed over the past 15 years
+in this area.  In doing so, we point out opportunities for
+future research that builds on the strengths of different techniques.
+\keywords{data flow analysis, symbolic execution, abstract interpretation, model checking, probabilistic program, DTMC, MDP}
 \end{abstract}
 
+\ignore{
 TBD
 \begin{itemize}
 \item Add to the list of possible applications in the introduction
@@ -112,13 +122,13 @@ them in the bullet list in that section.  We can then organize and wordsmith
 around those. (All)
 \item Put together the bibliography (Mitch)
 \end{itemize}
+}
 
 \input{introduction.tex}
 \input{background.tex}
 \input{overview.tex}
 \input{computing_prob.tex}
 \input{prob_dfa.tex}
-%\input{prob_mc.tex}
 \input{prob_symex.tex}
 \input{prob_spec.tex}
 \input{future.tex}

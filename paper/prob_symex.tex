@@ -190,16 +190,3 @@ The work in \cite{Sankaranarayanan2013} was the first to apply sampling of paths
 \mycomment{Anto: the next paragraph will be updated after completing sect 3}
 Another important dimension to consider is how to count the solutions for constraints in various domains. The work so far described has mostly focussed on linear integer arithmetic, since the theory is decidable and thus often used as the basis for symbolic execution tools. Fortunately, as already mentioned, efficient model counters also exist for this domain (such as LattE\cite{deloera2012software} and Barvinok\cite{verdoolaegesoftware}). In \cite{Borges2014} non-linear and bounded floating-point domains are handled giving accurate estimates of the size of the solution space. Counting the solutions to constraints complex data-structures, such as objects in Java, are addressed in \cite{Filieri2015}. New domains such counting the solutions to string domains \cite{Aydin2015} and the more general all solutions to a SAT formula (\#SAT) \cite{Chakraborty2014} has recently been proposed. 
 
-\subsubsection{Future Directions}
-
-There are many applications for probabilistic symbolic execution, but most work so far has focussed just on the probability of failure/success of a program under varying input distributions; i.e. the focus has mainly been on reliability. 
-
-Program understanding has been touched on in \cite{Geldenhuys2012} and \cite{Filieri2015} where errors are found by observing unexpected probabilities for certain behaviours. This area should be studied more and useful visualisations for probabilities should be investigated. 
-
-Probabilistic symbolic execution is particularly well suited for quantifying the difference between two versions of a program~\cite{Filieri2015b}. This makes it an ideal approach to rank how close a program is to a given oracle program, which has applications in mutation analysis, program repair, approximate computing or even in marking student assignments. 
-
-Probabilistic programming is becoming very popular \cite{Gordon2014}, but the current approaches mainly focus on sampling, whereas a more accurate approach would be to use probabilistic symbolic execution. 
-
-
-
- 

@@ -10,8 +10,8 @@ understood that such program analyses could be applied to fault
 detection -- and verification of the absence of specific classes of faults.
 
 There are extremely well-developed frameworks for defining
-and implementing such analyses.  In this paper we focus on three
-such frameworks: data flow analysis, model checking, and symbolic execution.
+and implementing such analyses.  In this paper we focus on two
+such frameworks: data flow analysis and symbolic execution.
 
 The power of these analysis techniques, and what distinguishes them from
 simply running a program and observing its behavior, is in their
@@ -79,16 +79,15 @@ posed.   reliability, probability of failure, program equivalence,
 a new coverage measure, more informative than a failed sound analysis
 (i.e., saying a property fails to hold just means Pr<1), ...}
 
-In this paper, we survey work on adapting model checking, data flow analysis, 
-and symbolic execution, to consider probabilistic information.
+In this paper, we survey work on adapting data flow analysis 
+and symbolic execution to consider probabilistic information.
 We begin with a brief background that provides basic definitions
 related to static analysis and probabilities.
 Section~\ref{sec:computingprobabilities} discusses approaches that
 have been developed to reason about the probability of program
 related events, e.g., executing a path, taking a branch, or reaching a state.
-The following three sections, 
-Section~\ref{sec:pmc}-\ref{sec:pse}, survey work on probabilistic
-model checking, probabilistic data flow analysis, and probabilistic
+The following two sections, \ref{sec:pdfa}-\ref{sec:pse}, 
+survey work on probabilistic data flow analysis and probabilistic
 symbolic execution.  These sections seek to expose similarities
 and differences among analysis approaches with respect to issues
 such as the \texttt{accuracy} of analysis results, i.e., how results

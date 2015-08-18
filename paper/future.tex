@@ -1,8 +1,16 @@
 \section{Open Questions and Future Directions}
 \label{sec:future}
 
-Some possible things to discuss:
+There are many applications for probabilistic program analysis, but most work so far has focussed just on the probability of failure/success of a program under varying input distributions; i.e. the focus has mainly been on reliability.
+
 \begin{enumerate}
+\item Program understanding has been touched on in \cite{Geldenhuys2012} and \cite{Filieri2015} where errors are found by observing unexpected probabilities for certain behaviours. This area should be studied more and useful visualisations for probabilities should be investigated.
+
+
+\item Probabilistic symbolic execution is particularly well suited for quantifying the difference between two versions of a program~\cite{Filieri2015b}. This makes it an ideal approach to rank how close a program is to a given oracle program, which has applications in mutation analysis, program repair, approximate computing or even in marking student assignments.
+
+\item Probabilistic programming is becoming very popular \cite{Gordon2014}, but the current approaches mainly focus on sampling, whereas a more accurate approach would be to use probabilistic symbolic execution.  This requires supporting conditioning, which should be possible since this simply means aborting the path and ignoring its probability mass and then renormalizing the resultant distribution.
+
 \item analysis tools: tools support for prob. data flow analysis is really lacking
 \item what kind of support would be useful for specifying input distributions?
 the single variable stuff is easy, but what about dependent input variables?

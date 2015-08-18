@@ -44,11 +44,18 @@ There are two perspectives adopted in the literature.
 One can view a probabilistic program as a transformer on probability
 distributions and compute the probability distribution, over the
 concrete domain, that holds at a program state.
-Alternatively, one can view a probabilistic program as a program whose inputs happen
+Alternatively, one can view a probabilistic program as a program 
+whose inputs happen
 to vary in some principled way and compute program properties, 
 properties of sets of concrete domain elements, along with a characterization
 of how that property varies with varying input.
-\mycomment{Matt: working here}
+Within these approaches there are types of approximations
+computed for probabilities.  It is common to compute upper bounds
+on probabilities for program properties, but lower bounds can 
+be computed as well.  In addition, it is possible to estimate the
+probability within some margin of error -- an approach that several
+techniques explore -- and it is even possible to compute the probability
+\textit{exactly} if certain restrictions hold on the program and distributions.
 
 \ignore{
 example showing a negation function with drawBernoulli(0.25)
@@ -58,14 +65,25 @@ show a program that tests whether the absolute value of a number
 is greater than 5 where the input is distributed according to N(0,1)
 }
 
-Within these there are different approaches taken to estimating
-these quantities.  Upper bounds, lower bounds, expectations, ...
 
 \subsection{Handling abstraction expressed through non-determinism}
-This cross-cutting theme is addressed in all program analyses that
-hope to scale. 
+Any analysis that hopes to scale will invariably be forced to overapproximate
+behavior.  As explained earlier in static analyses it is common
+to model such overapproximation using non-deterministic choice.
+Across all of the analysis techniques we have surveyed, MDPs
+have been in these situations since they naturally mix probabilistic
+and non-deterministic choice.   
+An important consequence of using MDPs is that it is no longer possible
+to compute a single probabilistic characterization of a property.
+Instead analyses can compute, across the set of all possible sequences
+of non-deterministic choice outcomes, the minimal and maximal 
+probabilities for a property to hold.
 
-All of the techniques use MDPs and then analyze maximal/minimal
-schedules.
-
+If the minimal probability for a property of interest lies above 
+a desired probability threshold, then regardless of how the non-determinism
+is resolved the property is guaranteed to hold with the desired 
+threshold.  If that is not the case, but the maximal probability for
+a property of interest lies above a desired threshold, then there
+there is a schedule to resolve the non-determinism that satisfies
+the property with at least the desired property.
 
