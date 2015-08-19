@@ -1,0 +1,11 @@
+What does it mean to learn a choice for a data abstraction?
+  - non-deterministic choice between neg and pos
+  - learn the choice that maximizes/minimizes probability of correctness
+  - this places additional constraints on the inputs by determinizing the choice
+    -> neg means "x < 0"
+
+Allows abstract interpretation to be strengthened at critical points
+to achieve max/min probability of "event"
+  - only strengthen when necessary (i.e., when a choice is required)
+
+

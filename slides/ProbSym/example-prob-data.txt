@@ -1,0 +1,150 @@
+*PC = j_2_SYMINT <= CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 2.49999937562453156230480461917e-1
+
+PC = i_1_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 1.24687874656523238417878963343e-4
+
+PC = j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 1.24438498907210191941043205416e-1
+
+PC = (j_2_SYMINT + i_1_SYMINT) <= k_3_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT == j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 3.12031718359667763808505914273e-5
+
+PC = (k_3_SYMINT + i_1_SYMINT) >= j_2_SYMINT &&
+     (k_3_SYMINT + j_2_SYMINT) > i_1_SYMINT &&
+     (j_2_SYMINT + i_1_SYMINT) > k_3_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 6.21881086881128011276935138181e-2
+
+*PC = i_1_SYMINT == j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 1.24812687343867105523402365709e-4
+
+*PC = i_1_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT == j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 1.24812687343867105523402365709e-7
+
+PC = (k_3_SYMINT + i_1_SYMINT) > j_2_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 9.34847028205564620370283719162e-5
+
+PC = (j_2_SYMINT + i_1_SYMINT) <= k_3_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 2.0770890583360660166335289793e-2
+
+PC = (k_3_SYMINT + j_2_SYMINT) > i_1_SYMINT &&
+     j_2_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 9.34847028205564620370283719162e-5
+
+PC = (k_3_SYMINT + i_1_SYMINT) <= j_2_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 3.12031718359667763808505914273e-5
+
+PC = (k_3_SYMINT + j_2_SYMINT) <= i_1_SYMINT &&
+     j_2_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 3.12031718359667763808505914273e-5
+
+PC = (k_3_SYMINT + i_1_SYMINT) < j_2_SYMINT &&
+     (k_3_SYMINT + j_2_SYMINT) > i_1_SYMINT &&
+     (j_2_SYMINT + i_1_SYMINT) > k_3_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 2.07086090523760704806791120125e-2
+
+*PC = (j_2_SYMINT + i_1_SYMINT) > k_3_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT == j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 9.34847028205564620370283719162e-5
+
+*PC = j_2_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT == j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 1.24812687343867105523402365709e-7
+
+*PC = k_3_SYMINT <= CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 1.24937500031210972628925768074e-1
+
+PC = j_2_SYMINT == k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 1.24687874656523238417878963343e-4
+
+PC = (k_3_SYMINT + j_2_SYMINT) <= i_1_SYMINT &&
+     (j_2_SYMINT + i_1_SYMINT) > k_3_SYMINT &&
+     j_2_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != k_3_SYMINT &&
+     i_1_SYMINT != j_2_SYMINT &&
+     k_3_SYMINT > CONST_0 &&
+     j_2_SYMINT > CONST_0 &&
+     i_1_SYMINT > CONST_0
+   Prob = 2.0770890583360660166335289793e-2
+
+*PC = i_1_SYMINT <= CONST_0
+   Prob = 5.00249875062468765617191404297e-1

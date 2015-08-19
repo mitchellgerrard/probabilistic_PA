@@ -1,0 +1,289 @@
+***Execute symbolic INVOKESTATIC: classify(III)I  ( i_1_SYMINT, j_2_SYMINT, k_3_SYMINT )  
+
+*************Summary***************
+
+PC is:constraint # = 3
+
+k_3_SYMINT[0] <= CONST_0 &&
+
+j_2_SYMINT[1] > CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 6
+
+j_2_SYMINT[1] == k_3_SYMINT[1] &&
+
+i_1_SYMINT[1] == k_3_SYMINT[1] &&
+
+i_1_SYMINT[1] == j_2_SYMINT[1] &&
+
+k_3_SYMINT[1] > CONST_0 &&
+
+j_2_SYMINT[1] > CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_3
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 7
+
+(j_2_SYMINT[2] + i_1_SYMINT[2]) > k_3_SYMINT[1] &&
+
+j_2_SYMINT[2] != k_3_SYMINT[1] &&
+
+i_1_SYMINT[2] != k_3_SYMINT[1] &&
+
+i_1_SYMINT[2] == j_2_SYMINT[2] &&
+
+k_3_SYMINT[1] > CONST_0 &&
+
+j_2_SYMINT[2] > CONST_0 &&
+
+i_1_SYMINT[2] > CONST_0
+
+Return is:  CONST_2
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 7
+
+(j_2_SYMINT[1] + i_1_SYMINT[1]) <= k_3_SYMINT[2] &&
+
+j_2_SYMINT[1] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[1] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[1] == j_2_SYMINT[1] &&
+
+k_3_SYMINT[2] > CONST_0 &&
+
+j_2_SYMINT[1] > CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 7
+
+(k_3_SYMINT[2] + i_1_SYMINT[2]) > j_2_SYMINT[1] &&
+
+j_2_SYMINT[1] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[2] == k_3_SYMINT[2] &&
+
+i_1_SYMINT[2] != j_2_SYMINT[1] &&
+
+k_3_SYMINT[2] > CONST_0 &&
+
+j_2_SYMINT[1] > CONST_0 &&
+
+i_1_SYMINT[2] > CONST_0
+
+Return is:  CONST_2
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 7
+
+(k_3_SYMINT[1] + i_1_SYMINT[1]) <= j_2_SYMINT[2] &&
+
+j_2_SYMINT[2] != k_3_SYMINT[1] &&
+
+i_1_SYMINT[1] == k_3_SYMINT[1] &&
+
+i_1_SYMINT[1] != j_2_SYMINT[2] &&
+
+k_3_SYMINT[1] > CONST_0 &&
+
+j_2_SYMINT[2] > CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 7
+
+(k_3_SYMINT[2] + j_2_SYMINT[2]) > i_1_SYMINT[1] &&
+
+j_2_SYMINT[2] == k_3_SYMINT[2] &&
+
+i_1_SYMINT[1] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[1] != j_2_SYMINT[2] &&
+
+k_3_SYMINT[2] > CONST_0 &&
+
+j_2_SYMINT[2] > CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_2
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 7
+
+(k_3_SYMINT[1] + j_2_SYMINT[1]) <= i_1_SYMINT[2] &&
+
+j_2_SYMINT[1] == k_3_SYMINT[1] &&
+
+i_1_SYMINT[2] != k_3_SYMINT[1] &&
+
+i_1_SYMINT[2] != j_2_SYMINT[1] &&
+
+k_3_SYMINT[1] > CONST_0 &&
+
+j_2_SYMINT[1] > CONST_0 &&
+
+i_1_SYMINT[2] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 9
+
+(k_3_SYMINT[5] + i_1_SYMINT[4]) >= j_2_SYMINT[2] &&
+
+(k_3_SYMINT[5] + j_2_SYMINT[2]) > i_1_SYMINT[4] &&
+
+(j_2_SYMINT[2] + i_1_SYMINT[4]) > k_3_SYMINT[5] &&
+
+j_2_SYMINT[2] != k_3_SYMINT[5] &&
+
+i_1_SYMINT[4] != k_3_SYMINT[5] &&
+
+i_1_SYMINT[4] != j_2_SYMINT[2] &&
+
+k_3_SYMINT[5] > CONST_0 &&
+
+j_2_SYMINT[2] > CONST_0 &&
+
+i_1_SYMINT[4] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 9
+
+(k_3_SYMINT[2] + i_1_SYMINT[1]) < j_2_SYMINT[4] &&
+
+(k_3_SYMINT[2] + j_2_SYMINT[4]) > i_1_SYMINT[1] &&
+
+(j_2_SYMINT[4] + i_1_SYMINT[1]) > k_3_SYMINT[2] &&
+
+j_2_SYMINT[4] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[1] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[1] != j_2_SYMINT[4] &&
+
+k_3_SYMINT[2] > CONST_0 &&
+
+j_2_SYMINT[4] > CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_1
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 8
+
+(k_3_SYMINT[2] + j_2_SYMINT[1]) <= i_1_SYMINT[3] &&
+
+(j_2_SYMINT[1] + i_1_SYMINT[3]) > k_3_SYMINT[2] &&
+
+j_2_SYMINT[1] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[3] != k_3_SYMINT[2] &&
+
+i_1_SYMINT[3] != j_2_SYMINT[1] &&
+
+k_3_SYMINT[2] > CONST_0 &&
+
+j_2_SYMINT[1] > CONST_0 &&
+
+i_1_SYMINT[3] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 7
+
+(j_2_SYMINT[2] + i_1_SYMINT[1]) <= k_3_SYMINT[3] &&
+
+j_2_SYMINT[2] != k_3_SYMINT[3] &&
+
+i_1_SYMINT[1] != k_3_SYMINT[3] &&
+
+i_1_SYMINT[1] != j_2_SYMINT[2] &&
+
+k_3_SYMINT[3] > CONST_0 &&
+
+j_2_SYMINT[2] > CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 2
+
+j_2_SYMINT[0] <= CONST_0 &&
+
+i_1_SYMINT[1] > CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+*************Summary***************
+
+PC is:constraint # = 1
+
+i_1_SYMINT[0] <= CONST_0
+
+Return is:  CONST_4
+
+***********************************
+
+

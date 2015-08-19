@@ -1,0 +1,23 @@
+\frametitle{A simple example ...}
+\begin{center}
+\begin{lstlisting}[escapechar=\%]
+int classify(int a, int b, int c) {
+  if (a<=0 || b<=0 || c<=0) return 4;
+  int type=0;
+  if (a==b) type+=1;
+  if (a==c) type+=2;
+  if (b==c) type+=3;
+  if (type==0) {
+    %\Hilight%if (a+b<=c || b+c<=a || a+c>=b) type=4;
+    %\Hilight%else type=1;
+    %\Hilight%return type;
+  }
+  if (type>3) type=3;
+  else if (type==1 && a+b>c) type=2;
+  else if (type==2 && a+c>b) type=2;
+  else if (type==3 && b+c>a) type=2;
+  else type=4;
+  return type;
+}
+\end{lstlisting}
+\end{center}
