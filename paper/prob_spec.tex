@@ -1,12 +1,25 @@
 \section{Specifying and Inferring Probability Distributions}
 \label{sec:probspecs}
 
+\begin{figure}
+\centering
+      \includegraphics[width=10cm]{up}
+\caption{Example Usage Profile}
+\label{fig:up}
+\end{figure}
+
+
 The probabilistic symbolic execution defined in the previous section
 makes use of a probabilistic {\em usage profile} which is an estimate
 of the probability distribution of a program's input space.  Usage
 profiles can be {\em specified} based on physical phenomena, known
 sensor parameters or other domain specific knowledge about the program
-and its deployment context.  They can also be {\em built}
+and its deployment context.  
+
+In our initial work we handled arbitrary probabilistic usage profiles through discretization. For example Figure~\ref{fig:up} illustrates two "discretized" usage profiles representing strong and weak wind conditions. Such usage profiles can be used for e.g. analizing the wing controller of an aircraft under different wind conditions. The ranges of values for the wind effect are reported on the x-axis, and the corresponding vertical bars represent the probability of a value in the range to be inserted as input. In this example, we assume symmetric distributions for the two profiles. Weak wind is more concentrated around zero, while strong wind is more likely to produce extreme values.
+
+
+They can also be {\em built}
 automatically based on observed data from past usages of the program.
 Finally, best(worst)-case usage profiles can be {\em inferred} from
 the structure of a program itself.  
