@@ -1,23 +1,23 @@
 \section{Open Questions and Future Directions}
 \label{sec:future}
 
-There are many applications for probabilistic program analysis, but most work so far has focused on the probability of failure/success of a program under varying input distributions; i.e. the focus has mainly been on reliability.
+There are many applications for probabilistic program analysis, but most work so far has focused on the probability of failure/success of a program under varying input distributions; i.e., the focus has mainly been on reliability.
 Here we suggest avenues for further development and application of
 probabilistic program analyses.
 
 \begin{enumerate}
 
-\item Program understanding has been touched on in \cite{Geldenhuys2012} and \cite{Filieri2015} where errors are found by observing unexpected probabilities for certain behaviours. This area could be studied more and visualisations based on probabilities investigated.
+\item Program understanding has been touched on in \cite{Geldenhuys2012} and \cite{Filieri2015} where errors are found by observing unexpected probabilities for certain behaviors. This area could be studied more, including investigating visualizations based on probabilities.
 
 \item Probabilistic symbolic execution is particularly well suited for quantifying the difference between two versions of a program~\cite{Filieri2015b}. This makes it an ideal approach to rank how close a program is to a given oracle program, which has applications in mutation analysis, program repair, approximate computing or even in marking student assignments.
 
-\item Probabilistic programming is becoming very popular \cite{Gordon2014}, but the current approaches mainly focus on sampling, whereas a more accurate approach would be to use probabilistic symbolic execution.  This requires supporting conditioning, which should be possible since this simply means aborting the path and ignoring its probability mass and then renormalizing the resultant distribution.  Iteration over large domains presents a significant challenge however.
+\item Probabilistic programming is becoming very popular \cite{Gordon2014}, but the current approaches mainly focus on sampling, whereas a more accurate approach would be to use probabilistic symbolic execution.  This requires supporting conditioning, which should be possible since this simply means aborting the path, ignoring its probability mass, and then renormalizing the resultant distribution.  Iteration over large domains presents a significant challenge, however.
 
 \item Probabilistic programs, in the sense of \cite{Gordon2014}, can be used
 to define a distribution.  This means that they could be a useful means of
 summarizing probability information for modular probabilistic program analysis.
-A program could define the input distribution and the output distribution
-could then be converted to a program -- the pair would form a probabilistic
+A program could define the input distribution, and the output distribution
+could then be converted to a program---the pair would form a probabilistic
 contract of sorts.
 
 \item Path-sensitivity is now a common means of boosting the precision
@@ -25,9 +25,9 @@ of classical data flow analyses.  Incorporating path-sensitivity in
 probabilistic data flow offers the opportunity to characterize
 the probability mass of the path using counting techniques.
 
-\item More generally it would be interesting to explore the extent
-to which the computation of branch probabilities
-in models used by techniques like PRISM and PASS could be achieved,
+\item More generally, it would be interesting to explore the extent
+to which the computation of branch probabilities---which annotate
+models in tools like like PRISM and PASS---could be achieved,
 in part, by using path condition calculation and solution
 space quantification.
 
@@ -36,10 +36,10 @@ and data flow seem promising.  The unanalyzed portion of a program's
 symbolic execution tree defines a ``residual'' program.  If that
 program can be extracted, via techniques like slicing, then it
 could be encoded for analysis with data flow techniques.  The
-results of the precise, but slow, and faster, but less precise,
-analysis could then be combined. 
+results of the precise-but-slow, and faster-but-less-precise,
+analysis, could then be combined. 
 
-\item To apply to real software there is a need for accurate characterization
+\item To apply to real software, there is a need for accurate characterizations
 of the distributions of ``random'' libraries, so that those distributions 
 can be discretized in various ways and related to one another.  Libraries
 encoding information about the actual distributions could then be used

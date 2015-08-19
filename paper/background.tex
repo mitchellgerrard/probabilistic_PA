@@ -4,12 +4,12 @@
 \input{example2}
 
 We focus in this paper on programs that draw input variables
-from given probability distributions, or equivalently that make
+from given probability distributions, or, equivalently, that make
 calls on functions returning values drawn from given distributions.
 The left side of Figure~\ref{fig:example} shows a method,
 \texttt{m}, that we will use to illustrate concepts in this paper.     
 It takes an integer variable, \texttt{x}, as input, then based on the 
-results of drawing values from a Bernoulli distribution
+results of drawing values from a Bernoulli distribution,
 it either performs its computation
 (which is unspecified and denoted with \texttt{...}) or triggers
 an assertion. 
@@ -17,8 +17,8 @@ an assertion.
 While researchers have developed analyses that consider a wide
 range of program properties, here
 we restrict our attention to program
-properties that can be encoded as boolean predicates that
-can be embedded in the program,
+properties that can be encoded as boolean predicates 
+embedded in the program,
 e.g., \texttt{assert} statements, to simplify the explanation
 of how probabilities are incorporated into the analyses.
 For the example, we are interested in reasoning about
@@ -26,7 +26,7 @@ For the example, we are interested in reasoning about
 not reach a false assertion.
 In our example
 this can happen by reaching the implicit return from \texttt{m},
-thereby by avoiding the three \texttt{assert} statements.
+thereby avoiding the three \texttt{assert} statements.
 
 A static analysis capable of reasoning about assert statements 
 can handle more general \textit{invariant properties}, i.e., 
@@ -44,9 +44,9 @@ freedom property.
 
 There are many different ways to represent the execution behavior
 of a program to enable analysis.  Immediately to the right of
-the code in Figure~\ref{fig:example} we show the control flow graph (CFG),
+the code in Figure~\ref{fig:example}, we show the control flow graph (CFG),
 which explicitly represents control successor relationships between
-statements.  A CFG models choice among successors as non-deterministic
+statements.  A CFG models choice among successors as nondeterministic
 choice -- depicted by the lack of labels on the edges.
 We will also consider models that include probabilistic choice,
 e.g., defining the probability that a branch is taken; the
@@ -58,12 +58,12 @@ of program state, e.g., defining a condition under which the branch
 is taken; the lower right fragment of Figure~\ref{fig:example}
 shows logical conditions that 
 reflect the fact that the value of parameter $x$ must be
-less or equal to $60$ for control to traverse the branch.
+less than or equal to $60$ for control to traverse the branch.
 
 A key concept in the program analysis frameworks we survey is
 \textit{symbolic abstraction}.  A symbolic abstraction is a 
 representation of a set of states.  Abstractions can be encoded
-in a variety of forms, e.g., logical formula \cite{thakur2012bilateral}, binary
+in a variety of forms, e.g., logical formulae \cite{thakur2012bilateral}, binary
 decision diagrams \cite{bryant1992symbolic}, or custom representations \cite{bagnara2008parma}.
 
 Analyses that seek to prove the satisfaction of properties generally
@@ -71,9 +71,9 @@ define abstractions that \textit{overapproximate} the set of program
 states, whereas those that seek to falsify properties generally define
 abstractions that \textit{underapproximate} the set of program states.
 
-With overapproximating analyses it is common to define an \textit{abstract
+With overapproximating analyses, it is common to define an \textit{abstract
 domain}, $\mathcal{A}$, 
-which symbolically represents a set of concrete states which 
+which symbolically represents a set of concrete states that
 are said to be defined over the \textit{concrete domain}, $\mathcal{C}$.
 For any reachable state of a program, a pair of abstraction 
 and concretization functions, 
@@ -88,36 +88,36 @@ Moreover, equiping it with a meet operator, $\sqcap$, which
 computes greatest lower bounds, and a maximal
 value, $\top \in \mathcal{A}$ such that 
 $\forall a \in \mathcal{A} : a \sqcap \top = a$, makes the
-abstract domain a meet semi-lattice.
+abstract domain a meet-semilattice.
 
 \subsubsection{Data Flow Analysis}
 Data flow analyses~\cite{kildall1973unified} 
 provides a framework for computing properties shared by sets of
 program traces reaching a program state, or set of states.  It is
 common for such analyses to group together the states that share a
-common control location and the properties attempt to characterize
+common control location; the computed properties attempt to characterize
 the invariants over those states.
 
-Data flow analyses are built on an underlying fixpoint engine as is
+Data flow analyses are built on an underlying fixpoint engine, as is
 model checking~\cite{Clarke:ModelCheckingBook}.  Moreover, data flow
 analyses commonly operate on abstractions of program states that
 can be defined by abstract interpretation~\cite{cousot1977abstract}. 
-In fact it is now well-understood that data flow analysis can be
+In fact, it is now well-understood that data flow analysis can be
 viewed as model checking of abstract interpretations~\cite{Schmidt:POPL}.
 
 An abstract interpretation is a 
 non-standard interpretation of program executions over an abstract domain.  
 The semantics of program statements is lifted to operate
 on a set of states, encoded as an element of the abstract domain,
-rather than a single concrete state.  
+rather than on a single concrete state.  
 For a program statement $\tau$,
 $\tau^\#$ defines its abstract semantics such that
 $\forall c, c' \in \mathcal{C} : \tau(c) = c' \implies \tau^\#(\alpha(c)) \sqsupseteq \alpha(c')$.  This implies the classic overapproximating correctness
 relation for abstracted program statements:
 $\tau^\# \sqsupseteq \alpha \circ \tau \circ \gamma$.
 
-Conceptually for a program trace, $tr_i$, the sequence of 
-statements, $[\tau_1,\ldots,\tau_n]$, defining the trace can
+Conceptually, for a program trace, $tr_i$, given by the sequence of 
+statements, $[\tau_1,\ldots,\tau_n]$, defining the abstract trace can
 be interpreted functionally, $tr_i^\# = \tau_{n}^\# \circ \ldots \circ \tau_1^\#$,
 and evaluated, $tr_i^\#(\iota)$,
 to overapproximate the program states reached by the trace; 
@@ -128,9 +128,9 @@ $\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$
 defines invariant properties that hold prior to executing $l$; this
 is refered to as the meet-over-paths (MOP) solution~\cite{kildall1973unified}.
 
-Generating the set of traces for non-trivial programs is impractical 
-and instead abstract states can be combined, via $\sqcap$, wherever
-traces merge in the control flow and loops are processed
+Generating the set of traces for non-trivial programs is impractical;
+instead, abstract states can be combined, via $\sqcap$, wherever
+traces merge in the control flow, and loops are processed
 repeatedly to compute the maximum fix point (MFP)
 as illustrated in Algorithm~\ref{alg-dfa}.
 The algorithm stores abstract states, $a$, for each location, initializing
@@ -138,19 +138,19 @@ the first location to $\iota$, then proceeds along the control
 flow relation of the program to approximate the effects of program
 statements.  It removes a new location, $l$, and computes the abstract
 state that approximates the post-state of executing the operation
-at that location -- storing it in a temporary $t$.  Then for
-all control flow successors it updates the abstract state for
+at that location---storing this abstract state in a temporary $t$.  Then, for
+all control flow successors, it updates the abstract state for
 that location by computing the greatest lower bound with $t$.
-If that results in a new abstract state for the successor then
+If that results in a new abstract state for the successor, then
 the successor is stored for future processing.  When the algorithm
 terminates it computes for each location $l$ an approximation,
 $a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$.
 
-While not traditionally a component of a data flow analysis a property,
+While not traditionally a component of a data flow analysis, a property,
 $\phi$, can be checked by relating it to abstract states.  Specifically,
 if $a[l] \implies \phi$ then $\phi$ is verified to hold whenever 
 location $l$ is reached.  However, it may be the case that $\phi$ holds
-at some location $l'$ but $a[l'] \centernot\implies \phi$ -- this is refered
+at some location $l'$ but $a[l'] \centernot\implies \phi$; this is referred
 to as a \textit{false error} report and is due to the overapproximating
 nature of $\mathcal{A}$ and $\tau^\#$.
 
@@ -282,35 +282,35 @@ variable which is unconstrained.
 When a branching statement is encountered, the symbolic expression encoding
 the branch condition is computed, $c$, and a check is performed
 to determine whether the current trace, encoded by $pc$, can be
-extended with $c$ or its negation.  
+extended with $c$ or $c$'s negation.  
 In the example of Figure~\ref{fig:example}, on the leftmost trace through
 the control flow graph, symbolic execution would use the semantic
 condition shown in the lower right, $c \equiv {\cal X} \le 60$,
-and add it to the path condition -- which is initially $true$.
+and add it to the path condition---which is initially $true$.
 This is achieved by formulating the constraints
-as a satisfiability query -- if the formula encoding branch constraints
-is satisfiable then there must exist an input that will follow the trace.
-For the example, all of the 6 traces through the control flow graph 
+as a satisfiability query---if the formula encoding branch constraints
+is satisfiable, then there must exist an input that will follow the trace.
+For the example, all of the six traces through the control flow graph 
 result in satisfiable path conditions.
 The trace is extended, recursively, following the feasible branch outcomes
 in a depth-first manner.
 
 While this algorithm is capable of computing an \textit{exact} symbolic
 approximation of the set of program states on a trace reaching $l$, in
-practice symbolic execution computes an underapproximation.
+practice, symbolic execution computes an underapproximation.
 Programs with looping behavior that is determined by input values 
 may result in an infinite symbolic execution tree. 
 For this reason, symbolic execution is
 typically run with a (user-specified) bound on the search depth, thus
-some paths may be unexplored (checked in {\tt stoppingPath}).   Moreover, there may be path constraints
+some paths may be unexplored (checked in {\it stoppingPath}).   Moreover, there may be path constraints
 for which efficient satisfiable checking is not possible.  Variants of
 symbolic execution~\cite{godefroid2005dart,sen2005cute,song2008bitblaze} 
 address this by replacing problematic $pc$ constraints with equality
-constraints based on values collected by executing the program along the trace.
+constraints based on values collected while executing the program along the trace.
 
 It is straightforward to integrate the checking of a property,
 $\phi$, into this algorithm.  Specifically,
-if $m \implies \neg\phi$ then $\phi$ is falsified 
+if $m \implies \neg\phi$, then $\phi$ is falsified 
 when location $l$ is reached.    This does not mean that $\phi$
 fails to hold whenever $l$ is reached, but due to the underapproximation
 of symbolic execution there is guaranteed to be an execution for which
@@ -318,7 +318,7 @@ it fails to hold.
 However, it may be the case that $\phi$ fails to hold
 on some trace reaching location $l$, but this may be missed
 due to the underapproximating nature of symbolic execution.
-In other words, if symbolic execution fails to find an error
+In other words, if symbolic execution fails to find an error,
 then one cannot conclude the lack of errror.
 
 Symbolic execution tools and toolkits exist for many popular 
@@ -361,7 +361,7 @@ The model fragment in the upper right corner of
 Figure~\ref{fig:example} depicts a Markov chain fragment.
 It defines, for the set of states 
 that are at the first line in the program, 
-a 0.5 probability that they will transition to 
+a 0.5 probability of transitioning to 
 the state representing the beginning of the then block,
 and similarly for the beginning of the else block.  The
 distribution indicates a 0 probability of moving to any
@@ -370,35 +370,35 @@ other state.
 For this small example, if we were to assume a probability
 distribution on the input $x$, then it would be possible
 to compute the probability of taking every edge in the CFG.   
-This would be a Markov chain model of $m$ and it would replace
-all non-deterministic choice in the CFG with probabilistic choice.
+This would be a Markov chain model of {\tt m} and it would replace
+all nondeterministic choice in the CFG with probabilistic choice.
 
-There are many situations where the removal of non-deterministic
+There are many situations where the removal of nondeterministic
 choice is impractical or undesirable.  For example, if the input
-distribution of $x$ is unknown then retaining non-deterministic
-choices for the conditionals testing that value would yield a
+distribution of $x$ is unknown, then retaining nondeterministic
+choices for the conditionals which test that value would yield a
 faithful program model.  In addition, it may be desirable, for
 efficiency of analysis, to abstract program behavior, and that
 abstraction may make it impossible to accurately compute the 
-probability of a transition.  An example of this is modeling
-the scheduler policy in reasoning about the behavior of a multi-threaded
-program.
+probability of a transition.  For example, to reason about the
+behavior of a multi-threaded program, nondeterministic choice is
+used to model the scheduler policy.
 
-When non-determinism is included in a probabilistic state
-transition model it results in an MDP.  
-An MDP adds an additional structure $A$ that defines
+When nondeterminism is included in a probabilistic state
+transition model, it results in an MDP.  
+An MDP adds an additional structure, $A$, that defines
 a set of (internal) actions which are used to model the
 selection among a set of possible next-state probability distributions.
 The transition relation
 for MDPs is generalized to $R : S \times A \times D_S$.
-When traversing a path in an MDP, in each state a choice
+When traversing a path in an MDP, in each state, a choice
 from $A$ must be made in order to determine how to transition,
 probabilistically, to a next state.   That sequence of choices, 
 $\sigma \in A^*$, is termed a \textit{schedule} (or policy or 
 strategy) for the MDP.
 
-Given a fixed schedule an MDP reduces to a Markov chain, but
-the value in an MDP lies in its ability to provide upper and
+Given a fixed schedule, an MDP reduces to a Markov chain, but
+the value of an MDP lies in its ability to provide upper and
 lower bounds on the behavior of the modeled system.
 For an MDP, let $Pr^{\sigma}(G)$ be the probability of reaching
 a $G$-state from an initial state using schedule $\sigma$;
