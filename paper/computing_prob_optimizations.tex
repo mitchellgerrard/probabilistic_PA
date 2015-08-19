@@ -1,10 +1,10 @@
 \subsection{Optimizations for PPA}\label{sec:computingprobabilitiesOptimizations}
 
+\mycomment{Anto: this section may need some rewriting.}
+
 While model counting and solution space quantification are general problems, their application to probabilistic program analysis can often be improved exploiting the additional information specific to this application field.
 
 Without any sake of completeness, we will briefly report in this section two techniques able to 1) exploit variables dependency to reduce the complexity of model counting and solution space quantification and 2) combine interval constraint propagation and stratified sampling to increase the accuracy of sampling-based probability computation, and in turn its convergence rate.
-
-\mycomment{Anto: the next may need some serious reworking}
 
 \paragraph{Divide and conquer.}
 The complexity of all the model counting and solution space quantification techniques proposed in this section depends on the number of variables involved in the constraints to be quantified. Let us assume such constraints are provided in disjunctive normal form and that there is no intersection between the solution spaces of any pair of disjuncts (this is form is quite natural for most constraints analyzed in PPA, usually requiring low computational overhead for normalization). Since there is no intersection between the disjuncts, the solution space for each of them can be quantified separately and than summed up to obtain the result for the whole disjunction.
@@ -27,6 +27,7 @@ For example, let $\phi$ be $\{x>2 \land y<5\}$, its probability can be computed 
 %\mycomment{Anto: this is probably too advanced. Maybe enough to refer the students to the fse15 paper}
 
 \paragraph{Interval constraint propagation and stratified sampling.}
+Despite their generality, sampling-based methods for computing probability may suffer slow convergence rate. Several techniques have been established in statistics to mitigate this general issue~\cite{Robert2005MCBook}. Besides these techniques, the specificity of the problems we face in PPA can be exploited to define even more effective variance reduction technique.
 
 Recall the example we introduced in Section~\ref{sec:computingprobabilitiesSampling}: we aim at quantifying the probability of satisfying the constraint 
 $v_1 \leq -v_2 \land v_2 \leq v_1$, where both $v_1, v_2 \in [-1, 1] \cap \mathbb{R}$. Figure~\ref{fig:stratifiedICP} shows the domain and the solution space for this problem, with $v_1$ on the x-axis and $v_2$ on the y-axis. Using hit-or-miss Monte Carlo to solve this problem requires throwing random samples for $v_1$ and $v_2$ within their domain (i.e., from within the square), and computing the ratio between those falling within the shadowed triangle (i.e., satisfying the constraints) and the total number of samples. Geometrically, this corresponds to estimating the ratio between the area of the triangle and the area of the square (which is 1/4).
@@ -34,7 +35,24 @@ $v_1 \leq -v_2 \land v_2 \leq v_1$, where both $v_1, v_2 \in [-1, 1] \cap \mathb
 \begin{figure}[h!]\label{fig:stratifiedICP}
   \centering
       \includegraphics[width=3cm]{triangle}
-  \caption{ICP-based stratified sampling.}
+  \caption{Example of ICP-based domain partitioning.}
 \end{figure}
 
-However, looking at the figure it is clear already before sampling that some regions of the domain do not contain solutions, thus every input value sampled from those regions will not satisfy the constraint. In other words, the probability of satisfying the constraint within those regions is identically 0, without any estimation uncertainty. 
+Looking at the figure it is evident that some regions of the domain do not contain solutions, i.e., the probability of satisfying the constraint within those regions is identically 0, without any estimation uncertainty. Intuitively, since we have an exact information about a fraction of the domain, we can confine the estimation, and consequently the uncertainty of estimation, only on the remaining part of the domain. This intuition can be systematized combining two techniques: interval constraint propagation and stratified sampling. 
+
+Interval constraint propagation (ICP) is a algorithmic technique to compute interval solutions to equality and inequality numerical constraints. The input of ICP is a set of $n$ variables, each one defined on a convex domain, and a conjunction of numerical constraints; its output is a set of $n$-dimensional non-overlapping boxes whose union contains all the values of the variables satisfying all the constraints. Each box is essentially an hyperplane bounding a portion of the domain that contains solutions for the problem plus, possibly, other points that do not satisfy the constraint. Looking again at Figure~\ref{fig:stratifiedICP}, the application of ICP to our constraint produces the four 2-dimensional red boxes, whose union contains all the solutions. ICP can thus be used to partition the input domain into a set of regions, where each region may 1) contain no solutions, 2) contain only solutions, or 3) contain both solutions and values that do not satisfy the constraint. In the first two cases computing the probability will trivially lead to 0 and 1, respectively, without any uncertainty (i.e., zero variance). In the third case, sampling is needed to estimate the fraction of solution points.
+
+When we have local results for each region in the domain partition, the second step is to compose these local information to obtain the probability estimate for the whole domain. Stratified sampling is a statistical techniques allowing to compose the local estimators of each region of the domain into a global estimator for the initial problem~\cite{Robert2005MCBook}. This computation is essentially a weighted sum of the local estimators, where the weight is the size of the region divided by the size of the domain. If we call $\hat{P}_i$ the local estimator of the $i$-th region and $w_i$ the ratio between the size of the $i$-th region and the size of the domain, exploiting the properties of expected value and variance for a sum of independent random variables~\cite{pestman1998mathematical}, we obtain for the global estimator $\hat{P}$ the following properties:
+
+\begin{equation}\label{eq:stratifiedSampling}
+	E[\hat{P}]=\sum_i w_i \cdot E[\hat{P}_i] \qquad Var[\hat{P}] = \sum_i w_i^2 \cdot Var[\hat{P}_i]
+\end{equation}
+
+The variance for the regions containing no solutions is trivially 0, thus the variance of the global estimator is reduced by the squared weight of these regions. Furthermore, for regions containing only solutions, the sampling-based probability computation will return variance 0 as well (recall Equation~\eqref{eq:mleEstimator}). Thus, fixed the total number of samples, the uncertainty on the global estimator with stratified sampling is always smaller or equal than the one we can obtain by applying Monte Carlo estimation on the whole domain, without partitions (this is a general result for stratified sampling~\cite{Robert2005MCBook}). 
+
+The effectiveness of this approach depends on how much of the domain can be pruned out by the adopted ICP technique. This approach has been implemented in~\cite{Borges2014}, using the open-source ICP solver RealPaver~\cite{granvilliers2006tomas} for floating-point constraints, showing a significant reduction of the estimator variance on several realist programs, and, in turn, a faster convergence rate of the sampling-based probability computation. A combination of this technique with the previous divide and conquer strategy has been further developed in~\cite{2015-fse-qcoral} for a finer focusing of the sampling effort on the constraints and regions mostly affecting the variance of the global estimator, obtaining even faster convergence rates.
+
+
+
+
+
