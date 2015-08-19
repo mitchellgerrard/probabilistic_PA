@@ -97,29 +97,27 @@ formulating or validating a usage profile.  An interesting topic for
 future research is the automatic inference of {\em symbolic usage
   profiles} to provide a mechanism for explicitly encoding lack of
 knowledge about user inputs -- through the use of symbolic variables
-to denote the mass in a region of the input space.
+to denote the mass in a region of the input space, $m_i$.
 
-For this approach to owork, one can again fix the shape of the
+For this approach, one can fix the shape of the
 distribution, e.g., the bins of a histogram estimator, the states of a
-Markov chain and then use probabilistric analysis to encode
+Markov chain, and then use probabilistric analysis to encode
 constraints among mass values in the regions of the distribution.  
 For example, from observed data developers might be
-very confident that values in the range $10 \ldots 30$ are at least 2
-times more likely than values in the range $30 \ldots 60$ This can be
+very confident that values in the range $[10,30]$ are at least 2
+times more likely than values in the range $[30,60]$.  This can be
 encoded as an \textit{intra-distribution constraint} $m_1 + m_2 >
-2(m_3 + m_4 + m_5)$ where $m_i$ are the variables for 5 bin masses.
+2(m_3 + m_4 + m_5)$ where $m_i$ are the variables for 5 bin masses
+between 10 and 60.
 
-Probabilistic analysis computes for each path, $p_i$
-the quantity $\Sigma_{j} vol(C_i \wedge b_j)*m_j$, where $b_j$ are discrete
+Probabilistic analysis could compute for each path, $p_i$
+the quantity $\Sigma_{j} \#(C_i \wedge b_j)*m_j$, where $b_j$ are discrete
 regions of the distribution estimator.  Wherever the mass
 of that region is known $m_j$ is a constant, otherwise it is
 a free variable modeling an unknown mass.
 
-
 Upon completion of the analysis the following sum
-$\Sigma_{j} (\Sigma_i vol(C_i \wedge b_j)) *m_j$, where
-the inner summation 
-is the incrementally accumulated coefficient vector,
+$\Sigma_{j} (\Sigma_i \#(C_i \wedge b_j)) *m_j$
 forms the basis for an optimization problem.
 Minimizing this sum subject to the constraints  
 $\Sigma_j = 1$ and any intra-distribution constraint gives
@@ -134,7 +132,7 @@ support upward of a billion variables -- subject to sufficient memory.
 For many systems we expect that the existence of partial distribution
 information
 will significantly reduce the number of symbolic variables required
-and, thus, systems with as many as 10 input variables can be handled
+and, thus, systems with 10s of input variables can be handled
 directly with off the shelf solvers. 
 
 For the general (non-linear) case one can explore {\em learning
@@ -144,13 +142,14 @@ best/worst profiles with respect to desired properties. We have
 already explored reinforcement learning in~\cite{luckow2014probabilistic} to
 infer best/worst schedules in the context of probabilistic analysis of
 concurrent programs. A similar approach can be applied for profile
-inference as well. This is an interesting topic for future work.
+inference as well. 
 
-
+\ignore{
 Note that our discussions about generalizing the work from ASE 2014 
 also aims to fix the structure of an MDP describing the time-series
 input structure of the environment.  The probability distributions
 governing non-deterministic transitions in that MDP are inferred,
 using a different technique, to compute angelic (demonic) usage
 profiles.
+}
 
