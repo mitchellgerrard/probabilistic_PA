@@ -10,7 +10,7 @@ The left side of Figure~\ref{fig:example} shows a method,
 \texttt{m}, that we will use to illustrate concepts in this paper.     
 It takes an integer variable, \texttt{x}, as input, then based on the 
 results of drawing values from a Bernoulli distribution
-and the value of the \texttt{x} it either performs its computation
+it either performs its computation
 (which is unspecified and denoted with \texttt{...}) or triggers
 an assertion. 
 
@@ -30,7 +30,7 @@ thereby by avoiding the three \texttt{assert} statements.
 
 A static analysis capable of reasoning about assert statements 
 can handle more general \textit{invariant properties}, i.e., 
-predicates that must hold whenever reached in all program program executions.  
+predicates that must hold whenever reached in all program executions.  
 
 \subsection{Programs and Program Analyses}
 A program defines a set of execution \textit{traces}, each of
@@ -92,8 +92,21 @@ abstract domain a meet semi-lattice.
 
 \subsubsection{Data Flow Analysis}
 Data flow analyses~\cite{kildall1973unified} 
-(and analyses built using abstract interpretation~\cite{cousot1977abstract}) perform
-non-standard interpretations of program executions over an abstract domain.  
+provides a framework for computing properties shared by sets of
+program traces reaching a program state, or set of states.  It is
+common for such analyses to group together the states that share a
+common control location and the properties attempt to characterize
+the invariants over those states.
+
+Data flow analyses are built on an underlying fixpoint engine as is
+model checking~\cite{Clarke:ModelCheckingBook}.  Moreover, data flow
+analyses commonly operate on abstractions of program states that
+can be defined by abstract interpretation~\cite{cousot1977abstract}. 
+In fact it is now well-understood that data flow analysis can be
+viewed as model checking of abstract interpretations~\cite{Schmidt:POPL}.
+
+An abstract interpretation is a 
+non-standard interpretation of program executions over an abstract domain.  
 The semantics of program statements is lifted to operate
 on a set of states, encoded as an element of the abstract domain,
 rather than a single concrete state.  
@@ -236,7 +249,7 @@ model checking algorithms.
    \STATE $\x{check}(l,m,\phi)$
  \ENDWHILE
 
- \STATE $c \gets \x{cond}(l)$
+ \STATE $c \gets \x{cond}(l)(m)$
 
  \IF{SAT$(pc \wedge c)$}
    \STATE {\tt symx}$(\x{succ_t}(l), m, pc \wedge c)$
@@ -387,16 +400,12 @@ strategy) for the MDP.
 Given a fixed schedule an MDP reduces to a Markov chain, but
 the value in an MDP lies in its ability to provide upper and
 lower bounds on the behavior of the modeled system.
-\mycomment{Mitch: I'm confused by the wording of the following
-sentence.}
-For an MDP, let $Pr^{\sigma}(G)$ is the probability of reaching
-a $G$-state from an initial state using schedule $\sigma$ and
-is defined by $Pr(G)$ for the induced Markov chain.
-We can then define 
+For an MDP, let $Pr^{\sigma}(G)$ be the probability of reaching
+a $G$-state from an initial state using schedule $\sigma$;
+this is equivalent to $Pr(G)$ for the Markov chain induced
+by fixing the schedule.  We can then define 
 $Pr^+(G) = \max_{\sigma} Pr^{\sigma}(G)$
 and
 $Pr^-(G) = \min_{\sigma} Pr^{\sigma}(G)$
 as the maximum and minimum probabilities of reaching a $G$-state
-in the MDP.  Any behavior expressable as a $G$-reachability property is
-captured by the MDP and is bounded above and
-below by these quantities.
+in the MDP over the set of all possible schedules.  

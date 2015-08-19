@@ -1,26 +1,9 @@
 \section{Computing Program Probabilities}
 \label{sec:computingprobabilities}
 
-\mycomment{Matt: it would be good if there was some discussion about
-how to handle a given distribution.  For example, how would prob
-sym exe handle a call to a function to return a value from N(0,1)
-(a normal distribution with mean 1 and standard distrubution 0).
-Equivalently how would this be specified as a usage profile.
-Is there something better than relying on a person to write this down?
-I know there is tons of work published on this, but is there a simple
-approach we can describe or that you've used.}
-
-
 Computing probabilities for probabilistic program analysis can usually be reduced to computing the probability of satisfying a boolean constraint over the program variables. In this section we will introduce some of the basic techniques currently used in program analysis. 
 
 To simplify the notation, we will focus on implicit probabilistic constructs, assuming the program under analysis has input variables $V=\{v_1, v_2, \dots, v_n\}$, where $v_i$ has domain $d_i$ and comes with a probability distribution $\mathcal{P}_i: d_i \to [0, 1]$. The input domain $D$ is defined as the cartesian product of the domains $d_i$, while the input distribution $\mathcal{P}$ is defined as the joint distribution over all the input variables $\prod_i \mathcal{P}_i(\bar{v_i})$. Given a constraint $\phi: V \to \{true, false\}$, our goal is to compute the probability $Pr(\phi)$ of satisfying $\phi$ given the input domains and probability distributions. This problem is usually referred to as model counting, when the input domains are countable, or solution space quantification, when the input domains are modeled as uncountable (e.g., abstracting floating-point numbers as reals).
-
-\mycomment{Anto: Section outline to be added}
-
-\mycomment{Anto: check definitions of model counting and solution space quantification}
-
-
-%Some techniques allow for bounding the probability value within a certain interval; 
 
 \subsection{Exact and numeric computation}\label{sec:computingprobabilitiesExact}
 
@@ -59,7 +42,9 @@ Efficient implementations of $\sharp(\cdot)$ are available for several classes o
 
 	\item \textbf{Regular expressions}: a variety of practically relevant constraints on strings can be formalized as matching with a regular expression~\cite{Luu2014,Aydin2015}. If the (maximum) length of the string is bounded, the number of instances matching a regular expression can be counted exactly with an automata-based approach. The regular expression is first transformed into the corresponding accepting automata. Then, an exponential generating function is automatically constructed to count the accepting runs of the automata up to a certain length, without the need to enumerate all of them explicitly. The technique is actually more general and can be used for any constraint whose satisfaction can be reduced to counting the accepting runs of a finite state automata. For more general constraints, called pseudo-relational, the exact count is not computable, though its value can be bounded in a finite interval, allowing, in some cases, for best- or worst-case analysis~\cite{Aydin2015}.
 	
+\ignore{
 	\item \textbf{SAT and SMT}: \mycomment{TBD (\url{http://arxiv.org/pdf/1306.5726v3.pdf}, \url{http://arxiv.org/pdf/1411.0659.pdf}; these papers should have been published, we should check related work in there)}
+}
 
 \end{itemize}
 
@@ -131,7 +116,7 @@ For most practically used distributions, the inverse CDF can computed efficientl
 
 In some cases the input variables are not probabilistically independent. For example, the temperature and the altitude measured by input sensors of an airplane might be correlated one another since at higher altitudes usually correspond lower temperatures. Whenever variables are not independent, their values have to be sampled as tuples from a multidimensional probability distribution. While the sampling approach discussed so far is conceptually applicable also to multidimensional distributions, it is usually computationally more expensive to compute the CDF and its inverse. More sophisticated sampling techniques are preferred in this case, such as Gibbs sampling~\cite{Robert2005MCBook}.
 
-As a final remark, while discretization can be used to obtain arbitrarily accurate approximations of complex distributions (over both integer and real numbers), the complexity of the probability computation method described in Section~\ref{sec:computingprobabilitiesExact} is exponential in the resolution of discretization, e.g., if a program has 5 input variables and the domain of each of them is split in 3 intervals, the size of the domain partition is $5^3$. When the number of variables grows, obtaining fine grained discretization of their probability distributions may become computationally too expensive. Distribution-aware sampling can be leveraged to avoid both this exponential explosion and the need to define a priori a convenient discretization resolution not to bias the results~\cite{2015-fse-qcoral}.
+As a final remark, while discretization can be used to obtain arbitrarily accurate approximations of complex distributions (over both integer and real numbers), the complexity of the probability computation method described in Section~\ref{sec:computingprobabilitiesExact} is exponential in the resolution of discretization, e.g., if a program has 5 input variables and the domain of each of them is split in 3 intervals, the size of the domain partition is $5^3$. When the number of variables grows, obtaining fine grained discretization of their probability distributions may become computationally too expensive. Distribution-aware sampling can be leveraged to avoid both this exponential explosion and the need to define a priori a discretization resolution~\cite{2015-fse-qcoral}.
 
 
 \paragraph{Beyond floating-point numbers.}

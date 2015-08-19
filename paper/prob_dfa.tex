@@ -4,6 +4,10 @@
 The key challenge in probabilistic data flow analyses is
 determining how probabilities are incorporated into the control
 and data abstractions that form its foundation.
+As in the classical case, for probabilistic data flow analysis,
+as we will see, can be thought of as model checking
+of probabilistic abstract interpretations and, in some
+cases, the model checking must itself be made probabilistic.
 
 \subsection{Control Flow Probabilities}
 Early work in extending data flow analysis 
@@ -52,7 +56,7 @@ in the background; the quantity becomes a
 Ramalingam's work assumes execution history does not matter --  
 the analysis is path insensitive.
 Later work adds some path sensitivity \cite{mehofer2001novel}, 
-but as both frameworks deals with exploded control flow graphs, a fully 
+but as both frameworks deal with exploded control flow graphs, a fully 
 path-sensitive approach is not tractable.
 
 Ramalingam's sum-over-all-paths approach is reminiscent of
@@ -86,15 +90,15 @@ those semantics \cite{monniaux2000abstract,others}
 to enable data flow analysis.
 This is typically done using a variation on Kozen's 
 probabilistic semantics \cite{kozen1981semantics} 
-alongside traditional data flow techniques.
+alongside abstract interpretation and data flow techniques.
 Embedding probabilities into the semantics allows 
 the expression of both control and data influences on property
 probabilities computed during the analysis.
 
 \subsubsection{Abstracting Probability Distributions}
-The first work in this area, by 
+The pioneering work in this area, by 
 Monniaux \cite{monniaux2000abstract,monniaux2001backwards},
-developed the key insights that most work in this area has built on. 
+developed the key insights that other work has built on. 
 The goal is to exploit the rich body of work on developing
 abstract domains and associated transformers and extend them
 so as to record bounds on probability measures for the concrete values
@@ -103,22 +107,34 @@ described by domain elements.
 Monniaux's work took the view that probabilistic programs 
 effectively transform an input distribution into an output
 distribution.  More generally, they compute a distribution that
-characterizes each point in the program.   
-Here a probabilistic abstract domain, $\mathcal{A}_p$, 
-is (an indexed) collection of pairs, $\mathcal{A} \times [0,1]$.
+characterizes each state in the program.   
+He develops a probabilistic abstract domain, $\mathcal{A}_p$, 
+as an (indexed) collection of pairs, $\mathcal{A} \times [0,1]$.
+The intuition is that a classic abstract domain is paired
+with a \textit{bounding probability weight} that is used
+to compute an upper bound on the concrete elements mapped
+by that domain.
 Given a concrete value $c$, 
 an upper approximation of its probability 
-at a program location with probabilistic abstract domain
-value $pa = \{(a_1,w_1), ..., (a_n,w_n)\}$
-is given by $\sum_{j \in \{ i \vert (a_i,w_i) \in pa \wedge   
-c \in \gamma(a_i)\}} w_j$.   A concrete
-value may lie in a number of abstract domains defined by
-the probabilistic abstract domain value.  For each such abstract
-domain the associated probability \textit{weight} must be totalled
+for a probabilistic abstract domain
+element $pa = \{(a_1,w_1), ..., (a_n,w_n)\}$
+is given by
+\[
+\sum_{j \in \{ i \vert (a_i,w_i) \in pa \wedge c \in \gamma(a_i)\}} w_j
+\]
+For a concrete value, each containing abstract
+domain element's associated weight must be totalled
 to bound of the probability of the concrete value.
+As an example let $\mathcal{A}$ be the interval abstraction
+applied to a single integer value
+and $pa = \{([1,5],0.1),([3,7],0.1,...\}$.  
+For a value $2$ only the first pair would apply, since
+$2 \not\in [3,7]$, contributing $0.1$ to the bound on $Pr(2)$.
+For a value of $3$ both pairs would apply and contribute
+their sum $0.2$ to the bound on $Pr(3)$.
 
 To clarify, these weight components are \textit{not} bounds on the probability
-the abstract domain as a whole, but rather they bound the probability
+of the abstract domain as a whole, but rather they bound the probability
 of each concrete element represented by the abstract domain.
 This simplifies the formulation of the probabilistic abstract
 transformers, i.e., the extension of $\tau^\#$ to account to 
@@ -127,6 +143,12 @@ work is required to compute the probability of a property holding.
 Fundamentally that requires estimating the size of the concretization
 of the abstract domain element and then multiplying by the computed bound for
 each concrete value.  
+
+It is important to note that a upper or lower
+bound on a probability distribution
+is not itself a distribution, since the sum across the domain
+will be either greater or less than $1$.
+This poses challenges for modular probabilistic data flow analyses.
 
 Recall that the techniques from 
 Section~\ref{sec:computingprobabilities} can be applied to
@@ -166,23 +188,34 @@ appears to require widening \cite{monniaux2000abstract,esparza2011probabilistic}
 
 \subsubsection{Probability for Abstract States}
 
-
-
-\mycomment{Matt: discuss Di Pierro's latest work which defines
-abstract branch probabilities.}
-
-Bounds on the probability of a state property have been well studied.
-Di Pierro et al. \cite{di2013probabilistic} aim to estimate the probability of a property,
-rather than bound it.  They formulate their an abstract 
+Computing bounds on the probability of a state property have been well studied.
+Di Pierro et al. \cite{di2013probabilistic} develop analyses
+that aim to estimate the probability of an abstract state, 
+rather than bound it or bound the probability distribution.  
+They formulate their analysis using an abstract 
 domain over vector spaces, instead of lattices, and use
 the Moore-Penrose pseudo-inverse instead of the usual fixed point.
-While shown to be effective on small programs, the space
-complexity of vector space encodings and lack of tool support
-have not yet demonstrated the scalability of the approach.
 
+Abstract states encode variable domains as matrices, e.g., a 100 by 100 matrix
+would be needed to encode the input $x$ for the example in 
+Figure~\ref{fig:example}.  While very efficient matrix algorithms
+can be employed, the space consumed by this representation can
+be significant.  
+Transfer functions operate on these matrices to filter values and
+update probabilities along branches and, 
+as in Ramalingam's work, weighted sums are used to accumulate probabilities
+at control flow merge points.
+
+Their early work was limited to very small programs, but more recent
+work suggests approaches for abstracting the matrices to significantly
+reduce time and space complexity.   
+
+Neither of the lines of work described above made implementations
+available.  We believe that sharing probabilistic data flow analyses
+infrastructure could lead to significant advances in the field.
 
 \subsection{Handling nondeterminism}
-When abstraction of program choice are required or when 
+When abstraction of program choice is required or when 
 there is no basis for defining an input distribution programs,
 it is natural to use non-determinism to account for the uncertainty
 in program behavior.
@@ -199,14 +232,32 @@ is safely modeled by one of these tuples.  The challenge in the
 analysis is to select from among those tuples to compute a useful
 probability estimate.
 
-\mycomment{Matt: more here with discussion of original Monniaux work,
-add a very short discussion of the 2-player game approach then just
-mention these}
-\cite{PRISMabstraction,wachter2010best,esparza2011probabilistic}.
+More recent approaches to abstraction in probabilistic data flow
+analysis, or model checking, take a different approach.
+A trace in an MDP can be viewed as an alternation of, potentially trivial,
+probabilistic and non-deterministic choices.  For instance, the
+left most trace in the MDP on the right side of Figure~\ref{fig:prob-cfg}
+can be read as $\mathit{left};\_;\mathit{left};0.6$ where $\_$ 
+denotes an empty choice -- in this case a probabilistic choice.
+Probabilistic model checkers such as PRISM and PASS exploit this
+2-phase structure to formulate MDP model checking as a 2-player
+game.  One player resolves the non-determinism, thereby determining
+the schedule, and the other resolves the probabilistic choice.
+
+Abstract interpretation can be applied to the data states in
+approaches~\cite{PRISMabstraction,wachter2010best,esparza2011probabilistic}
+to improve efficiency.  Note however that these abstractions are
+independent of the probabilistic choices which must be specified
+by the developer in some way -- as in the case of Ramalingam's work.
 
 \subsection{More and varied probabilistic data flow analyses}
-\mycomment{Go through most recent related work and characterize it
-here}
+Recent years have seen several varied lines of work draw on
+the lessons learned from the early research on probabilistic
+data flow analysis.
+
+Researchers have developed rich customized abstract domains that 
+incorporate probability bounds \cite{probabilisticPolyhedra,probAffineForms}
+and permit analyses of probabilistic properties of real software systems.
 
 More recent work has explored computing an alternative probabilistic
 property called {\sl expectation invariants} \cite{chakarov2014expectation}.
@@ -217,7 +268,7 @@ over a sufficiently large number of runs, when $f$ is called with
 a uniformly distributed number in the range $[0,10]$, it will return
 an average value less than 7.
 
-The idea of a ``probabilistic program" has been generalized from
+The idea of a ``probabilistic program'' has been generalized from
 Kozen's original semantics to include conditioning on program
 observations~\cite{Gordon2014}.
 In this setting, the program implicitly specifies a probability 

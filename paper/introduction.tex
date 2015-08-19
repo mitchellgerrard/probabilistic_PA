@@ -3,7 +3,7 @@
 
 Static program analyses aim to calculate properties of 
 the possible executions of a program without ever running the program
-and have been an active topic of study since the 1960s \cite{First}.
+and have been an active topic of study for over 4 decades.
 Initially developed to allow compilers to generate more efficient
 output programs, by the mid-1970s \cite{fosdick1976data} researchers had
 understood that such program analyses could be applied to fault
@@ -45,9 +45,8 @@ some simple assumption, i.e., that income must be non-negative.
 Domain experts have studied income distributions and find that
 it varies according to a generalized beta distribution 
 \cite{mcdonald1984some,thurow1970analyzing}.  Can this type of information be 
-exploited in a program analysis to speed analysis,
-to yield more useful analysis results, or to reason 
-about new types of program properties?
+exploited to yield useful analysis results when classic
+analyses fail, or to reason about new types of program properties?
 
 For decades there has been a growing awareness of the value of 
 incorporating more precise forms of uncertainty into program behavior.  
@@ -57,7 +56,8 @@ good average case performance -- and consequently as a defense against
 intolerable worst case performance.
 Programming such algorithms requires that primitives be available
 to draw values from probability distributions and there are many
-languages that provide such primitives \cite{tisue2004netlogo,others}.  
+languages that provide such primitives, e.g., NetLogo \cite{tisue2004netlogo},
+the C++ \texttt{$\mathtt{<random>}$} library, and the GNU Scientific library.
 
 Regardless of whether information about the distribution of
 values is embedded within a program or stated as an input assumption,
@@ -76,30 +76,33 @@ What has lagged behind is work developing frameworks for
 defining and implementing static analysis techniques for such programs.
 
 What would such analyses have to offer?
-\mycomment{Matt: add the laundry list of questions that might be
-posed.   reliability, probability of failure, program equivalence,
-a new coverage measure, more informative than a failed sound analysis
-(i.e., saying a property fails to hold just means Pr<1), ...}
+They can, of course, provide a means of analyzing programs that compute
+with values chosen from probability distributions, but they offer much
+more.
+For example, researchers have explored the use of probabilistic analysis
+results to assess the security of software components~\cite{probabilisticPolyhedra},
+assess program reliability~\cite{FilieriICSE13}, as a measure of program
+similarity (or inequivalence)~\cite{GeldenhuysISSTA12}, as a characterization 
+of the coverage
+achieved by an analysis technique~\cite{DwyerASE11}, and to provide information
+about program properties when a classic analysis would fail, e.g.,
+by running out of memory, time, or due to excessive approximation.
 
 In this paper, we survey work on adapting data flow analysis 
-and symbolic execution to consider probabilistic information.
+and symbolic execution to use probabilistic information.
 We begin with a brief background that provides basic definitions
 related to static analysis and probabilities.
+Section~\ref{sec:overview} attempts to expose some of the key
+intuitions and concepts that cross-cut the work in this area.
 Section~\ref{sec:computingprobabilities} discusses approaches that
 have been developed to reason about the probability of program-related 
 events, e.g., executing a path, taking a branch, or reaching a state.
 The following two sections, \ref{sec:pdfa}-\ref{sec:pse}, 
 survey work on probabilistic data flow analysis and probabilistic
-symbolic execution.  These sections seek to expose similarities
-and differences among analysis approaches with respect to issues
-such as the \texttt{accuracy} of analysis results, i.e., how results
-are related to executable program behavior, 
-the aspects of behavior that are governed by probabilities, and
-the treatment of non-determinism -- which is a standard modeling
-approach in static analysis.
+symbolic execution.  
 Section~\ref{sec:probspecs} surveys approaches to the cross-cutting
 issue of how probabilities can be specified or encoded for use
 in analyses.
-Finally, we conclude with the discussion of a series of open questions
+We conclude with the discussion of a series of open questions
 and research challenges that we believe are worth pursuing.
 
