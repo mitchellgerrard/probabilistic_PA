@@ -99,11 +99,11 @@ common control location; the computed properties attempt to characterize
 the invariants over those states.
 
 Data flow analyses are built on an underlying fixpoint engine, as is
-model checking~\cite{Clarke:ModelCheckingBook}.  Moreover, data flow
+model checking~\cite{clarke1999model}.  Moreover, data flow
 analyses commonly operate on abstractions of program states that
 can be defined by abstract interpretation~\cite{cousot1977abstract}. 
 In fact, it is now well-understood that data flow analysis can be
-viewed as model checking of abstract interpretations~\cite{Schmidt:POPL}.
+viewed as model checking of abstract interpretations~\cite{schmidt1998data}.
 
 An abstract interpretation is a 
 non-standard interpretation of program executions over an abstract domain.  
@@ -155,7 +155,7 @@ to as a \textit{false error} report and is due to the overapproximating
 nature of $\mathcal{A}$ and $\tau^\#$.
 
 Data flow analysis tools and toolkits exist for many popular 
-languages~\cite{vallee1999soot,fink2012wala,others}
+languages~\cite{vallee1999soot,fink2012wala}
 and have been used primarily for program optimization and
 verifying program conformance with (implicit and explicit)
 assertional specifications.

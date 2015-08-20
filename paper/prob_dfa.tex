@@ -64,7 +64,7 @@ the approach taken in probabilistic model checking of DTMCs.
 In that approach, a system of linear equations is formulated
 whose solution computes the probability with which a property
 holds---so-called \textit{quantitative} properties in 
-PRISM \cite{PRISMmarktoberdorf}.   Ramalingam formulates an
+PRISM \cite{kwiatkowska2010advances}.   Ramalingam formulates an
 equivalent system of linear equations.  
 
 Both of these techniques rely on being able to annotate
@@ -86,7 +86,8 @@ offer one means of approaching that problem.
 Within the last 15 years, researchers 
 began incorporating probabilistic information directly into
 the semantics of a program and then abstracting over 
-those semantics \cite{monniaux2000abstract,others}
+those semantics 
+\cite{monniaux2000abstract,smith2008probabilistic,cousot2012probabilistic}
 to enable data flow analysis.
 This is typically done using a variation on Kozen's 
 probabilistic semantics \cite{kozen1981semantics} 
@@ -163,7 +164,7 @@ For statements that generate variables drawn from a probability
 distribution, an upper approximation of the distribution for
 regions of the abstract domain is required.  The literature
 has constructed these using ad-hoc techniques, but we believe
-the methods of Section~\ref{sec:counting} might be applied to 
+the methods of Section~\ref{sec:computingprobabilities} might be applied to 
 achieve an upper approximation, and describe this further in Section~\ref{sec:future}.
 For sequential statements, weight components are propogated
 and abstract domain elements are updated by the underlying transformer.
@@ -220,7 +221,7 @@ there is no basis for defining an input distribution programs,
 it is natural to use nondeterminism to account for the uncertainty
 in program behavior.
 
-In Monniaux's semantics\cite{MonniauxMDP}, choices that can be tied to a known
+In Monniaux's semantics \cite{monniaux2005abstract}, choices that can be tied to a known
 distribution are cleanly separated from those that cannot.
 A nondeterministic choice allows for independent outcomes, and
 this is modeled by lifting the singleton outcomes of deterministic
@@ -245,9 +246,9 @@ game.  One player resolves the nondeterminism, thereby determining
 the schedule, and the other resolves the probabilistic choice.
 
 Abstract interpretation can be applied to the data states in
-approaches~\cite{PRISMabstraction,wachter2010best,esparza2011probabilistic}
+approaches~\cite{kwiatkowska2011prism,wachter2010best,esparza2011probabilistic}
 to improve efficiency.  Note, however, that these abstractions are
-independent of the probabilistic choices which must be specified
+independent of the probabilistic choices implicit in the semantics, and must be specified
 by the developer in some way---as in the case of Ramalingam's work.
 
 \subsection{More and varied probabilistic data flow analyses}
@@ -256,7 +257,7 @@ the lessons learned from the early research on probabilistic
 data flow analysis.
 
 Researchers have developed rich customized abstract domains that 
-incorporate probability bounds \cite{probabilisticPolyhedra,probAffineForms}
+incorporate probability bounds \cite{mardziel2013dynamic,adje2014static}
 and permit analyses of probabilistic properties of real software systems.
 
 More recent work has explored computing an alternative probabilistic
