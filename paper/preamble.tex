@@ -1,0 +1,105 @@
+%%%%%%%%%%%%%%%%%%%%%%% file typeinst.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is the LaTeX source for the instructions to authors using
+% the LaTeX document class 'llncs.cls' for contributions to
+% the Lecture Notes in Computer Sciences series.
+% http://www.springer.com/lncs       Springer Heidelberg 2006/05/04
+%
+% It may be used as a template for your own input - copy it
+% to a new file with a new name and use it as the basis
+% for your article.
+%
+% NB: the document class 'llncs' has its own and detailed documentation, see
+% ftp://ftp.springer.de/data/pubftp/pub/tex/latex/llncs/latex2e/llncsdoc.pdf
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[runningheads,a4paper]{llncs}
+
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{centernot}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
+
+\newcommand\x[1]{\ensuremath{\mathit{#1}}}
+\newcommand\lrangle[1]{\ensuremath{\langle#1\rangle}}
+
+\makeatletter
+\providecommand{\bigsqcap}{%
+  \mathop{%
+    \mathpalette\@updown\bigsqcup
+  }%
+}
+\newcommand*{\@updown}[2]{%
+  \rotatebox[origin=c]{180}{$\m@th#1#2$}%
+}
+\makeatother
+
+
+%\usepackage{url}
+%\urldef{\mailsa}\path|{dwyer, mgerrard}@cse.unl.edu|    
+%\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+%\noindent\keywordname\enspace\ignorespaces#1}
+
+\begin{document}
+
+\newcommand{\mycomment}[1]{\textit{\textcolor{red}{#1}}}
+\newcommand{\ignore}[1]{}
+
+% first the title is needed
+\title{Information for GTTSE'2015 Participants}
+
+\author{Matthew B. Dwyer\inst{1}
+\and Antonio Filieri\inst{2}\and Jaco Geldenhuys\inst{4}\and Mitchell Gerrard\inst{1}\and\\
+Corina Pasareanu\inst{3}\and Willem Visser\inst{4}}
+%
+% (feature abused for this document to repeat the title also on left hand pages)
+
+% the affiliations are given next; don't give your e-mail address
+% unless you accept that it will be published
+\institute{University of Nebraska -- Lincoln
+\and University of Stuttgart
+\and NASA Ames Research Center
+\and University of Stellenbosch
+}
+\maketitle
+
+The following paper is a \textbf{DRAFT} of the final paper that we
+plan to prepare.  Our goal is to provide an accessible entrance to the
+deep and technical literature on probabilistic program analysis.
+As a GTTSE participant you are in a position to help us achieve that
+goal.
+
+Towards that end we encourage you to send us an email, at
+\texttt{dwyer@cse.unl.edu}, with a title beginning ``Feedback on
+GTTSE paper'' where you let us know what you think.
+In particular, we welcome suggestions for parts of the development
+where we might provide a clearer or more explicit explanation of
+the ideas.  
+
+We have a number of ideas along these lines, e.g., replacing some
+of the examples with ones that are more complex, adding some visualizations
+to supplement textual explanations.   We will mix our ideas with yours
+and try to come up with a paper that is useful to the broader community.
+
+We'll be happy to thank you for your contributions so do include your
+name in the email.
+
+See you in Braga
+
+
+
+
+\end{document}

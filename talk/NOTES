@@ -3,7 +3,7 @@ Develop the following examples:
 1) An illustration of an abstract doman and transformers, etc.
    for data flow
 
-2) An illustration of a program as a distribution transformer.
+*2) An illustration of a program as a distribution transformer.
    Try "abs(x)" where x is drawn from N(0,1)
 
 3) An illustration of counting an abstract element and then 

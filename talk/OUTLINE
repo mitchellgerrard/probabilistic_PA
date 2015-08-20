@@ -1,0 +1,31 @@
+Motivating stories:
+ - Individual-based Agent Modeling in Ecology
+   -> Biologists write models (programs) and do experiments on them
+      - cheap, but low fidelity
+      - can lead to questions that drive field studies
+   -> some models are huge and complex
+      - drosophilia & dynamic energy budget model
+      - 75k C SLOC, parallel and highly optimized
+   -> most models begin simple, encoded in high-level languages
+      - wood hoopoe foraging
+      - NetLogo
+   -> they use simulation to explore their models; mimics experimental regime
+   ? What if they could ask "what if question" about their models?
+     - is the probability that a non-alpha hoopoe forages for new territory
+       when less than 1 year old greater than 0.3?
+        
+ - UAV software
+   -> time-triggered ROS architecture
+   -> every cycle system reads new sensor values
+      - sensed phenomena vary in understood ways (temp, light, position, ...)
+      - sensor error gives rise to uncertainty 
+        - again in known ways
+   -> would like to be able to reason about the long run behavior
+   -> they test and test and test and pour over log data
+   ? What if they could analyze their code under an environment that
+     modeled the variability they expected?
+     - is the probability that the actuator output is within [0,4.5] greater
+       than 0.999?
+
+
+      
