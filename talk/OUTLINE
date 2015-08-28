@@ -1,4 +1,14 @@
-Motivating stories:
+My story
+ - where and what I've worked on, who I've worked with
+ - your experience shapes a unique set of experiences and skills that
+   you bring to your research
+ - expand that set by working with other people
+ - hard at first
+ - tough going from being the expert at X to the novice at Y
+ - ultimately leads you toward potentially valuable work at the intersection
+   of different areas
+
+Taking research risks:
  - Individual-based Agent Modeling in Ecology
    -> Biologists write models (programs) and do experiments on them
       - cheap, but low fidelity
@@ -27,5 +37,82 @@ Motivating stories:
      - is the probability that the actuator output is within [0,4.5] greater
        than 0.999?
 
+What is a probabilistic program?
+ - show NetLogo wood hoopoe model
+ - show a simple program for SPF
+
+TRANSITION
+
+Goals of this tutorial
+ - expose you to the broad and growing body of work in prob. prog. analysis
+ - background on non-probabilistic prog. analysis
+ - overview of prob. data flow analysis
+ - overview of prob. sym. exe.
+ - overview of solution space quantification approaches
+ - deeper dive into prob. sym. exe.
+ - problems that you might consider working on
+
+WEDNESDAY:
+ - reasoning about program executions
+   - view programs as a generator of traces
+     - simplify our discussion and think finite
+       - traces are finite length (timeout,^C,...)
+       - traces are finite in number (10^2000 is still finite)
+   - sample and observe individual traces
+     - informed/biased sampling 
+     - random sampling (fuzzing)
+   - abstract sets of traces and analyze as a group
+     - underapproximate
+     - overapproximate
+     - neither
+ - background in non-probabilistic prog. analysis
+   - what is a symbolic abstraction
+     - over vs. under
+     - abstract domain
+   - what is data flow analysis
+     - abstract interpretation + model checking
+     - example of an abstract interpretation of a trace
+     - multiple A.I.s of a program 
+     - fixpoint calculation over A.I.s
+     - MFP
+     - improving precision
+   - what is symbolic execution
+     - symbolic representation of program state
+     - example of a sym. ex. of a trace (same as above?)
+     - sym. ex. tree
+     - the role of SAT
+     - underapproximation: of loops, of complex conditions
+   - big picture
+     - pros and cons of these frameworks
+ - prob. data flow analysis
+   - two basic approaches
+     *- abstract the distribution
+     *- estimate probability of abstract domain elements
+   - two key concepts
+     *- how many values lie in \gamma(a)?
+     *- for each such value, how is that values probability estimated
+   - illustrate how branching works
+     - filtering of abstract domain values
+     - potential for overapprox. when the branch condition is not
+       accurately supported by the domain
+
+ - prob. sym. exe.
+   - original idea and exhaustive analysis (from ISSTA'12)
+
+FRIDAY:
+ - provide an overview of recent work on model counting and solution space
+   quantification
+   - simple example from rectangular domains
+   - Latte/barvinok
+   - PLDI'14
+   - FSE'15
+
+ - provide a more detailed discussion of prob. sym. exe. 
+   - the generic algorithm from the paper
+   - FSE'14
+   - ASE'14
+   - demonstration of prob. SPF
+
+ - open questions
 
       

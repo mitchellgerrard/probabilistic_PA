@@ -1,0 +1,244 @@
+\documentclass[xcolor=dvipsnames,10pt]{beamer}
+% ********** Style prezentation **********
+
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{multimedia}
+\usepackage{xmpmulti}
+\usepackage[absolute,overlay]{textpos} 
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage{pifont}
+\usepackage{url}
+\usepackage{pict2e}
+\usepackage{flushend}
+\usepackage{graphicx}
+\usepackage{pgf}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes}
+\usetikzlibrary{backgrounds}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
+\newcommand{\ignore}[1]{}
+
+
+\lstset{ %
+  language=Java,              
+  basicstyle=\footnotesize
+}
+
+\mode<presentation>
+{
+	\usetheme{Warsaw}
+}
+\definecolor{scarlet}{RGB}{200,0,0}
+\setbeamercolor{structure}{fg=scarlet}
+\addtobeamertemplate{footline}{
+\begin{columns}
+  \hfill\includegraphics[height=.75cm]{unl_clear.pdf}\hspace{.5cm}
+\end{columns}
+\vspace{2mm}
+}{\usebeamercolor[bg]{footline}\hfill\raisebox{1mm}[0mm]{\hspace{2mm}}}
+
+\newcommand\x[1]{\ensuremath{\mathit{#1}}}
+\newcommand\lrangle[1]{\ensuremath{\langle#1\rangle}}
+
+\def\ON{\ding{52}}
+\def\OF{\ding{55}}
+\def~{\phantom{0}}
+
+\setbeamertemplate{navigation symbols}{} %remove if navigation symbols are needed
+\setbeamersize{text margin left=5mm, text margin right=5mm} % change margin as you wish
+
+\author{Matthew B. Dwyer}
+
+\title[Probabilistic Program Analysis]{Probabilistic Program Analysis}
+\subtitle{GTTSE part 4 : Don't have a PhD topic? Here take one of mine!}
+
+
+\institute{
+Department of Computer Science and Engineering\\
+University of Nebraska - Lincoln\\
+Lincoln, Nebraska USA\\
+}
+
+\date{August 2015}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage %displays the title page
+\end{frame}
+
+\begin{frame}{Explore quantitative program analyses}
+\vfill
+In security researchers moved from information flow to \textit{quantitative}
+information flow in an attempt to characterize the severity of vulnerabilities.
+\vfill
+There may be additional opportunities for adapting classic analyses 
+to produce quantitative information that is not 
+not necessarily probabilistic.
+\vfill
+Quantification can shift questions from possibility/impossibility to how many,
+i.e., channel capacity.
+\vfill
+For example, dependence analysis could be modified to compute edge
+weights that permit the capacity of dependence chains to be computed?
+\vfill
+This would permit a ``capacity threshold'' notion of slicing to
+be performed.
+\vfill
+Would this be useful?  \pause  You tell us in a few years.
+\vfill
+\end{frame}
+
+\begin{frame}{Rank errors based on execution probability}
+\vfill
+A number of analysis techniques, e.g., model checking, provide
+error reports in the form of counter examples, i.e., a trace.
+\vfill
+There can be many such traces and determining which one to look
+at can be a challenge.
+\vfill
+Lots of work on error ranking in the mid-2000s, but
+probabilistic technique might permit a new approach where 
+the probability of taking the path that the counter example
+took could allow developers to focus on ``more likely'' errors first.
+\vfill
+\end{frame}
+
+\begin{frame}{Customizing supporting techniques for program analysis}
+\vfill
+Model counting is a general problem; the complexity of \#SAT has been
+studied for many decades.
+\vfill
+SAT techniques became fast by focusing 
+on the cases that arose in practice.
+\vfill
+This led to a proliferation of \textit{theory fragments} with associated
+efficient decision procedures.
+\vfill
+\pause
+The same approach seems possible for \# procedures.
+\vfill
+Simple example: polyhedra that are regular hyperrectangles are trivial to count, i.e., $\Pi_{e \in Edge} length(e)$
+\vfill
+A first step in this direction would be to characterize the types
+of queries that arise in program analysis which require \#.
+\vfill
+Collecting a large corpus of such queries and classifying them 
+would be very useful in providing a ``target'' for \# researchers.
+\vfill
+\end{frame}
+
+\begin{frame}{DSL Design for Analysis}
+\vfill
+DSLs are being designed for many domains, e.g., 
+robotics, ecological/biological systems, in which 
+stochasticity is fundamental.
+\vfill
+How can the design of these DSLs be set up to 
+facilitate probabilistic analysis?
+\vfill
+Can we incorporate notions of input distribution into the
+language?   For instance as an assumption about inputs that
+can be exploited for analysis and checked at runtime? 
+\vfill
+Are there notions of probabilistic contract that make sense
+in this setting that could permit modular analysis?
+\vfill
+\end{frame}
+
+\begin{frame}{Moving from explicit to implicit branch probabilities}
+\vfill
+Popular probabilistic model checking tools like 
+like PRISM and PASS still require that probabilities annotate
+transitions in the model.
+\vfill
+In some cases this is easy, e.g., modeling \texttt{bernouli(0.5)}, but
+in others it is not, e.g., when it is based in complex ways on 
+input data.
+\vfill
+Is it possible to incorporate the tracking of symbolic constraints
+reaching a branch and then using \# techniques to eliminate some
+of the explicit probabilities? 
+\vfill
+This is tricky because you need to shift from a fully path-sensitive
+setting, like symbolic execution, to one where paths are merged, but
+it is possible.
+\vfill
+At the very least it seems possible to run a separate analysis that
+attempts to determine the accuracy of those explicit probabilities?
+\vfill
+\end{frame}
+
+\begin{frame}{Residual probabilistic program analysis}
+\vfill
+In a residual analysis one stages a series of analyses.
+\vfill
+An analysis does what it can on the program and then passes
+the unanalyzed part, the residue, on to the next one in the series.
+\vfill
+What if you were to run a probabilistic symbolic execution 
+for whatever resource budget you can tolerate and then target
+the ``unanalyzed'' portion of the program using a data flow
+analysis?
+\vfill
+Alternatively you run probabilistic data flow first, then target
+the regions of the program for which you have imprecise probability
+information for refinement using symbolic execution.
+\vfill
+One could use slicing techniques to extract that residue.
+\vfill
+This would combine the precision of the symbolic execution 
+with the scalability of data flow.
+\vfill
+\end{frame}
+
+\begin{frame}{Probabilistic program differencing}
+\vfill
+Probabilistic symbolic execution is particularly well suited for quantifying the difference between two versions of a program~\cite{Filieri2015b}. 
+\vfill
+This means that it could be used to rank how close a program is to a given oracle program.
+\vfill
+This has applications in mutation analysis, program repair, approximate computing or even in marking student assignments.
+\vfill
+\end{frame}
+
+\begin{frame}{Symbolically executing ``probabilistic programs''}
+\vfill
+Probabilistic programming is becoming very popular.
+\vfill
+Most current approaches rely on sampling.
+\vfill
+Statistical symbolic execution can be more efficient because 
+each sample accumulates the \texttt{mass} of the sampled path
+instead of the mass of the single sampled trace.
+\vfill
+Extending symbolic execution to support these programs requires support
+for conditioning, i.e., the \texttt{observe(...)} statement.
+\vfill
+From a path generation perspective this is trivial, i.e., it is equivalent
+to support of \texttt{assume(...)}.
+\vfill
+It is trickier to handle the renormalization of the output distribution; but this seems possible.
+\vfill
+Handling incompleteness, e.g., when the probabilistic program iterates over
+large domains, remains an open challenge.
+\vfill
+\end{frame}
+
+\begin{frame}{Final words}
+\vfill
+Send us your ideas for improving the briefing paper!
+\vfill
+We want it to be a useful resource for the community.
+\vfill
+\end{frame}
+
+\end{document}

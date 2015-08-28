@@ -1,0 +1,429 @@
+\documentclass[xcolor=dvipsnames,10pt]{beamer}
+% ********** Style prezentation **********
+
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{multimedia}
+\usepackage{xmpmulti}
+\usepackage[absolute,overlay]{textpos} 
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage{pifont}
+\usepackage{url}
+\usepackage{pict2e}
+\usepackage{flushend}
+\usepackage{graphicx}
+\usepackage{pgf}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes}
+\usetikzlibrary{backgrounds}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
+\newcommand{\ignore}[1]{}
+
+
+\lstset{ %
+  language=Java,              
+  basicstyle=\footnotesize
+}
+
+\pgfdeclarelayer{foreground}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main,foreground}
+
+\mode<presentation>
+{
+	\usetheme{Warsaw}
+}
+\definecolor{scarlet}{RGB}{200,0,0}
+\setbeamercolor{structure}{fg=scarlet}
+\addtobeamertemplate{footline}{
+\begin{columns}
+  \hfill\includegraphics[height=.75cm]{unl_clear.pdf}\hspace{.5cm}
+\end{columns}
+\vspace{2mm}
+}{\usebeamercolor[bg]{footline}\hfill\raisebox{1mm}[0mm]{\hspace{2mm}}}
+
+\newcommand\x[1]{\ensuremath{\mathit{#1}}}
+\newcommand\lrangle[1]{\ensuremath{\langle#1\rangle}}
+
+\def\ON{\ding{52}}
+\def\OF{\ding{55}}
+\def~{\phantom{0}}
+
+\setbeamertemplate{navigation symbols}{} %remove if navigation symbols are needed
+\setbeamersize{text margin left=5mm, text margin right=5mm} % change margin as you wish
+
+\author{Matthew B. Dwyer}
+
+\title[Probabilistic Program Analysis]{Probabilistic Program Analysis}
+\subtitle{}
+
+
+\institute{
+Department of Computer Science and Engineering\\
+University of Nebraska - Lincoln\\
+Lincoln, Nebraska USA\\
+}
+
+\date{August 2015}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage %displays the title page
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Program Analysis in a nutshell}
+\vfill
+\begin{center}
+\def\supercircle{(0,0) circle (1.25cm)}
+\def\progtraces{(0:3cm) circle (1.0cm)}
+\def\subcircle{(0:6cm) circle (0.75cm)}
+
+\tikzset{red/.style={fill=red}}
+\tikzset{green/.style={fill=green}}
+
+\begin{tikzpicture}%[scale=1.0]
+  \draw \progtraces node[below] {program};
+  \draw[red] \supercircle node[yshift=-15mm,below] {over-approximation};
+  \draw[green] \subcircle node[yshift=-15mm,below] {under-approximation};
+\end{tikzpicture}
+\end{center}
+\vfill
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Program Analysis in a nutshell}
+\vfill
+\begin{center}
+\def\supertraces{(0,0) circle (1.0cm)}
+\def\supercircle{(0,0) circle (1.25cm)}
+\def\subcircle{(0:6cm) circle (0.75cm)}
+\def\subtraces{(0:6cm) circle (1.0cm)}
+
+\tikzset{red/.style={fill=red}}
+\tikzset{green/.style={fill=green}}
+
+\begin{tikzpicture}%[scale=1.0]
+  \begin{scope}
+     \clip \supercircle;
+     \draw[red, even odd rule] \supercircle \supertraces;
+  \end{scope}
+  \draw\subtraces;
+  \draw[green] \subcircle;
+  \draw \supercircle node[yshift=-15mm,below] {extra behavior};
+  \draw \subcircle node[yshift=-15mm,below] {missing behavior};
+\end{tikzpicture}
+\end{center}
+\vfill
+\end{frame}
+
+\pgfmathdeclarefunction{Gauss}{2}{%
+  \pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((\x-#1)^2)/(2*#2^2))}%
+}
+
+\pgfmathdeclarefunction{RightMirrorPiledGauss}{2}{%
+ \pgfmathparse{x<0?0:2*Gauss(#1,#2)}%
+}
+
+\begin{frame}[fragile]
+\frametitle{Imagine a normally distributed integer}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A trivial program}
+\vfill
+\begin{center}
+\begin{lstlisting}
+int abs(int x) {
+  if (x<0) 
+    return -x;
+  else 
+    return x;
+}
+\end{lstlisting}
+\end{center}
+\vfill
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Here is the output distribution}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[blue,very thick] {RightMirrorPiledGauss(0,2)};
+\end{axis}
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{What's going on here?}
+\vfill
+\begin{tikzpicture}
+
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+
+\begin{pgfonlayer}{background}
+\path[fill=black!10] (0,0) rectangle (3.4,5.7);
+\node at (2,4) {$x<0$};  
+\node at (4.8,4) {$x \ge 0$};  
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\vfill
+Let's think in terms of a very coarse division of the input
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{What's going on here?}
+\vfill
+\begin{tikzpicture}
+
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+
+\begin{pgfonlayer}{background}
+\path[fill=black!10] (0,0) rectangle (3.4,5.7);
+\node at (2,4) {$x<0$};  
+\node at (4.8,4) {$x \ge 0$};  
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\vfill
+Input values $x \ge 0$ appear on the output unchanged.
+\pause
+
+Their mass in the input distribution propagates to the output.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{What's going on here?}
+\vfill
+\begin{tikzpicture}
+
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+
+\begin{pgfonlayer}{background}
+\path[fill=black!10] (0,0) rectangle (3.4,5.7);
+\node at (2,4) {$x<0$};  
+\node at (4.8,4) {$x \ge 0$};  
+\end{pgfonlayer}
+
+\begin{pgfonlayer}{foreground}
+\path[fill] (2.47,1.65) circle [radius=0.1];
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\vfill
+Input values $x < 0$ are transformed.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{What's going on here?}
+\vfill
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\begin{pgfonlayer}{background}
+\path[fill=black!10] (0,0) rectangle (3.4,5.7);
+\node at (2,4) {$x<0$};  
+\node at (4.8,4) {$x \ge 0$};  
+\end{pgfonlayer}
+\begin{pgfonlayer}{foreground}
+\path[fill] (2.47,1.65) circle [radius=0.1];
+\onslide<2>\draw[->] (2.47,1.65) -> (4.37,1.65);
+\end{pgfonlayer}
+\end{tikzpicture}
+\vfill
+Input values $x < 0$ are transformed.  
+
+\onslide<2>Their mass in the input distribution is shifted to $-x$ 
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{What's going on here?}
+\vfill
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\begin{pgfonlayer}{background}
+\path[fill=black!10] (0,0) rectangle (3.4,5.7);
+\node at (2,4) {$x<0$};
+\node at (4.8,4) {$x \ge 0$};
+\end{pgfonlayer}
+\begin{pgfonlayer}{foreground}
+\path[fill] (4.37,1.65) circle [radius=0.1];
+\end{pgfonlayer}
+\end{tikzpicture}
+\vfill
+Input values $x < 0$ are transformed.  
+
+Their mass in the input distribution is shifted to $-x$ 
+
+and accumulates in the output distribution
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{What's going on here?}
+\vfill
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\begin{pgfonlayer}{background}
+\path[fill=black!10] (0,0) rectangle (3.4,5.7);
+\node at (2,4) {$x<0$};
+\node at (4.8,4) {$x \ge 0$};
+\end{pgfonlayer}
+\begin{pgfonlayer}{foreground}
+\path[fill] (4.37,2.85) circle [radius=0.1];
+\end{pgfonlayer}
+\end{tikzpicture}
+\vfill
+Input values $x < 0$ are transformed.  
+
+Their mass in the input distribution is shifted to $-x$ 
+
+and accumulates in the output distribution
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Here is the output distribution}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[blue,very thick] {RightMirrorPiledGauss(0,2)};
+\end{axis}
+
+\begin{pgfonlayer}{foreground}
+\path[fill] (4.37,1.67) circle [radius=0.1];
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Bounding distribution}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\begin{pgfonlayer}{foreground}
+% distance divided by 10 is 5.71 = 6.28 - 0.57
+\path[draw]  (0.2845, 0.5)          rectangle (0.2845+0.1*5.71, 0.6);
+\path[draw]  (0.2845+0.1*5.71, 0.5) rectangle (0.2845+0.2*5.71, 0.6);
+\path[draw]  (0.2845+0.2*5.71, 0.5) rectangle (0.2845+0.3*5.71, 0.8);
+\path[draw]  (0.2845+0.3*5.71, 0.5) rectangle (0.2845+0.4*5.71, 2.0);
+\path[draw]  (0.2845+0.4*5.71, 0.5) rectangle (0.2845+0.5*5.71, 4.9);
+\path[draw]  (0.2845+0.5*5.71, 0.5) rectangle (0.2845+0.6*5.71, 5.3);
+\path[draw]  (0.2845+0.6*5.71, 0.5) rectangle (0.2845+0.7*5.71, 4.9);
+\path[draw]  (0.2845+0.7*5.71, 0.5) rectangle (0.2845+0.8*5.71, 2.0);
+\path[draw]  (0.2845+0.8*5.71, 0.5) rectangle (0.2845+0.9*5.71, 0.8);
+\path[draw]  (0.2845+0.9*5.71, 0.5) rectangle (0.2845+1.0*5.71, 0.6);
+\path[draw]  (0.2845+1.0*5.71, 0.5) rectangle (0.2845+1.1*5.71, 0.6);
+
+\pause
+\node at (0.22+0.15*5.71, 0.8) {\footnotesize $0.003$};
+\node at (0.22+0.25*5.71, 1.0) {\footnotesize $0.01$};
+\node at (0.22+0.35*5.71, 2.2) {\footnotesize $0.065$};
+\node at (0.22+0.45*5.71, 5.1) {\footnotesize $0.185$};
+\node at (0.22+0.55*5.71, 5.5) {\footnotesize $0.21$};
+\end{pgfonlayer}
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Bounding $Pr([-1,1])$}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\begin{pgfonlayer}{foreground}
+% distance divided by 10 is 5.71 = 6.28 - 0.57
+\path[draw]  (0.2845, 0.5)          rectangle (0.2845+0.1*5.71, 0.6);
+\path[draw]  (0.2845+0.1*5.71, 0.5) rectangle (0.2845+0.2*5.71, 0.6);
+\path[draw]  (0.2845+0.2*5.71, 0.5) rectangle (0.2845+0.3*5.71, 0.8);
+\path[draw]  (0.2845+0.3*5.71, 0.5) rectangle (0.2845+0.4*5.71, 2.0);
+\path[draw]  (0.2845+0.4*5.71, 0.5) rectangle (0.2845+0.5*5.71, 4.9);
+\path[draw]  (0.2845+0.5*5.71, 0.5) rectangle (0.2845+0.6*5.71, 5.3);
+\path[draw]  (0.2845+0.6*5.71, 0.5) rectangle (0.2845+0.7*5.71, 4.9);
+\path[draw]  (0.2845+0.7*5.71, 0.5) rectangle (0.2845+0.8*5.71, 2.0);
+\path[draw]  (0.2845+0.8*5.71, 0.5) rectangle (0.2845+0.9*5.71, 0.8);
+\path[draw]  (0.2845+0.9*5.71, 0.5) rectangle (0.2845+1.0*5.71, 0.6);
+\path[draw]  (0.2845+1.0*5.71, 0.5) rectangle (0.2845+1.1*5.71, 0.6);
+
+\pause
+\draw[<->,very thick]  (0.2845+0.5*5.71, 0.2) -> (0.2845+0.6*5.71, 0.2);
+\end{pgfonlayer}
+\end{tikzpicture}
+\vfill
+\pause
+How many elements are in the domain? \pause 3
+\pause
+
+What is the mass of each element? \pause $\le 0.21$ 
+\pause
+
+$Pr([-1,1]) \le 0.63 = 3*0.21$
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Bounding $Pr([0,5])$}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\begin{pgfonlayer}{foreground}
+% distance divided by 10 is 5.71 = 6.28 - 0.57
+\path[draw]  (0.2845, 0.5)          rectangle (0.2845+0.1*5.71, 0.6);
+\path[draw]  (0.2845+0.1*5.71, 0.5) rectangle (0.2845+0.2*5.71, 0.6);
+\path[draw]  (0.2845+0.2*5.71, 0.5) rectangle (0.2845+0.3*5.71, 0.8);
+\path[draw]  (0.2845+0.3*5.71, 0.5) rectangle (0.2845+0.4*5.71, 2.0);
+\path[draw]  (0.2845+0.4*5.71, 0.5) rectangle (0.2845+0.5*5.71, 4.9);
+\path[draw]  (0.2845+0.5*5.71, 0.5) rectangle (0.2845+0.6*5.71, 5.3);
+\path[draw]  (0.2845+0.6*5.71, 0.5) rectangle (0.2845+0.7*5.71, 4.9);
+\path[draw]  (0.2845+0.7*5.71, 0.5) rectangle (0.2845+0.8*5.71, 2.0);
+\path[draw]  (0.2845+0.8*5.71, 0.5) rectangle (0.2845+0.9*5.71, 0.8);
+\path[draw]  (0.2845+0.9*5.71, 0.5) rectangle (0.2845+1.0*5.71, 0.6);
+\path[draw]  (0.2845+1.0*5.71, 0.5) rectangle (0.2845+1.1*5.71, 0.6);
+
+\pause
+\draw[<->,very thick]  (0.2845+0.55*5.71, 0.2) -> (0.2845+0.8*5.71, 0.2);
+\end{pgfonlayer}
+\end{tikzpicture}
+\vfill
+\pause
+How many elements are in the domain? \pause 5
+
+\pause
+What is the mass of each element? \pause $\le 0.21, \le 0.185, \le 0.065$
+
+\pause
+$Pr([0,5]) \le 0.92 = 2*0.21 + 2*0.185 + 2*0.065$
+\end{frame}
+
+
+
+\end{document}

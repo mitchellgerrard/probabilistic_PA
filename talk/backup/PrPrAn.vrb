@@ -1,0 +1,32 @@
+\frametitle{Bounding $Pr([0,5])$}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[green,very thick] {Gauss(0,2)};
+\end{axis}
+\begin{pgfonlayer}{foreground}
+% distance divided by 10 is 5.71 = 6.28 - 0.57
+\path[draw]  (0.2845, 0.5)          rectangle (0.2845+0.1*5.71, 0.6);
+\path[draw]  (0.2845+0.1*5.71, 0.5) rectangle (0.2845+0.2*5.71, 0.6);
+\path[draw]  (0.2845+0.2*5.71, 0.5) rectangle (0.2845+0.3*5.71, 0.8);
+\path[draw]  (0.2845+0.3*5.71, 0.5) rectangle (0.2845+0.4*5.71, 2.0);
+\path[draw]  (0.2845+0.4*5.71, 0.5) rectangle (0.2845+0.5*5.71, 4.9);
+\path[draw]  (0.2845+0.5*5.71, 0.5) rectangle (0.2845+0.6*5.71, 5.3);
+\path[draw]  (0.2845+0.6*5.71, 0.5) rectangle (0.2845+0.7*5.71, 4.9);
+\path[draw]  (0.2845+0.7*5.71, 0.5) rectangle (0.2845+0.8*5.71, 2.0);
+\path[draw]  (0.2845+0.8*5.71, 0.5) rectangle (0.2845+0.9*5.71, 0.8);
+\path[draw]  (0.2845+0.9*5.71, 0.5) rectangle (0.2845+1.0*5.71, 0.6);
+\path[draw]  (0.2845+1.0*5.71, 0.5) rectangle (0.2845+1.1*5.71, 0.6);
+
+\pause
+\draw[<->,very thick]  (0.2845+0.55*5.71, 0.2) -> (0.2845+0.8*5.71, 0.2);
+\end{pgfonlayer}
+\end{tikzpicture}
+\vfill
+\pause
+How many elements are in the domain? \pause 5
+
+\pause
+What is the mass of each element? \pause $\le 0.21, \le 0.185, \le 0.065$
+
+\pause
+$Pr([0,5]) \le 0.92 = 2*0.21 + 2*0.185 + 2*0.065$

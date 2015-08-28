@@ -1,0 +1,30 @@
+\frametitle{Assessment : Symbolic Execution}
+\vfill
+Abstract domains and transformers are designed to be efficient to compute over
+\begin{itemize}
+\item no such guarantee for general symbolic abstractions
+\end{itemize}
+\vfill
+The key differences
+\begin{itemize}
+\item underapproximates program behavior (skip traces, concolic)
+\item more precise \textbf{if} it considers the behavior you are interested in
+\end{itemize}
+\vfill
+Can be highly optimized
+\begin{itemize}
+\item state matching, state merging
+\item hybrids of concrete and symbolic execution
+\item aggressive query processing (99.997\% of SAT queries do not require a solver)
+\end{itemize}
+\vfill
+Tool support is widely available
+\begin{itemize}
+\item NASA SPF, Klee, CIVL, and many more
+\end{itemize}
+\vfill
+Used in practice
+\begin{itemize}
+\item Microsoft, VeriTesting, Coverity, and many more
+\end{itemize}
+\vfill

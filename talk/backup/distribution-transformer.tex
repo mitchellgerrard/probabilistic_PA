@@ -1,0 +1,82 @@
+\documentclass[]{article}
+
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{centernot}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
+
+\newcommand\x[1]{\ensuremath{\mathit{#1}}}
+\newcommand\lrangle[1]{\ensuremath{\langle#1\rangle}}
+
+\makeatletter
+\providecommand{\bigsqcap}{%
+  \mathop{%
+    \mathpalette\@updown\bigsqcup
+  }%
+}
+\newcommand*{\@updown}[2]{%
+  \rotatebox[origin=c]{180}{$\m@th#1#2$}%
+}
+\makeatother
+
+
+%\usepackage{url}
+%\urldef{\mailsa}\path|{dwyer, mgerrard}@cse.unl.edu|    
+%\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+%\noindent\keywordname\enspace\ignorespaces#1}
+
+
+% comment macro
+\newcommand{\mycomment}[1]{\textit{\textcolor{red}{#1}}}
+\newcommand{\ignore}[1]{}
+
+\title{Distribution Transformer}
+
+\begin{document}
+
+\pgfmathdeclarefunction{Gauss}{2}{%
+  \pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((\x-#1)^2)/(2*#2^2))}%
+}
+
+\pgfmathdeclarefunction{RightMirrorPiledGauss}{2}{%
+ \pgfmathparse{x<0?0:2*Gauss(#1,#2)}%
+}
+
+\begin{figure}
+\begin{tikzpicture}
+\begin{axis}[xlabel=$x$, grid=major, samples=100, domain=-10:10]
+\addplot[solid] {Gauss(0,2)};
+\addplot[dashed] {RightMirrorPiledGauss(0,2)};
+\end{axis}
+\end{tikzpicture}
+\caption{Input Distribution $N(0,2)$ (solid), Output Distribution (dashed)}
+\label{fig:input}
+\end{figure}
+
+Consider the simple program that accepts an integer as
+input and returns its absolute value.
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize\ttfamily]
+int abs(int x) {
+  if (x<0) 
+    return -x;
+  else 
+    return x;
+}
+\end{lstlisting}
+Figure~\ref{fig:input} shows the normally distributed input (in solid)
+and the output distribution which accumulates the probability mass 
+of the negative inputs onto the negated positive values on output.
+
+
+\end{document}
