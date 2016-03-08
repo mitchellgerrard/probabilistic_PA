@@ -1,4 +1,4 @@
-\section{Probabilistic Data Flow Analysis}
+\subsection{Probabilistic Data Flow Analysis}
 \label{sec:pdfa}
 
 The key challenge in probabilistic data flow analysis is
@@ -9,7 +9,7 @@ can be thought of as model checking
 of probabilistic abstract interpretations, and, in some
 cases, the model checking itself must be made probabilistic.
 
-\subsection{Control Flow Probabilities}
+\subsubsection{Control Flow Probabilities}
 Early work in extending data flow analysis 
 techniques with probabilities did not consider
 the semantics of the program. 
@@ -82,7 +82,7 @@ challenge, but the techniques from Section~\ref{sec:computingprobabilities}
 offer one means of approaching that problem.
 }
 
-\subsection{Abstract Data Probabilities}
+\subsubsection{Abstract Data Probabilities}
 Within the last 15 years, researchers 
 began incorporating probabilistic information directly into
 the semantics of a program and then abstracting over 
@@ -96,7 +96,7 @@ Embedding probabilities into the semantics allows
 the expression of both control flow and data values to influence
 the property probabilities computed during the analysis.
 
-\subsubsection{Abstracting Probability Distributions}
+\paragraph{Abstracting Probability Distributions}
 The pioneering work in this area, by 
 Monniaux \cite{monniaux2000abstract,monniaux2001backwards},
 developed the key insights that other work has built on. 
@@ -187,7 +187,7 @@ The space is reduced; the weights remain the same.
 Finally, reaching fixpoints for rich probabilistic abstract domains
 appears to require widening \cite{monniaux2000abstract,esparza2011probabilistic} to be cost-effective.
 
-\subsubsection{Probability for Abstract States}
+\paragraph{Probability for Abstract States}
 
 Computing bounds on the probability of a state property has been well-studied.
 Di Pierro et al. \cite{di2013probabilistic} develop analyses
@@ -215,7 +215,7 @@ Neither of the lines of work described above made implementations
 available.  We believe that sharing probabilistic data flow analyses
 infrastructure could lead to significant advances in the field.
 
-\subsection{Handling nondeterminism}
+\subsubsection{Handling nondeterminism}
 When abstraction of program choice is required or when 
 there is no basis for defining an input distribution programs,
 it is natural to use nondeterminism to account for the uncertainty
@@ -251,7 +251,7 @@ to improve efficiency.  Note, however, that these abstractions are
 independent of the probabilistic choices implicit in the semantics, and must be specified
 by the developer in some way---as in the case of Ramalingam's work.
 
-\subsection{More and varied probabilistic data flow analyses}
+\subsubsection{More and varied probabilistic data flow analyses}
 Recent years have seen several varied lines of work draw on
 the lessons learned from the early research on probabilistic
 data flow analysis.

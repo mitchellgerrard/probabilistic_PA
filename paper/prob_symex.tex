@@ -1,4 +1,4 @@
-\section{Probabilistic Symbolic Execution}
+\subsection{Probabilistic Symbolic Execution}
 \label{sec:pse}
 
 Symbolic execution produces path conditions (PCs), i.e., constraints on the inputs, that characterize how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analyzed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
@@ -111,7 +111,7 @@ As in Section~\ref{sec:computingprobabilitiesExact}, $D$ represents the finite d
 
 %To use model counting techniques to compute the probability $\x{Pr}(\x{pc})$ of path condition \x{pc}, we define a counting function, $\sharp(\x{pc})$, that returns the number of elements of $D$ that satisfy $\x{pc}$. Because we assume that $D$ is finite and countable, $\sharp(\cdot)$ always produces a finite non-negative integer, and $\x{Pr}(\x{pc})$ is, by definition~\cite{pestman1998mathematical}, $\sharp(\x{pc}) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty input domain). 
 
-\subsection{Approach}
+\subsubsection{Approach}
 
 To allow for a more general description of the approach to probabilistic symbolic execution, we modify Algorithm~\ref{alg-symexe} to sample and process symbolic paths one at a time. This processing includes the calculation of probabilities as described above.  The modified algorithm (shown in Algorithms~\ref{alg-pse} and~\ref{alg-symsample}) allows us to better handle the case where only a subset of paths of the program are analyzed. The interested reader is referred to \cite{filieri2014statistical} for a more detailed discussion of the precise algorithm.
 
@@ -161,22 +161,22 @@ Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{p
 
 $\newline$
 
-\subsubsection{stoppingPath} is the same as in the original symbolic execution algorithm and is there to handle loops conditioned on input variables, since these can cause infinite executions. However, since some paths might now be truncated before reaching the target property, we introduce three types of paths, (1) success paths, which reach and satisfy the target property, (2) failure paths, which reaches and falsify the property, and (3) grey paths, which are truncated before reaching the property. We consider these as three disjoint sets of paths and calculate the cumulative probability of success (i.e., the reliability of the code), failure and grey paths.  Grey paths can be handled optimistically (grouped with the success paths), pessimistically (grouped with the failure paths) or kept separate and be used as a measure for how confident we are in our estimates (for example, if the grey paths probability is very low, we are more confident). 
+\paragraph{stoppingPath} is the same as in the original symbolic execution algorithm and is there to handle loops conditioned on input variables, since these can cause infinite executions. However, since some paths might now be truncated before reaching the target property, we introduce three types of paths, (1) success paths, which reach and satisfy the target property, (2) failure paths, which reaches and falsify the property, and (3) grey paths, which are truncated before reaching the property. We consider these as three disjoint sets of paths and calculate the cumulative probability of success (i.e., the reliability of the code), failure and grey paths.  Grey paths can be handled optimistically (grouped with the success paths), pessimistically (grouped with the failure paths) or kept separate and be used as a measure for how confident we are in our estimates (for example, if the grey paths probability is very low, we are more confident). 
 
-\subsubsection{selectBranch}  In the context of symbolic execution, we define a sample as the
+\paragraph{selectBranch}  In the context of symbolic execution, we define a sample as the
 simulation of one symbolic path. Whenever a branch is encountered during such simulation, the decision to proceed along either of the alternative branches has to be taken according to the probability
 of satisfying the corresponding branch conditions. To calculate these, we calculate the number of solutions for each path condition as described at the beginning of this section. At each branching point, we therefore have the count for the PC that reached the branching point ($\sharp(pc)$) and the counts for the path condition for both branches ($\sharp(pc \wedge c)$ and $\sharp(pc \wedge \neg c)$). The probability for the true branch is thus $Pr(\x{succ_t}(l)) = \sharp(pc \wedge c)/\sharp(pc)$ and for the false branch it is $Pr(\x{succ_f}(l)) = \sharp(pc \wedge \neg c)/\sharp(pc)$.  
 
 In the example from Figure~\ref{fig:symex:illus}, when we sample at node $3$, we have that the path condition at the node is $pc = b_0 < 5 \wedge b_1 < 5$ and $\sharp(pc) = 2500$. The true branch ($b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ with a count of $1500$) will thus be taken with probability $1500/2500 = 0.6$ and the false branch will be taken with probability $0.4$.  
 
-\subsubsection{processPath} calculates the probability for the path being processed and checks whether the path falls into the success, failure or grey set. Note that many of these calculations have already been performed during the {\tt selectBranch}, and caching is used to eliminate duplication. 
+\paragraph{processPath} calculates the probability for the path being processed and checks whether the path falls into the success, failure or grey set. Note that many of these calculations have already been performed during the {\tt selectBranch}, and caching is used to eliminate duplication. 
 
 Again in the example from Figure~\ref{fig:symex:illus}, the paths ending at the labels $A', B'$ and $C'$ indicate assertion failures, and thus the probability of failure will be $1500/10000 + 1750/10000 + 2250/10000 = 0.55$.  Since there are no loops in the example the rest of the paths indicate success, which will have probability $0.45$.
 
 In addition to the probability calculations, another import task performed here is to handle sampling without replacement. More specifically, how to ensure an exhaustive analysis can be done even when certain behaviors have very small probability (and thus would be hard to sample in a purely Monte Carlo fashion). We leverage the counts we store for each path condition to ensure no path is sampled twice (when we don't want replacement). Whenever a path is finished being explored, we subtract the final PC's count from all the PC counts along the current path back to the root. Note that these counts are being used by \x{selectBranch} to calculate the conditional probabilities at a branch, and thus it changes the distribution of the probabilities. More importantly, if a count becomes zero, it will never be sampled. As more of the paths of the program are analyzed, 
 counts are being propagated up the tree until the root node's count becomes zero, at which point all paths have been explored. 
 
-\subsubsection{stoppingSearch} uses either a measure of confidence based on the percentage of the input domain that has been explored, or it uses a statistical measure of confidence. 
+\paragraph{stoppingSearch} uses either a measure of confidence based on the percentage of the input domain that has been explored, or it uses a statistical measure of confidence. 
 
 Enough confidence exists about the portion of the input domain that has been analyzed when  $1 - Pr(\x{success}) + Pr(\x{failure}) < \epsilon$.  If we treat grey paths separately, this means $Pr(\x{grey}) < \epsilon$. The parameter $\epsilon$ is provided by the user, and is typically very small. Note that although it is shown that \x{stoppingSearch} takes the path as input, in reality it just reuses the results computed during the \x{processPath}. 
 
@@ -184,11 +184,11 @@ Enough confidence exists about the portion of the input domain that has been ana
 \mycomment{Corina: Antonio can you help out with the statistical portion}
 }
 
-\subsection{Handling nondeterminism}
+\subsubsection{Handling nondeterminism}
 
 Handling nondeterminism within the systems being analyzed has been studied in \cite{Filieri2013} in the context of scheduling choices in concurrent programs. The approach was to determine the schedule giving the highest (or lowest) reliability. More recently, an approach based on value iteration learning was presented in \cite{luckow2014exact} to handle the problem in a more general fashion.
 
-\subsection{More and varied probabilistic symbolic execution}
+\subsubsection{More and varied probabilistic symbolic execution}
 
 Probabilistic symbolic execution was introduced in \cite{Geldenhuys2012}, where the approach was to do model counting (using LattE) on-the-fly during symbolic execution (as in Algorithm~\ref{alg-symexe}). This work was extended in \cite{Filieri2013} to collect path conditions from symbolic execution and then calculate the reliability of the code. This work also showed how usage profiles can be handled. In both of these works it is important to observe that {\it all} paths of the program are analyzed, and thus the probability calculations are precise. 
 

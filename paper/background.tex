@@ -1,4 +1,4 @@
-\section{Scope and Background}
+\subsection{Scope and Background}
 \label{sec:background}
 
 \input{example2}
@@ -32,7 +32,7 @@ A static analysis capable of reasoning about assert statements
 can handle more general \textit{invariant properties}, i.e., 
 predicates that must hold whenever reached in all program executions.  
 
-\subsection{Programs and Program Analyses}
+\subsubsection{Programs and Program Analyses}
 A program defines a set of execution \textit{traces}, each of
 which is a sequence of \textit{concrete states}, i.e., 
 the current program counter and a map from memory locations to values.
@@ -90,7 +90,7 @@ value, $\top \in \mathcal{A}$ such that
 $\forall a \in \mathcal{A} : a \sqcap \top = a$, makes the
 abstract domain a meet-semilattice.
 
-\subsubsection{Data Flow Analysis}
+\paragraph{Data Flow Analysis}
 Data flow analyses~\cite{kildall1973unified} 
 provides a framework for computing properties shared by sets of
 program traces reaching a program state, or set of states.  It is
@@ -263,7 +263,7 @@ model checking algorithms.
 \end{minipage}
 \end{figure}
 
-\subsubsection{Symbolic Execution}
+\paragraph{Symbolic Execution}
 Like data flow analysis, symbolic execution~\cite{king1976symbolic,clarke1976system} 
 performs a non-standard interpretation of program executions using 
 a symbolic abstraction of program states.
@@ -325,7 +325,7 @@ Symbolic execution tools and toolkits exist for many popular
 languages~\cite{pasareanu2010symbolic,godefroid2005dart,jamrozik2013generating,cadar2008klee}
 and have been used primarily for test generation and fault detection.
 
-\subsection{Probabilities and Probabilistic Models}
+\subsubsection{Probabilities and Probabilistic Models}
 
 There is an enormous literature on probability and statistics
 that can be brought to bear in program analysis.  

@@ -1,11 +1,11 @@
-\section{Computing Program Probabilities}
+\subsection{Computing Program Probabilities}
 \label{sec:computingprobabilities}
 
 Computing probabilities for probabilistic program analysis can usually be reduced to computing the probability of satisfying a boolean constraint over the program variables. In this section we will introduce some of the basic techniques currently used in program analysis. 
 
 To simplify the notation, we will focus on implicit probabilistic constructs, assuming the program under analysis has input variables $V=\{v_1, v_2, \dots, v_n\}$, where $v_i$ has domain $d_i$ and comes with a probability distribution $\mathcal{P}_i: d_i \to [0, 1]$. The input domain $D$ is defined as the cartesian product of the domains $d_i$, while the input distribution $\mathcal{P}$ is defined as the joint distribution over all the input variables $\prod_i \mathcal{P}_i(\bar{v_i})$. Given a constraint $\phi: V \to \{true, false\}$, our goal is to compute the probability $Pr(\phi)$ of satisfying $\phi$ given the input domains and probability distributions. This problem is usually referred to as model counting, when the input domains are countable, or solution space quantification, when the input domains are modeled as uncountable (e.g., abstracting floating-point numbers as reals).
 
-\subsection{Exact and numeric computation}\label{sec:computingprobabilitiesExact}
+\subsubsection{Exact and numeric computation}\label{sec:computingprobabilitiesExact}
 
 % OUTLINE
 %	\begin{enumerate}
@@ -67,7 +67,7 @@ Since the elements of the partition are disjoint by construction, we can exploit
 
 Formalizing the input distribution on a finite partition of the input domain is general enough to capture every valid distribution on the inputs, including possible correlations or functional dependencies among the input variables. However, the finer the specification of the input distribution, the more complex the computation of Equation~\eqref{eq:countingInputDistribution}, which, in the worst case, may require the computation of $|D|$ summands \cite{Borges2014}. While this worst case is unlikely to occur (partially due to the optimization strategies described later), more efficient probability computations are possible which employ distribution-aware sampling-based methods, described in the next section.
 
-\subsection{Sampling-based methods}\label{sec:computingprobabilitiesSampling}
+\subsubsection{Sampling-based methods}\label{sec:computingprobabilitiesSampling}
 Exact methods can suffer from two main limitations: 1) generality with respect to input domains and constraint classes and 2) scalability, either due to the intrinsic complexity of the algorithm used or to the discretization of the input distributions. In many cases, sampling-based methods may be used to leverage both limitations.
 
 In this section we will present sampling-based methods for quantifying the probability of satisfying arbitrarily complex floating-point constraints. We will briefly discuss how to generalize to different domains at the end of the section.

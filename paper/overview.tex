@@ -1,4 +1,4 @@
-\section{Overview}
+\subsection{Probabilistic Extension}
 \label{sec:overview}
 
 The literature on incorporating probabilistic techniques into 
@@ -9,7 +9,7 @@ families of approaches and, in doing so, provide the reader with
 intuitions that are often missing in the detailed presentation of
 techniques, quite helpful in understanding them.
 
-\subsection{Where do the probabilities come from?}
+\subsubsection{Where do the probabilities come from?}
 There are two perspectives adopted in the literature.
 Programs are \textit{implicitly} probabilistic because the distributions
 from which input values are drawn are not specified in the program,
@@ -55,7 +55,7 @@ has at hand, while Sections~\ref{sec:computingprobabilities}
 and \ref{sec:pse} compute such probabilities from information about
 the program semantics and the input distribution.
 
-\subsection{What does the analysis compute?}
+\subsubsection{What does the analysis compute?}
 There are again two perspectives adopted in the literature.
 One can view a probabilistic program as a transformer on probability
 distributions; the analysis computes the probability distribution over the
@@ -92,7 +92,7 @@ is greater than 5 where the input is distributed according to N(0,1)
 }
 
 
-\subsection{Mixing abstraction with probabilities}
+\subsubsection{Mixing abstraction with probabilities}
 Any analysis that hopes to scale will have to symbolically approximate
 behavior.  As explained earlier, in static analyses it is common
 to model such overapproximation using nondeterministic choice.
