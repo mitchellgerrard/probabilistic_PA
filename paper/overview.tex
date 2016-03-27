@@ -1,4 +1,4 @@
-\subsection{Probabilistic Extension}
+\subsection{Extending Program Analyses with Probabilities}
 \label{sec:overview}
 
 The literature on incorporating probabilistic techniques into 
@@ -7,7 +7,7 @@ varied.  In this paper we cannot hope to cover all of it, but our
 intention is to expose key similarities and differences between 
 families of approaches and, in doing so, provide the reader with
 intuitions that are often missing in the detailed presentation of
-techniques, quite helpful in understanding them.
+techniques.
 
 \subsubsection{Where do the probabilities come from?}
 There are two perspectives adopted in the literature.
@@ -43,7 +43,7 @@ of a value in that set.
 
 In Section~\ref{sec:probspecs}, we will see how distributions can
 be specified and inferred from data sets that characterize the
-input domain, in a form that 
+input domain in a form that 
 analyses can consume.  While effective, these approaches can be
 costly, and Section~\ref{sec:computingprobabilities} discusses
 techniques for mitigating that cost.
@@ -75,25 +75,18 @@ techniques explore---and it is even possible to compute the probability
 
 Conceptually, there are two pieces of information that are necessary
 to reason probabilisticaly about a set of concrete values: a quantity
-that approximates the probability of each value, and the number of
-values in the set.  Many of the earlier probabilistic static analysis
+that approximates the probability of each value in the set 
+and the number of values in the set.  
+Many of the earlier probabilistic static analysis
 techniques did not explicitly capture this latter quantity, but
 more recent work discussed in Section~\ref{sec:pse}, using the
 techniques of Section~\ref{sec:computingprobabilities}, 
 does capture this quantity, as do other
 recent approaches~\cite{mardziel2013dynamic}.
 
-\ignore{
-example showing a negation function with drawBernoulli(0.25)
-and how it transforms a distribution
-
-show a program that tests whether the absolute value of a number
-is greater than 5 where the input is distributed according to N(0,1)
-}
-
 
 \subsubsection{Mixing abstraction with probabilities}
-Any analysis that hopes to scale will have to symbolically approximate
+Any analysis that hopes to scale will have to approximate
 behavior.  As explained earlier, in static analyses it is common
 to model such overapproximation using nondeterministic choice.
 Across all of the analysis techniques we have surveyed, MDPs

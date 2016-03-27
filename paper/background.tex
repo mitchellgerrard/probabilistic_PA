@@ -22,17 +22,20 @@ embedded in the program,
 e.g., \texttt{assert} statements, to simplify the explanation
 of how probabilities are incorporated into the analyses.
 For the example, we are interested in reasoning about
-\textit{assertion freedom}, i.e., that the program does
+assertion freedom, i.e., that the program does
 not reach a false assertion.
 In our example
 this can happen by reaching the implicit return from \texttt{m},
 thereby avoiding the three \texttt{assert} statements.
 
+\ignore{
 A static analysis capable of reasoning about assert statements 
 can handle more general \textit{invariant properties}, i.e., 
 predicates that must hold whenever reached in all program executions.  
+}
 
 \subsubsection{Programs and Program Analyses}
+\ignore{
 A program defines a set of execution \textit{traces}, each of
 which is a sequence of \textit{concrete states}, i.e., 
 the current program counter and a map from memory locations to values.
@@ -41,6 +44,7 @@ all traces, the predicate evaluates to true, otherwise the program
 \textit{falsifies} the property.
 In the example, there are six traces, half of which falsify the assertion
 freedom property.
+}
 
 There are many different ways to represent the execution behavior
 of a program to enable analysis.  Immediately to the right of
@@ -98,9 +102,11 @@ common for such analyses to group together the states that share a
 common control location; the computed properties attempt to characterize
 the invariants over those states.
 
-Data flow analyses are built on an underlying fixpoint engine, as is
-model checking~\cite{clarke1999model}.  Moreover, data flow
-analyses commonly operate on abstractions of program states that
+Data flow analyses are solved using a fixpoint computation which
+allows properties of all program paths to be safely approximated.
+Model checking~\cite{clarke1999model} also relies on an underlying
+fixpoint computation.  Moreover, data flow
+analyses operate on symbolic abstractions of program states that
 can be defined by abstract interpretation~\cite{cousot1977abstract}. 
 In fact, it is now well-understood that data flow analysis can be
 viewed as model checking of abstract interpretations~\cite{schmidt1998data}.

@@ -7,11 +7,7 @@ and have been an active topic of study for over five decades.
 Initially developed to allow compilers to generate more efficient
 output programs, by the mid-1970s \cite{fosdick1976data} researchers had
 understood that such program analyses could be applied to fault
-detection---and verification of the absence of specific classes of faults.
-
-There are extremely well-developed frameworks for defining
-and implementing such analyses.  In this paper we focus on two
-such frameworks: data flow analysis and symbolic execution.
+detection and verification of the absence of specific classes of faults.
 
 The power of these analysis techniques, and what distinguishes them from
 simply running a program and observing its behavior, is in their
@@ -27,9 +23,10 @@ when it is ported to an operating system with a different scheduler).
 Static analyses model uncertainty in program behavior
 through the use of various forms of abstraction and symbolic representation.
 For example, symbolic expressions are used to encode logical constraints 
-in symbolic execution, to define abstract domains
-in data flow analysis, and to capture sets of data values that may be input
-to a program in the predicate abstraction of model checking.
+in symbolic execution~\cite{SymEx}, to define abstract domains
+in data flow analysis~\cite{DataFlowAnalysis}, and to 
+capture sets of data values that constitute reachable states via
+predicate abstraction~\cite{PredicateAbstraction}.
 Nondeterministic choice is another widely used approach for modeling
 uncertainty---for instance, in modeling uncertain branch 
 decisions in data flow analysis,
@@ -47,6 +44,7 @@ incomes vary according to a generalized beta distribution
 exploited to yield useful analysis results when classic
 analyses fail, or to reason about new types of program properties?
 
+\ignore{
 For decades, there has been a growing awareness of the value of 
 incorporating more precise forms of uncertainty into program behavior.  
 The field of randomized algorithms has studied how to incorporate
@@ -57,14 +55,14 @@ Programming such algorithms requires that primitives be available
 to draw values from probability distributions, and there are many
 languages that provide such primitives, e.g., NetLogo \cite{tisue2004netlogo},
 the C++ \texttt{$\mathtt{<random>}$} library, and the GNU Scientific library.
+}
 
 Regardless of whether information about the distribution of
 values is embedded within a program or stated as an input assumption,
-the semantics of these probabilistic programs is well-understood---and
+the semantics of such probabilistic programs is well-understood---and
 has long been studied 
-\cite{kozen1981semantics,kozen1983probabilistic,jones1990probabilistic,morgan1996probabilistic}
-% Reset the footnote counter from title page to 0 for the body of the paper
-\setcounter{footnote}{0}
+\cite{kozen1981semantics,kozen1983probabilistic,jones1990probabilistic,morgan1996probabilistic}\\
+\setcounter{footnote}{0}\\
 \footnote{In recent
 years, the term probabilistic program has been generalized beyond
 drawing inputs from probability distributions, which we
@@ -72,8 +70,8 @@ consider here, to programs that can condition program behavior---by
 rejecting certain program runs---and thereby be viewed as
 computations over probability distributions.  We refer the reader to the
 recent paper by Gordon, Henzinger, Nori and Rajamani \cite{Gordon2014}
-for discussion of these more general programs.}. 
-What has lagged behind is work in developing frameworks for 
+for discussion of the analysis of these more general probabilistic programs.}. 
+What has lagged behind is the development of frameworks for 
 defining and implementing static analysis techniques for such programs.
 
 What would such analyses have to offer?
@@ -91,8 +89,8 @@ by running out of memory, time, or due to excessive approximation.
 
 In this paper, we survey work on adapting data flow analysis 
 and symbolic execution to use probabilistic information.
-We begin with a brief background that provides basic definitions
-related to static analysis and probabilities.
+We begin with background that provides basic definitions
+related to static analysis and probabilistic models.
 Section~\ref{sec:overview} attempts to expose some of the key
 intuitions and concepts that cross-cut the work in this area.
 Section~\ref{sec:computingprobabilities} discusses approaches that
@@ -101,9 +99,11 @@ events, e.g., executing a path, taking a branch, or reaching a state.
 The following two sections, \ref{sec:pdfa}-\ref{sec:pse}, 
 survey work on probabilistic data flow analysis and probabilistic
 symbolic execution.  
+\ignore{
 Section~\ref{sec:probspecs} surveys approaches to the cross-cutting
 issue of how probabilities can be specified or encoded for use
 in analyses.
+}
 We conclude with the discussion of a series of open questions
 and research challenges that we believe are worth pursuing.
 

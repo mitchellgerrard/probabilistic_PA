@@ -1,6 +1,7 @@
 \begin{figure}[h!]
-\hspace{-.7in}
-\tikzstyle{every node}=[text width=10em, text centered, font=\scriptsize, inner sep=0pt]
+\hspace{-0.0in}
+%\tikzstyle{every node}=[text width=10em, text centered, font=\scriptsize, inner sep=0pt]
+\tikzstyle{every node}=[text centered, font=\scriptsize, inner sep=1pt]
 \begin{tikzpicture}[scale=0.38, level/.style={sibling distance = 15mm, level distance = 17mm}]
   \node[yshift=0mm] {\texttt{if(drawB...}}
    child{
@@ -9,49 +10,50 @@
       node[xshift=-8mm] {\texttt{if(x <= 60)}}
        child{
         node[name=e1,xshift=-3mm] {\texttt{...}}
-        edge from parent[->] node[left,xshift=12mm] {0.6}
+        edge from parent[->] node[left,xshift=-1mm] {0.6}
        }
        child{
         node[xshift=3mm] {\texttt{assert...}}
-        edge from parent[->] node[right,xshift=-12mm] {0.4}
+        edge from parent[->] node[right,xshift=1mm] {0.4}
        }
-      edge from parent[->] node[left,xshift=12mm] {0.5}
+      edge from parent[->] node[left,xshift=-1mm] {0.5}
      }
      child{
       node[xshift=8mm] {\texttt{if(x <= 30)}}
        child{
         node[name=e2,xshift=-3mm] {\texttt{...}}
-        edge from parent[->] node[left,xshift=12mm] {0.3}
+        edge from parent[->] node[left,xshift=-1mm] {0.3}
        }
        child{
         node[name=m1,xshift=3mm] {\texttt{assert...}}
-        edge from parent[->] node[right,xshift=-12mm] {0.7}
+        edge from parent[->] node[right,xshift=1mm] {0.7}
        }
-      edge from parent[->] node[right,xshift=-12mm] {0.5}
+      edge from parent[->] node[right,xshift=1mm] {0.5}
      }
-     edge from parent[->] node[left,xshift=12mm] {0.5}
+     edge from parent[->] node[left,xshift=-1mm] {0.5}
    }
    child{
     node[xshift=12mm] {\texttt{if(x <= 55)}}
      child{
       node[name=e3,xshift=-3mm] {\texttt{...}}
-      edge from parent[->] node[left,xshift=12mm] {0.55}
+      edge from parent[->] node[left,xshift=-1mm] {0.55}
      }
      child{
       node[xshift=3mm] {\texttt{assert...}}
-      edge from parent[->] node[right,xshift=-12mm] {0.45}
+      edge from parent[->] node[right,xshift=1mm] {0.45}
      }
-    edge from parent[->] node[right,xshift=-12mm] {0.5}
+    edge from parent[->] node[right,xshift=1mm] {0.5}
    }
 ;
 \node[name=r,yshift=-30mm] {\texttt{return}};
 \draw[->] (e1.south) to ($(r.north)+(-3mm,0)$);
 \draw[->] (e2.south) to ($(r.north)+(0,0)$);
-\draw[->] (e3.south) to ($(m1.east)+(0,0)$) to ($(r.north)+(3mm,0)$);
+\draw[->] (e3.south) to ($(m1.east)+(5mm,0)$) to ($(r.north)+(3mm,0)$);
 \end{tikzpicture}%
 ~
-\hspace{-1.0in}
-\tikzstyle{every node}=[text width=10em, text centered, font=\scriptsize, inner sep=0pt]
+\hspace{0.0in}
+%\tikzstyle{every node}=[text width=10em, text centered, font=\scriptsize, inner sep=0pt]
+\tikzstyle{every node}=[text centered, font=\scriptsize, inner sep=1pt]
 \begin{tikzpicture}[scale=0.38, level/.style={sibling distance = 15mm, level distance = 17mm}]
   \node[yshift=0mm] {\texttt{if(drawB...}}
    child{
@@ -60,11 +62,11 @@
       node[xshift=-8mm] {\texttt{if(x <= 60)}}
        child{
         node[name=e1,xshift=-3mm] {\texttt{...}}
-        edge from parent[->] node[left,xshift=12mm] {0.6}
+        edge from parent[->] node[left,xshift=-1mm] {0.6}
        }
        child{
         node[xshift=3mm] {\texttt{assert...}}
-        edge from parent[->] node[right,xshift=-12mm] {0.4}
+        edge from parent[->] node[right,xshift=1mm] {0.4}
        }
       edge from parent[->] 
      }
@@ -72,11 +74,11 @@
       node[xshift=8mm] {\texttt{if(x <= 30)}}
        child{
         node[name=e2,xshift=-3mm] {\texttt{...}}
-        edge from parent[->] node[left,xshift=12mm] {0.3}
+        edge from parent[->] node[left,xshift=-1mm] {0.3}
        }
        child{
         node[name=m1,xshift=3mm] {\texttt{assert...}}
-        edge from parent[->] node[right,xshift=-12mm] {0.7}
+        edge from parent[->] node[right,xshift=1mm] {0.7}
        }
       edge from parent[->] 
      }
@@ -86,11 +88,11 @@
     node[xshift=12mm] {\texttt{if(x <= 55)}}
      child{
       node[name=e3,xshift=-3mm] {\texttt{...}}
-      edge from parent[->] node[left,xshift=12mm] {0.55}
+      edge from parent[->] node[left,xshift=-1mm] {0.55}
      }
      child{
       node[xshift=3mm] {\texttt{assert...}}
-      edge from parent[->] node[right,xshift=-12mm] {0.45}
+      edge from parent[->] node[right,xshift=1mm] {0.45}
      }
     edge from parent[->] 
    }
@@ -98,7 +100,7 @@
 \node[name=r,yshift=-30mm] {\texttt{return}};
 \draw[->] (e1.south) to ($(r.north)+(-3mm,0)$);
 \draw[->] (e2.south) to ($(r.north)+(0,0)$);
-\draw[->] (e3.south) to ($(m1.east)+(0,0)$) to ($(r.north)+(3mm,0)$);
+\draw[->] (e3.south) to ($(m1.east)+(5mm,0)$) to ($(r.north)+(3mm,0)$);
 \end{tikzpicture}
 \caption{Probabilistic CFG (left) and MDP (right)}
 \label{fig:prob-cfg}
