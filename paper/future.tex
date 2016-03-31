@@ -9,10 +9,10 @@ probabilistic program analyses.
 
 \item Program understanding has been touched on in \cite{Geldenhuys2012} and \cite{Filieri2015} where errors are found by observing unexpected probabilities for certain behaviors.  This provides a means of quantifying the notion of ``bugs as deviant behavior'' that underlies much work on fault detection.   While numeric characterizations of distributions may be difficult for developers to interpret, visualizations of those distributions might allow them to spot unexpected patterns to focus their attention on.
 
-\item Probabilistic symbolic execution is particularly well suited for quantifying the difference between two versions of a program~\cite{Filieri2015b}. This makes it an ideal approach to rank how close a program is to a given oracle program, which has applications in mutation analysis, program repair, approximate computing or even in marking student assignments.  Note that this provides a route to a semantic ranking of programs as opposed to more syntactic rankings, e.g., by measuring the shared syntactic structure. 
+\item Probabilistic symbolic execution is particularly well-suited for quantifying the difference between two versions of a program~\cite{Filieri2015b}. This makes it an ideal approach to rank how close a program is to a given oracle program, which has applications in mutation analysis, program repair, approximate computing or even in marking student assignments.  Note that this provides a route to a semantic ranking of programs as opposed to more syntactic rankings, e.g., by measuring the shared syntactic structure. 
 
 \item Probabilistic programming is becoming very popular \cite{Gordon2014}, but the current approaches mainly focus on sampling, whereas a more accurate approach would be to use probabilistic symbolic execution.  
-To achieve this symbolic execution must be extended to support
+To achieve this, symbolic execution must be extended to support
 \texttt{observe(e)} statements which condition input on a boolean expression,
 $e$, by aborting the path if the expression is false and renormalizing the
 output distribution.
