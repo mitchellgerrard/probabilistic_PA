@@ -74,11 +74,12 @@ Analyses that seek to prove the satisfaction of properties generally
 define abstractions that \textit{overapproximate} the set of program
 states, whereas those that seek to falsify properties generally define
 abstractions that \textit{underapproximate} the set of program states.
-
 With overapproximating analyses, it is common to define an \textit{abstract
 domain}, $\mathcal{A}$, 
 which symbolically represents a set of concrete states that
 are said to be defined over the \textit{concrete domain}, $\mathcal{C}$.
+
+\ignore{
 For any reachable state of a program, a pair of abstraction 
 and concretization functions, 
 $\alpha : \mathcal{C} \mapsto \mathcal{A}$ and  
@@ -93,6 +94,7 @@ computes greatest lower bounds, and a maximal
 value, $\top \in \mathcal{A}$ such that 
 $\forall a \in \mathcal{A} : a \sqcap \top = a$, makes the
 abstract domain a meet-semilattice.
+}
 
 \paragraph{Data Flow Analysis}
 Data flow analyses~\cite{kildall1973unified} 
@@ -113,9 +115,15 @@ viewed as model checking of abstract interpretations~\cite{schmidt1998data}.
 
 An abstract interpretation is a 
 non-standard interpretation of program executions over an abstract domain.  
-The semantics of program statements is lifted to operate
+The semantics of program statements are lifted to operate
 on a set of states, encoded as an element of the abstract domain,
 rather than on a single concrete state.  
+Generating the set of traces for non-trivial programs is impractical;
+instead, abstract states can be combined, via a meet operation, wherever
+traces merge in the control flow, and loops are processed
+repeatedly to compute the maximum fix point (MFP).
+
+\ignore{
 For a program statement $\tau$,
 $\tau^\#$ defines its abstract semantics such that
 $\forall c, c' \in \mathcal{C} : \tau(c) = c' \implies \tau^\#(\alpha(c)) \sqsupseteq \alpha(c')$.  This implies the classic overapproximating correctness
@@ -134,11 +142,6 @@ $\displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$
 defines invariant properties that hold prior to executing $l$; this
 is refered to as the meet-over-paths (MOP) solution~\cite{kildall1973unified}.
 
-Generating the set of traces for non-trivial programs is impractical;
-instead, abstract states can be combined, via $\sqcap$, wherever
-traces merge in the control flow, and loops are processed
-repeatedly to compute the maximum fix point (MFP)
-as illustrated in Algorithm~\ref{alg-dfa}.
 The algorithm stores abstract states, $a$, for each location, initializing
 the first location to $\iota$, then proceeds along the control
 flow relation of the program to approximate the effects of program
@@ -151,14 +154,15 @@ If that results in a new abstract state for the successor, then
 the successor is stored for future processing.  When the algorithm
 terminates it computes for each location $l$ an approximation,
 $a[l] \sqsubseteq \displaystyle\bigsqcap_j^{T(l)} tr_j^\#(\iota)$.
+}
 
 While not traditionally a component of a data flow analysis, a property,
 $\phi$, can be checked by relating it to abstract states.  Specifically,
-if $a[l] \implies \phi$ then $\phi$ is verified to hold whenever 
+if some abstract state at location $l$ implies $\phi$, then $\phi$ is verified to hold whenever 
 location $l$ is reached.  However, it may be the case that $\phi$ holds
-at some location $l'$ but $a[l'] \centernot\implies \phi$; this is referred
+at some location $l'$ but the abstract state at $l'$ does not imply $\phi$; this is referred
 to as a \textit{false error} report and is due to the overapproximating
-nature of $\mathcal{A}$ and $\tau^\#$.
+nature of abstract interpretation.
 
 Data flow analysis tools and toolkits exist for many popular 
 languages~\cite{vallee1999soot,fink2012wala}
@@ -189,7 +193,7 @@ model checking algorithms.
 
 \mycomment{Matt: explain the algorithm}
 }
-
+\ignore{
 \begin{figure}[t]
 \noindent\begin{minipage}[t]{0.4\textwidth}
 \begin{algorithm}[H]
@@ -268,6 +272,7 @@ model checking algorithms.
 \end{algorithm}
 \end{minipage}
 \end{figure}
+}
 
 \paragraph{Symbolic Execution}
 Like data flow analysis, symbolic execution~\cite{king1976symbolic,clarke1976system} 
