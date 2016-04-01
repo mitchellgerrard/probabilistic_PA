@@ -344,6 +344,14 @@ that can be brought to bear in program analysis.
 In this paper, we consider two types of discrete time models:
 Markov chains and Markov decision processes (MDP).
 
+Both models rely on the concept of a probability distribution.
+A \textit{probability distribution} over a set is given by a function
+which maps each of the set's subsets to some real number between 0 and 1;
+this number represents the probability of a given subset being the outcome
+of a random experiment.
+The sum of the probabilities of all subsets is 1.
+
+\ignore{
 A \textit{distribution} over a set $S$ is given by a 
 function $\pi : S \rightarrow [0,1]$ where
 $\sum_{s \in S} \pi(s) = 1$.  For $s \in S$,
@@ -368,7 +376,12 @@ s_n \in G \wedge \forall i \in [0,n-1] : R(s_i)(s_{i+1}) > 0$
 as the traces reaching a $G$-state.
 The probability of reaching a state in 
 a set of goal states, $G$, is $Pr(G) = \sum_{s \in Tr(G)} Pr(s)$.
+}
 
+A Markov chain is a labeled transition system which, given some
+state, defines the probability of moving to another state.
+The probability of executing a sequence of states is then the
+product of the transition probabilities between each state.
 The model fragment in the upper right corner of 
 Figure~\ref{fig:example} depicts a Markov chain fragment.
 It defines, for the set of states 
@@ -401,17 +414,20 @@ transition model, it results in an MDP.
 An MDP adds an additional structure, $A$, that defines
 a set of (internal) actions which are used to model the
 selection among a set of possible next-state probability distributions.
+\ignore{
 The transition relation
 for MDPs is generalized to $R : S \times A \times D_S$.
+}
 When traversing a path in an MDP, in each state, a choice
 from $A$ must be made in order to determine how to transition,
-probabilistically, to a next state.   That sequence of choices, 
-$\sigma \in A^*$, is termed a \textit{schedule} (or policy or 
+probabilistically, to a next state.   That sequence of choices
+\ignore{$\sigma \in A^*$,} is termed a \textit{schedule} (or policy or 
 strategy) for the MDP.
-
 Given a fixed schedule, an MDP reduces to a Markov chain, but
 the value of an MDP lies in its ability to provide upper and
-lower bounds on the behavior of the modeled system.
+lower bounds on the behavior of the modeled system (discussed
+in the following section).
+\ignore{
 For an MDP, let $Pr^{\sigma}(G)$ be the probability of reaching
 a $G$-state from an initial state using schedule $\sigma$;
 this is equivalent to $Pr(G)$ for the Markov chain induced
@@ -421,3 +437,4 @@ and
 $Pr^-(G) = \min_{\sigma} Pr^{\sigma}(G)$
 as the maximum and minimum probabilities of reaching a $G$-state
 in the MDP over the set of all possible schedules.  
+}
