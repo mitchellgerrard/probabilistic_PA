@@ -1,9 +1,13 @@
 \subsection{Probabilistic Symbolic Execution}
 \label{sec:pse}
 
-Symbolic execution produces path conditions (PCs), i.e., constraints on the inputs, that characterize how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analyzed any further (see Algorithm~\ref{alg-symexe}).  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
+Symbolic execution produces path conditions (PCs), i.e., constraints on the inputs, that characterize how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analyzed any further.  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
 
-As in Section~\ref{sec:computingprobabilitiesExact}, for simplicity, we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. 
+As in Section~\ref{sec:computingprobabilitiesExact}, for simplicity, we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  
+See \cite{Filieri2013} for a detailed discussion of usage profiles within symbolic execution.
+\ignore{
+Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. 
+}
 
 For example, in Figure~\ref{fig:symex:illus}, 
 we introduce variables $b_0$ and $b_1$ to model 
@@ -113,11 +117,11 @@ As in Section~\ref{sec:computingprobabilitiesExact}, $D$ represents the finite d
 
 \subsubsection{Approach}
 
-To allow for a more general description of the approach to probabilistic symbolic execution, we modify Algorithm~\ref{alg-symexe} to sample and process symbolic paths one at a time. This processing includes the calculation of probabilities as described above.  The modified algorithm (shown in Algorithms~\ref{alg-pse} and~\ref{alg-symsample}) allows us to better handle the case where only a subset of paths of the program are analyzed. The interested reader is referred to \cite{filieri2014statistical} for a more detailed discussion of the precise algorithm.
+To allow for a more general description of the approach to probabilistic symbolic execution, we modify the traditional symbolic execution algorithm to sample and process symbolic paths one at a time. This processing includes the calculation of probabilities as described above.  The modified algorithm (shown in Algorithms~\ref{alg-pse} and~\ref{alg-symsample}) allows us to better handle the case where only a subset of paths of the program are analyzed. The interested reader is referred to \cite{filieri2014statistical} for a more detailed discussion of the precise algorithm.
 
 When considering the example in Figure~\ref{fig:symex:illus}, each of the six paths from the root to the leaves can be sampled and the path condition describing that path will be the conjunct of the constraints along the path; for example the leftmost path will have $b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ as its path condition. 
 
-Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{processPath} of Algorithms~\ref{alg-pse} and~\ref{alg-symsample}. At a high level, {\tt symsample} is called from the initial state of the program with $pc=\mathtt{true}$ as the current path condition;  it returns a single path which is then processed.  This is followed by a check to see if the analysis is complete and can stop. Within {\tt symsample} we first check to see if the search needs to be stopped; otherwise, we symbolically execute the program up to the next branching point and decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in Algorithm~\ref{alg-symexe}, where both branches could be taken if they were both satisfiable. 
+Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{processPath} of Algorithms~\ref{alg-pse} and~\ref{alg-symsample}. At a high level, {\tt symsample} is called from the initial state of the program with $pc=\mathtt{true}$ as the current path condition;  it returns a single path which is then processed.  This is followed by a check to see if the analysis is complete and can stop. Within {\tt symsample} we first check to see if the search needs to be stopped; otherwise, we symbolically execute the program up to the next branching point and decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in traditional symbolic execution, where both branches could be taken if they were both satisfiable. 
 
 \begin{minipage}{0.4\textwidth}
 \begin{algorithm}[H]
@@ -190,7 +194,7 @@ Handling nondeterminism within the systems being analyzed has been studied in \c
 
 \subsubsection{More and varied probabilistic symbolic execution}
 
-Probabilistic symbolic execution was introduced in \cite{Geldenhuys2012}, where the approach was to do model counting (using LattE) on-the-fly during symbolic execution (as in Algorithm~\ref{alg-symexe}). This work was extended in \cite{Filieri2013} to collect path conditions from symbolic execution and then calculate the reliability of the code. This work also showed how usage profiles can be handled. In both of these works it is important to observe that {\it all} paths of the program are analyzed, and thus the probability calculations are precise. 
+Probabilistic symbolic execution was introduced in \cite{Geldenhuys2012}, where the approach was to do model counting (using LattE) on-the-fly during symbolic execution. This work was extended in \cite{Filieri2013} to collect path conditions from symbolic execution and then calculate the reliability of the code. This work also showed how usage profiles can be handled. In both of these works it is important to observe that {\it all} paths of the program are analyzed, and thus the probability calculations are precise. 
 
 The work in \cite{Sankaranarayanan2013} was the first to apply sampling of paths during static analysis to provide a probability calculation with a certain confidence bound. They applied the approach to calculate bounds on the probability of assertions holding in the code. In \cite{filieri2014statistical}, an approach similar to Algorithm~\ref{alg-pse} was used to also sample paths and then use Bayesian estimation and hypothesis testing. This paper also introduced the subtraction of the counts to ensure rare events can be sampled (see {\tt processPath above}). 
 
