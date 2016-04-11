@@ -47,6 +47,13 @@ Barvinok's algorithm has been used for probabilistic program analysis in \cite{G
 \end{itemize}
 }
 
+The counting function $\sharp(\cdot)$ can often be stated as a boolean
+satisfiability problem.
+The problem of counting the number of distinct truth assignments for
+a propositional formula is called \#SAT, or propositional model counting.
+There are a number of tools that can efficiently solve many cases of
+\#SAT, including sharpSAT~\cite{thurley2006sharpsat} and Cachet~\cite{sang2005heuristics}.
+
 Other finite domains, such as bounded data structures \cite{Filieri2015} and regular languages~\cite{Luu2014,Aydin2015}, are active topics of study in applied model counting.
 
 
