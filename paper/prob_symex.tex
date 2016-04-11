@@ -3,7 +3,7 @@
 
 Symbolic execution produces path conditions (PCs), i.e., constraints on the inputs, that characterize how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analyzed any further.  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
 
-As in Section~\ref{sec:computingprobabilitiesExact}, for simplicity, we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  
+For simplicity, we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  
 See \cite{Filieri2013} for a detailed discussion of usage profiles within symbolic execution.
 \ignore{
 Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. 
@@ -16,8 +16,11 @@ the domains of those variables consists of 10 values and the tests
 check for half of the domain, which corresponds to the 0.5 parameter
 in the Bernoulli distribution.
 Note that this program now has 3 inputs and an input domain size of
-$10 * 10 * 100 = 10000$.
+$10 \times 10 \times 100 = 10000$.
+\ignore{
 As in Section~\ref{sec:computingprobabilitiesExact}, $D$ represents the finite discrete domain of the variables.
+}
+The domain of variables, which is finite and discrete, is denoted by $D$.
 
 \begin{figure}[t]
 \begin{minipage}{0.3\textwidth}

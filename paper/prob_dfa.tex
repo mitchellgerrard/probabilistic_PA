@@ -6,7 +6,7 @@ determining how probabilities are incorporated into the control
 and data abstractions that form its foundation.
 As in the classical case, we will see that probabilistic data flow analysis
 can be thought of as model checking
-of probabilistic abstract interpretations, and, in some
+of probabilistic abstract interpretations, and in some
 cases, the model checking itself must be made probabilistic.
 
 \subsubsection{Control Flow Probabilities}
@@ -49,8 +49,8 @@ relaxed, because instead of computing an invariant dataflow
 fact, we only want the summation of probabilities of all
 traces reaching a certain point.
 The expected frequencies may now be computed as the least
-fixpoint using the same iterative data flow algorithm presented
-in the background; the quantity becomes a
+fixpoint using the traditional iterative data flow algorithm;
+the quantity becomes a
 {\sl sum-over-all-paths} instead of a {\sl meet-over-all-paths}.
 
 Ramalingam's work assumes execution history does not 
@@ -71,9 +71,8 @@ Both of these techniques rely on being able to annotate
 branch decisions in the program (or model, in PRISM's case)
 with probabilities.  When those decisions are governed by
 computed conditions over input variables, the calculation of
-branch probabilities quickly becomes challenging---as we will
-see in Section~\ref{sec:pse}, the techniques from 
-Section~\ref{sec:computingprobabilities} can be applied to
+branch probabilities quickly becomes challenging---Section~\ref{sec:pse} 
+and Section~\ref{sec:computingprobabilities} will address
 this problem.
 
 \ignore{
@@ -123,12 +122,18 @@ is given by
 \[
 \sum_{j \in \{ i \vert (a_i,w_i) \in pa \wedge c \in \gamma(a_i)\}} w_j
 \]
+\ignore{
 For a concrete value, each containing abstract
 domain element's associated weight must be totalled
 to bound the probability of the concrete value.
+}
+In Monniaux's work, multiple abstract domain elements can map onto a given
+concrete value; each of these abstract domain elements'
+weights must be totalled to bound the probability of
+the given concrete value.
 As an example, let $\mathcal{A}$ be the interval abstraction
 applied to a single integer value
-and $pa = \{([1,5],0.1),([3,7],0.1),\ldots\}$.  
+and let $pa = \{([1,5],0.1),([3,7],0.1),\ldots\}$.  
 For a value of $2$, only the first pair would apply, since
 $2 \not\in [3,7]$, contributing $0.1$ to the bound on $Pr(2)$.
 For a value of $3$, both pairs would apply and contribute
@@ -151,7 +156,7 @@ is not itself a distribution, since the sum across the domain
 will be either greater or less than $1$.
 This poses challenges for modular probabilistic data flow analyses.
 
-Recall that the techniques from 
+We will see that the techniques from 
 Section~\ref{sec:computingprobabilities} can be applied to
 the problem of counting the concretization of an abstract domain element 
 that is encoded as a logical formula.  This may offer a potential
@@ -233,7 +238,7 @@ analysis, as well as in model checking, takes a different approach.
 A trace in an MDP can be viewed as an alternation of
 probabilistic and nondeterministic choices.  For instance, the
 leftmost trace in the MDP on the right side of Figure~\ref{fig:prob-cfg}
-can be read as $\mathit{left};\_;\mathit{left};0.6$ where $\_$ 
+can be read as $\mathit{left};\_;\mathit{left};0.6$, where $\_$ 
 denotes an empty choice---in this case a probabilistic choice.
 Probabilistic model checkers such as PRISM and PASS exploit this
 2-phase structure to formulate MDP model checking as a 2-player
