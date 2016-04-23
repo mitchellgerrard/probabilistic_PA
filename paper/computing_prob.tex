@@ -79,35 +79,50 @@ Exact methods can suffer from two main limitations: 1) generality with respect t
 In this section we will present sampling-based methods for quantifying the probability of satisfying arbitrarily complex floating-point constraints. We will briefly discuss how to generalize to different domains at the end of the section.
 \mycomment{SHOULD TRY TO COMPRESS THE FOLLOWING A BIT}
 
-Sampling-based probability computations rely on the application of Monte Carlo methods for estimating the probability of satisfying a given constraint. Monte Carlo estimation is a well-developed field in Statistics, with countless applications in science and engineering~\cite{robert2013monte}. In this section, we will review the basics of some Monte Carlo estimation techniques used in probabilistic program analysis. % while in Section~\ref{sec:computingprobabilitiesOptimizations} we will show how this general techniques can be tailored to probabilistic program analysis for more efficient quantification procedures.
+Sampling-based methods estimate the probability of satisfying a given constraint using a Monte Carlo approach~\cite{robert2013monte}. For simplicity, we will focus on the simplest, though general, method suitable for our purpose: hit-or-miss Monte Carlo. We will add some pointer to more advanced methods later in the section.
+
+%Sampling-based probability computations rely on the application of Monte Carlo methods for estimating the probability of satisfying a given constraint. Monte Carlo estimation is a well-developed field in Statistics, with countless applications in science and engineering~\cite{robert2013monte}. In this section, we will review the basics of some Monte Carlo estimation techniques used in probabilistic program analysis. % while in Section~\ref{sec:computingprobabilitiesOptimizations} we will show how this general techniques can be tailored to probabilistic program analysis for more efficient quantification procedures.
 
 \paragraph{Hit-or-miss Monte Carlo.}
+On a first hand, we will assume a uniform input distribution over bounded, real domains. Consider for example the constraint $x \leq -y \land y \leq x$, where both $x, y \in [-1, 1] \cap \mathbb{R}$. Taken an input $x, y$, the constraint would either be satisfied or violated. In probabilistic terms, this can be seen as a Bernoulli experiment, i.e., an experiment having only two mutually exclusive outcomes, \textit{true} or \textit{false}, where the probability of the \textit{true} outcome is the parameter $p$ of a Bernoulli distribution~\cite{pestman1998mathematical} (the probability of the \textit{false} outcome is in turn $1-p$). Our goal is to estimate the parameter $p$, from $n$ random samples over the input domain.
 
-As in the previous section, we will first introduce this quantification technique assuming a uniform input distributions over a convex domain. Consider for example the constraint $v_1 \leq -v_2 \land v_2 \leq v_1$, where both $v_1, v_2 \in [-1, 1] \cap \mathbb{R}$. For each value of $v_1$ and $v_2$, the constraint can either be true or false. To estimate the probability of satisfying the constraint (and in turn of violating it), we can define a suitable probabilistic model and then run a set of experiments to estimate its parameters.
+Figure~\ref{fig:sampling-based} plots the solution space for the example constraint ($x$ and $y$ on the x- and y-axis, respectively); the value $p$ we aim to estimate is the ratio between the shadowed area, enclosing all the points satisfying the constraint, an the input domain (i.e., the outer box).
 
-A suitable probabilistic model to represent the binary true/false outcome of an experiment is a Bernoulli distribution~\cite{pestman1998mathematical}. This is a parametric distribution with a single parameter, call it $p$, representing the probability of observing the true outcome; the complementary outcome, false, will have probability $1-p$.
+\begin{figure}[ht]
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=1\linewidth]{plot_sampling01}
+\end{minipage}
+\quad
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=1\linewidth]{plot_sampling02}
+\end{minipage}
+\caption{Sampling-based solution space quantification for $x \leq -y \land y \leq x$, $x, y \in [-1, 1]$.}
+\label{fig:sampling-based}
+\end{figure}
 
-The simplest way to estimate $p$ consists in generating $n$ independent random values for $v_1$ and $v_2$ and count how many of those values satisfy the constraint. More precisely, we can define an estimator $\hat{P}$ for the parameter $p$ which is the ratio between the number of experiments returning true and the total number of experiments, $n$. The most important properties of this estimator (that can be justified, for example, by the central limit theorem~\cite{pestman1998mathematical}) are its expected value $E[\hat{P}]$, which is the most likely estimate, and its variance $Var[\hat{P}]$, which is an index of the uncertainty we have about our estimate after the experiments. Formally:
-%
+The hit-or-miss Monte Carlo method consists in taking $n$ independent random samples uniformly within the domain; if a sample $s_i$ satisfies the constraint, we assign $s_i=1$, otherwise, $s_i=0$. This process is formally called a Binomial experiment with $n$ samples. The maximum likelihood estimate for $p$ is then $\hat{p}$~\cite{pestman1998mathematical}:
+
 \begin{equation}\label{eq:mleEstimator}
-	E[\hat{P}] = \bar{x} \qquad Var[\hat{P}] = \frac{\bar{x} \cdot (1-\bar{x})}{n}
+	\hat{p} = \frac{\sum_{i=1}^n s_i}{n} \qquad\qquad\qquad \sigma(\hat{p}) = \sqrt{\frac{\hat{p} \cdot (1-\hat{p})}{n}}
 \end{equation}
-%
-\noindent where $\bar{x}=\sum_{i=1}^n x_i$ and $x_i$ is $1$ if the $i$-th experiment returned true and $0$ otherwise.
+ 
+ 
+The right part of Equation~\eqref{eq:mleEstimator} shows the standard deviation $\sigma$ of $\hat{p}$~\cite{pestman1998mathematical}. The standard deviation is an index of the convergence of the estimate. Notably, it decreases with the square root of the number of samples; when the number of samples grows to infinity, the standard deviation goes to $0$, making the estimation converge to the actual value of $p$.
 
-The estimator $\hat{P}$ has two important properties: it is unbiased, i.e., its expected value converges to the actual probability of satisfying the constraints when the number of experiments grows; it is consistent, i.e., its variance (and in turn, our uncertainty about the result) decreases to 0, in this case linearly (as can be noted by the denominator $n$ in Equation~\eqref{eq:mleEstimator}). 
+Despite the convergence of $\hat{p}$ to $p$ can be proved only in the limit, given the value of $\hat{p}$, its standard deviation $\sigma$, and a desired confidence level $0<\alpha<1$, it is possible to define a confidence interval for the unknown value $p$. In particular:
 
-From the perspective of probabilistic program analysis, these two properties can be used to guarantee the asymptotic correctness of the computed probability, as well as to quantify the convergence of the estimation process. The variance can indeed be used to provide probabilistic guarantees on the correctness of the result in the form of confidence intervals~\cite{pestman1998mathematical} (assuming $n$ is large enough):
-%
-\begin{equation}\label{eqConfidenceInterval}
-	Pr\Big( \bar{x} - z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\bar{x} \cdot (1-\bar{x})}{n}} \ \leq p \leq \ \bar{x} + z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\bar{x} \cdot (1-\bar{x})}{n}} \Big) = 1-\frac{\alpha}{2}
+\begin{equation}\label{eq:mleInterval}
+	Pr\Big( \hat{p} - z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\hat{p} \cdot (1-\hat{p})}{n}} \ \leq p \leq \ \hat{p} + z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\hat{p} \cdot (1-\hat{p})}{n}} \Big) = 1-\frac{\alpha}{2}
 \end{equation}
-%
-\noindent where $z_{\frac{\alpha}{2}}$ is the $1-\frac{\alpha}{2}$ quantile of the standard Normal distribution~\cite{pestman1998mathematical}. For example, if we want to have a confidence of $99.9\%$ on our estimation, we will pick $z_{\frac{\alpha}{2}}=3.08$ and keep collecting samples until the length of the interval is acceptably small, i.e., the accuracy of the result is acceptable.
 
-Hit-or-miss Monte Carlo is the simplest estimation method suitable for our problems. However, its convergence rate is usually worse than more sophisticated techniques such as crude Monte Carlo or Markov chain Monte Carlo~\cite{Robert2005MCBook}. It is also possible to reduce the variance of the estimator with convenient sampling procedures (in place of uniform random sampling), such as stratified or importance sampling~\cite{Robert2005MCBook}. More sophisticated techniques exists when the actual value of $p$ to be estimated is close to the extremes (0 or 1), in particular, slice sampling (or splitting) has been successfully used in probabilistic model checking~\cite{importanceSamplingSMC,splittingSMC,statisticalModelChecking}. Finally, while Equation~\eqref{eqConfidenceInterval} can be used as a stopping criteria for sampling, it is grounded on fairly conservative assumptions; tighter bounds can be used to determine a priori the number of samples needed to guarantee some required accuracy and confidence level, the most popular being Chernoff-Hoeffding's bound~\cite{hoeffding1963probability,approximatePMC,statisticalModelChecking}. When checking if the computed probability of satisfying a constraint is sufficiently accurate, estimation methods can be replaced by statistical hypothesis testing, which is usually more efficient~\cite{pestman1998mathematical}. Finally, the estimator we presented in this section is a maximum likelihood estimator, defined according to frequentist probability theory; Bayesian estimation can be used as well, providing a different perspective on the problem---one that allows for the inclusion of prior knowledge on the expected result (when available) of estimation or hypothesis testing~\cite{Robert2007BayesianChoice,gelman2003bayesian}.
+\noindent where $z_{\frac{\alpha}{2}}$ is the $1-\frac{\alpha}{2}$ quantile of the standard Gaussian distribution~\cite{pestman1998mathematical}.
 
+Equation~\eqref{eq:mleInterval} is constructed using the central limit theorem, under the assumption that a large number of samples $n$ have been collected (as a rule of thumb, hundreds of samples or more are almost surely a good fit for this assumption). The width of the interval, which is an index of the accuracy of the estimate, can be arbitrarily reduced by increasing the number of samples $n$; thus, Equation~\eqref{eq:mleInterval} can be used as stopping criteria for the estimation process.
 
+In our example, in a run with $n=10000$ samples, we obtained $\hat{p}= 0.2512$ with standard deviation $\sigma(\hat{p})=0.00433703$; thus, with $99\%$ confidence, we can conclude $p \in [0.248126, 0.254274]$. From Figure~\ref{fig:sampling-based}, it is immediate to calculate that $p=0.25$, which falls within the computed interval.
+
+It can be noted that hit-or-miss methods may require a large number of samples to converge to a high accuracy (small interval). This is even worse when the actual value of $p$ close to its extremes (0 or 1). Significant improvements on the convergence rates can be achieved with more complex sampling procedures, including the use of quasi-Monte Carlo sampling~\cite{robert2013monte}, or, when $p$ is close to its extremes, importance sampling, Markov Chain Monte Carlo, or slice sampling~\cite{bishop2006pattern}; some of these methods have successfully been used for similar problems in probabilistic model checking~\cite{importanceSamplingSMC,splittingSMC,statisticalModelChecking}. More accurate confidence intervals can also be used as stopping criteria. The interval in Equation~\cite{eq:mleInterval} is indeed conservative and does not exploit all the information in the estimator because of the approximation via the central limit theorem. More precise intervals have been proposed in statistics~\cite{pestman1998mathematical}; in probabilistic model checking, the most commonly used is Chernoff-Hoeffding's bound~\cite{hoeffding1963probability,approximatePMC,statisticalModelChecking}. Bayesian estimators can also be used, allowing for the inclusion of prior knowledge on the expected result (when available)~\cite{Robert2007BayesianChoice,gelman2003bayesian}; Bayesian methods demonstrated a faster convergence rate in many probabilistic verification problems~\cite{Zuliani:2010:BSM:1755952.1755987}. Finally, an hybrid approach exploiting interval constraint propagation for a compositional solution of the estimation problem has been proposed for probabilistic program analysis in~\cite{Borges2014,2015-fse-qcoral}.
 
 \paragraph{Distribution-aware sampling.} So far we have assumed that inputs are distributed uniformly within their domain. When different distributions are specified for the input variables, the hit-or-miss Monte Carlo algorithm presented above can still be applied, though the samples from input variables should be taken according to their specified input distributions.
 
