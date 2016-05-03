@@ -1,9 +1,22 @@
 \section{Future Directions}
 \label{sec:future}
 
-There are many applications for probabilistic program analysis, but most work so far has focused on the probability of failure/success of a program under varying input distributions; i.e., the focus has mainly been on reliability.
-Here we suggest avenues for further development and application of
-probabilistic program analyses.
+In this paper we have provided a survey on work to adapt two
+powerful program analysis frameworks, data flow analysis and symbolic
+execution, to incorporate probabilistic reasoning.  This work has
+already motivated exciting advances in model counting and solution
+space quantification as discussed in Section~\ref{sec:computingprobabilities}.
+
+As in other areas of program analysis a mutually reinforcing cycle of
+algorithm and tool development coupled with applications of analyses
+is poised to spur further advances.  We believe that efforts to focus
+probabilistic program analyses techniques on applications will reveal
+new opportunities for adapting algorithms to be more efficient and
+effective and that this will, in turn, inspire researchers to identify
+additional applications of these techniques.   Towards this end we
+describe several areas where application of probabilistic program
+analyses has potential and identify opportunities for cross-fertilization
+among probabilistic analysis techniques.
 
 \begin{enumerate}
 
@@ -20,7 +33,7 @@ Most existing symbolic execution frameworks already support \texttt{assume} and 
 Extending this to support \texttt{observe} requires that the probability
 estimates of aborted paths be accumulated to permit renormalization at the
 end of the symbolic execution.  We note that relative to existing probabilistic
-symbolic execution approaches this adds no overhead.
+symbolic execution approaches this adds negligable overhead.
 
 \item Probabilistic programs, in the sense of \cite{Gordon2014}, can be used
 to define a distribution.  This means that they could be a useful means of

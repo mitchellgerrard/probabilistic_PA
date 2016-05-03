@@ -120,7 +120,14 @@ The domain of variables, which is finite and discrete, is denoted by $D$.
 
 \subsubsection{Approach}
 
-To allow for a more general description of the approach to probabilistic symbolic execution, we modify the traditional symbolic execution algorithm to sample and process symbolic paths one at a time. This processing includes the calculation of probabilities as described above.  The modified algorithm (shown in Algorithms~\ref{alg-pse} and~\ref{alg-symsample}) allows us to better handle the case where only a subset of paths of the program are analyzed. The interested reader is referred to \cite{filieri2014statistical} for a more detailed discussion of the precise algorithm.
+We outline a general approach to probabilistic symbolic execution
+that accomodates many of the advances in the recent literature.
+Algorithms~\ref{alg-pse} and~\ref{alg-symsample} are modifications of
+the traditional symbolic execution algorithm to sample and process 
+symbolic paths one at a time. 
+This processing includes the calculation of probabilities as described in
+the next section.
+The interested reader is referred to \cite{filieri2014statistical} for a more detailed discussion of the precise algorithm.
 
 When considering the example in Figure~\ref{fig:symex:illus}, each of the six paths from the root to the leaves can be sampled and the path condition describing that path will be the conjunct of the constraints along the path; for example the leftmost path will have $b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ as its path condition. 
 
@@ -139,7 +146,7 @@ Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{p
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.55\textwidth}
 \begin{algorithm}[H]
 \floatname{algorithm}{Alg.}
 \caption{{\tt symsample}$(l,m,pc)$}
@@ -172,7 +179,10 @@ $\newline$
 
 \paragraph{selectBranch}  In the context of symbolic execution, we define a sample as the
 simulation of one symbolic path. Whenever a branch is encountered during such simulation, the decision to proceed along either of the alternative branches has to be taken according to the probability
-of satisfying the corresponding branch conditions. To calculate these, we calculate the number of solutions for each path condition as described at the beginning of this section. At each branching point, we therefore have the count for the PC that reached the branching point ($\sharp(pc)$) and the counts for the path condition for both branches ($\sharp(pc \wedge c)$ and $\sharp(pc \wedge \neg c)$). The probability for the true branch is thus $Pr(\x{succ_t}(l)) = \sharp(pc \wedge c)/\sharp(pc)$ and for the false branch it is $Pr(\x{succ_f}(l)) = \sharp(pc \wedge \neg c)/\sharp(pc)$.  
+of satisfying the corresponding branch conditions. To calculate these, we calculate the number of solutions for each path condition as described at the beginning of this section---techniques for calculating this number are detailed in
+Section~\ref{sec:computingprobabilities}.
+
+At each branching point, we have the count for the PC that reached the branching point ($\sharp(pc)$) and the counts for the path condition for both branches ($\sharp(pc \wedge c)$ and $\sharp(pc \wedge \neg c)$). The probability for the true branch is thus $Pr(\x{succ_t}(l)) = \sharp(pc \wedge c)/\sharp(pc)$ and for the false branch it is $Pr(\x{succ_f}(l)) = \sharp(pc \wedge \neg c)/\sharp(pc)$.  
 
 In the example from Figure~\ref{fig:symex:illus}, when we sample at node $3$, we have that the path condition at the node is $pc = b_0 < 5 \wedge b_1 < 5$ and $\sharp(pc) = 2500$. The true branch ($b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ with a count of $1500$) will thus be taken with probability $1500/2500 = 0.6$ and the false branch will be taken with probability $0.4$.  
 

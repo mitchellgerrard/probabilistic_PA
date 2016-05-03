@@ -47,7 +47,7 @@ freedom property.
 }
 
 There are many different ways to represent the execution behavior
-of a program to enable analysis.  Immediately to the right of
+of a program to facilitate analysis.  Immediately to the right of
 the code in Figure~\ref{fig:example}, we show the control flow graph (CFG),
 which explicitly represents control successor relationships between
 statements.  A CFG models choice among successors as nondeterministic
@@ -56,7 +56,7 @@ We will also consider models that include probabilistic choice,
 e.g., defining the probability that a branch is taken; the
 upper right fragment of Figure~\ref{fig:example} shows probabilities
 that reflect the outcome of the Bernoulli draw.
-In addition, we will study models where 
+In addition, we will study models where the
 choice of successor is defined based on the semantics
 of program state, e.g., defining a condition under which the branch
 is taken; the lower right fragment of Figure~\ref{fig:example}
@@ -68,7 +68,15 @@ A key concept in the program analysis frameworks we survey is
 \textit{symbolic abstraction}.  A symbolic abstraction is a 
 representation of a set of states.  Abstractions can be encoded
 in a variety of forms, e.g., logical formulae \cite{thakur2012bilateral}, binary
-decision diagrams \cite{bryant1992symbolic}, or custom representations \cite{bagnara2008parma}.
+decision diagrams \cite{bryant1992symbolic}, or custom representations \cite{bagnara2008parma}.  For example, the set of integer values that
+are less than $0$ can be defined, through its characteristic
+function $lt0 \equiv \lambda x.x<0$ which returns true for all values in the set.
+
+While abstractions encode sets of states \textit{abstract transformers}
+compute the effect of a program statement on a set of states.  For example,
+the fact that the sum of any pair of negative values is negative is
+encoded as $lt0 +^\# lt0 = lt0$, where $\#$ denotes an abstract transformer
+for $+$ that operates on symbolic encodings of sets.
 
 Analyses that seek to prove the satisfaction of properties generally
 define abstractions that \textit{overapproximate} the set of program
@@ -287,24 +295,26 @@ The analysis begins at the first
 program location with the path condition set to \textit{true}.
 
 Sequences of program statements are interpreted by applying the operation
-at each program location to update the symbolic variables.
+at each program location to update the values of program
+variables with expressions defined over symbolic variables.
 An operation that reads from an input generates a fresh symbolic
-variable which is unconstrained.  
-When a branching statement is encountered, the symbolic expression encoding
-the branch condition is computed, $c$, and a check is performed
+variable which represents the set of possible input values.
+When a branching statement is encountered, the symbolic expression, $c$, 
+encoding the branch condition is computed and a check is performed
 to determine whether the current trace---encoded by the path condition---can be
 extended with $c$ or $c$'s negation.  
 This is done by formulating the constraints
 as a satisfiability query; if the formula encoding branch constraints
 is satisfiable, then there must exist an input that will follow the trace.
-The trace is extended, recursively, following the feasible branch outcomes
+The trace is extended following the feasible branch outcomes, usually
 in a depth-first manner.
 In the example of Figure~\ref{fig:example}, on the leftmost trace through
-the control flow graph, symbolic execution would use the semantic
-condition shown in the lower right, $c \equiv {\cal X} \le 60$,
-and add it to the path condition---which is initially $true$.
-All six traces through the control flow graph 
-result in satisfiable path conditions.
+the control flow graph, when symbolic execution reaches the 
+condition shown in the lower right, $c \equiv {\cal X} \le 60$.
+That condition is conjoined to the path condition, $PC \wedge {\cal X} \le 60$,
+and then confirmed to be satisfiable since the previous branches do
+not constrain the values of ${\cal X}$---the symbolic variable representing
+the value of input $x$.
 
 While symbolic execution is capable of computing an \textit{exact} symbolic
 approximation of the set of program states on a trace reaching some location, in
@@ -321,7 +331,7 @@ constraints based on values collected while executing the program along the trac
 
 It is straightforward to integrate the checking of a property,
 $\phi$, into symbolic execution.  Specifically,
-if the set of symbolic expressions at some location $l$ implies
+if a symbolic expression reaching location $l$ implies
  $\neg\phi$, then $\phi$ is falsified 
 when $l$ is reached.    This does not mean that $\phi$
 fails to hold whenever $l$ is reached, but due to the underapproximation

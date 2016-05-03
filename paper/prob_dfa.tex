@@ -12,13 +12,13 @@ cases, the model checking itself must be made probabilistic.
 \subsubsection{Control Flow Probabilities}
 Early work in extending data flow analysis 
 techniques with probabilities did not consider
-the semantics of the program. 
+the influence of control and data flow on probabilities.
 Instead, user-defined probabilities 
 were attached to nodes in the program's control flow graph.  
 This allowed the analysis to estimate
 the probability of an expression evaluating 
-to some value or type at runtime, which could 
-allow useful program optimization.
+to some value or type at runtime, which was used to enable
+program optimization.
 
 This approach begins with a control flow graph where each edge is 
 mapped to the probability that it is taken during execution.
@@ -72,8 +72,8 @@ branch decisions in the program (or model, in PRISM's case)
 with probabilities.  When those decisions are governed by
 computed conditions over input variables, the calculation of
 branch probabilities quickly becomes challenging---Section~\ref{sec:pse} 
-and Section~\ref{sec:computingprobabilities} will address
-this problem.
+and Section~\ref{sec:computingprobabilities} describe approaches
+to  address this problem.
 
 \ignore{
 Accurately estimating control flow probabilities is a significant
@@ -106,8 +106,8 @@ described by domain elements.
 
 Monniaux's work takes the view that probabilistic programs 
 effectively transform an input distribution into an output
-distribution.  More generally, probabilistic programs compute a distribution that
-characterize each state in the program.   
+distribution.  More generally, probabilistic programs compute 
+a distribution that characterizes each state in the program.   
 He develops a probabilistic abstract domain, $\mathcal{A}_p$, 
 as an (indexed) collection of pairs, $\mathcal{A} \times [0,1]$.
 The intuition is that a classic abstract domain is paired
@@ -122,11 +122,9 @@ is given by
 \[
 \sum_{j \in \{ i \vert (a_i,w_i) \in pa \wedge c \in \gamma(a_i)\}} w_j
 \]
-\ignore{
-For a concrete value, each containing abstract
-domain element's associated weight must be totalled
-to bound the probability of the concrete value.
-}
+where $\gamma$ is the function that maps a symbolic abstraction to
+the set of concrete values it describes.
+
 In Monniaux's work, multiple abstract domain elements can map onto a given
 concrete value; each of these abstract domain elements'
 weights must be totalled to bound the probability of
@@ -143,7 +141,8 @@ To clarify, these weight components are \textit{not} bounds on the probability
 of the abstract domain as a whole, but rather are bounds on the probability
 of each concrete element represented by the abstract domain.
 This simplifies the formulation of the probabilistic abstract
-transformers, i.e., the extension of $\tau^\#$ to account for 
+transformers, i.e., the extension of $\tau^\#$, the non-probabilistic
+abstract transformer, to account for 
 $\mathcal{A}_p$, but it means that additional
 work is required to compute the probability of a property holding.
 Fundamentally, that requires estimating the size of the concretization
@@ -153,7 +152,7 @@ each concrete value.
 It is important to note that an upper or lower
 bound on a probability distribution
 is not itself a distribution, since the sum across the domain
-will be either greater or less than $1$.
+may be greater than $1$.
 This poses challenges for modular probabilistic data flow analyses.
 
 We will see that the techniques from 
@@ -169,7 +168,7 @@ distribution, an upper approximation of the distribution for
 regions of the abstract domain is required.  The literature
 has constructed these using ad-hoc techniques, but we believe
 the methods of Section~\ref{sec:computingprobabilities} might be applied to 
-achieve an upper approximation, and describe this further in Section~\ref{sec:future}.
+achieve an upper approximation.
 For sequential statements, weight components are propogated
 and abstract domain elements are updated by the underlying transformer.
 
@@ -205,7 +204,7 @@ Abstract states encode variable domains as matrices, e.g., a 100 by 100 matrix
 would be needed to encode the input $x$ for the example in 
 Figure~\ref{fig:example}.  While very efficient matrix algorithms
 can be employed, the space consumed by this representation can
-be significant.  
+be significant for large concrete domains.  
 Transfer functions operate on these matrices to filter values and
 update probabilities along branches and, 
 as in Ramalingam's work, weighted sums are used to accumulate probabilities
@@ -246,7 +245,7 @@ game.  One player resolves the nondeterminism, thereby determining
 the schedule, and the other resolves the probabilistic choice.
 
 Abstract interpretation can be applied to the data states in
-approaches~\cite{kwiatkowska2011prism,wachter2010best,esparza2011probabilistic}
+such approaches~\cite{kwiatkowska2011prism,wachter2010best,esparza2011probabilistic}
 to improve efficiency.  Note, however, that these abstractions are
 independent of the probabilistic choices implicit in the semantics, and must be specified
 by the developer in some way---as in the case of Ramalingam's work.

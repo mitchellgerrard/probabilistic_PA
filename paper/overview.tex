@@ -19,7 +19,7 @@ that the statements
 within the program define the input probability distributions.
 More generally, a program might combine both implicit and explicit
 probabilistic calls.  Method \texttt{m} in Figure~\ref{fig:example}
-is an example of such a combined probabilistic program.
+is an example of such a program.
 
 It is possible to transform explicit probabilistic constructs
 into implicit ones
@@ -35,25 +35,18 @@ by \texttt{b1} and \texttt{b2}, respectively.  The input
 distribution for these auxiliary inputs would then be specified
 as a set of pairs,
 \[
-\{ (\lambda x.x<0,0), (\lambda x.x=0,0.5), (\lambda x.x=1,0.5), (\lambda x.x>1,0) \}
+\{ (\lambda x.x=0,0.5), (\lambda x.x\not=0 \vee x\not=1, 0), (\lambda x.x=1,0.5)\}
 \]
 where the first component defines the characteristic function
 of a set of values and the second component defines the probability
 of a value in that set.
 
-In Section~\ref{sec:probspecs}, we will see how distributions can
-be specified and inferred from data sets that characterize the
-input domain in a form that 
-analyses can consume.  While effective, these approaches can be
-costly, and Section~\ref{sec:computingprobabilities} discusses
-techniques for mitigating that cost.
-
 Section~\ref{sec:pdfa} discusses approaches where probabilities
 governing specific branch outcomes, as opposed to input values,
 are built into the program model from knowledge the developer
-has at hand, while Sections~\ref{sec:computingprobabilities}
-and \ref{sec:pse} compute such probabilities from information about
-the program semantics and the input distribution.
+has at hand, while Sections~\ref{sec:pse} and \ref{sec:computingprobabilities}
+describe techniques for computing such probabilities from information about
+the program semantics and input distribution.
 
 \subsubsection{What does the analysis compute?}
 There are again two perspectives adopted in the literature.
