@@ -1,0 +1,10 @@
+Syntax for addressing reviewer comments:
+
+Green : Fixed (with pg # if needed)
+        [\fixed{}]
+Blue  : Acknowledged, but not changed
+        [\recognize{}]
+Red   : Question
+        [\ask{}]
+Black : TODO
+        []
