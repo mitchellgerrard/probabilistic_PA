@@ -23,7 +23,7 @@ program optimization.
 This approach begins with a control flow graph where each edge is 
 mapped to the probability that it is taken during execution.
 The sum of all probabilities leaving any control flow node must be 1
-(excepting the exit node).
+(except for the exit node).
 These probabilities may be obtained through heuristics, profiling,
 or some static analysis.
 Imagine an execution trace following some path along the edges of
@@ -31,11 +31,11 @@ the control flow graph.
 The probability of executing that trace is expressed as the product of 
 edge probabilities along this path.
 So the probability of executing some program point can be seen as the
-summation of the probabilities of traces which can reach that program point.
+summation of the probabilities of traces that can reach that program point.
 
 \input{prob_cfg}
 Figure~\ref{fig:prob-cfg} shows the probabilistic CFG for the
-example from Figure~\ref{fig:example}, given that input $x$
+example of Figure~\ref{fig:example}, given that input $x$
 is uniformly distributed in the range $[1,100]$.
 
 To compute the probability of a data flow fact holding 
@@ -44,7 +44,7 @@ modified version of Kildall's dataflow analysis framework
 ~\cite{ramalingam1996data}.
 Instead of the usual semilattice with an idempotent meet
 operation, a non-idempotent addition operator is used.
-The restricted properties of the meet operation can be
+The usual properties of the meet operation can be
 relaxed, because instead of computing an invariant dataflow
 fact, we only want the summation of probabilities of all
 traces reaching a certain point.
@@ -61,9 +61,9 @@ path-sensitive approach is not tractable.
 
 Ramalingam's sum-over-all-paths approach is reminiscent of
 the approach taken in probabilistic model checking of DTMCs.
-In that approach, a system of linear equations is formulated
-whose solution computes the probability with which a property
-holds---so-called \textit{quantitative} properties in 
+In the latter approach, a system of linear equations is formulated
+whose solution yields the probability of some property
+holding---so-called \textit{quantitative} properties in 
 PRISM \cite{kwiatkowska2010advances}.   Ramalingam formulates an
 equivalent system of linear equations.  
 
@@ -77,7 +77,7 @@ to  address this problem.
 
 \ignore{
 Accurately estimating control flow probabilities is a significant
-challenge, but the techniques from Section~\ref{sec:computingprobabilities}
+challenge, but the techniques of Section~\ref{sec:computingprobabilities}
 offer one means of approaching that problem.
 }
 
@@ -145,7 +145,7 @@ transformers, i.e., the extension of $\tau^\#$, the non-probabilistic
 abstract transformer, to account for 
 $\mathcal{A}_p$, but it means that additional
 work is required to compute the probability of a property holding.
-Fundamentally, that requires estimating the size of the concretization
+In essence, this requires estimating the size of the concretization
 of the abstract domain element and then multiplying by the computed bound for
 each concrete value.  
 

@@ -3,7 +3,7 @@
 
 \input{example2}
 
-We focus in this paper on programs that draw input variables
+This paper focuses on programs that draw input variables
 from given probability distributions, or, equivalently, that make
 calls on functions returning values drawn from given distributions.
 The left side of Figure~\ref{fig:example} shows a method,
@@ -72,7 +72,7 @@ decision diagrams \cite{bryant1992symbolic}, or custom representations \cite{bag
 are less than $0$ can be defined, through its characteristic
 function $lt0 \equiv \lambda x.x<0$ which returns true for all values in the set.
 
-While abstractions encode sets of states \textit{abstract transformers}
+While abstractions encode sets of states, \textit{abstract transformers}
 compute the effect of a program statement on a set of states.  For example,
 the fact that the sum of any pair of negative values is negative is
 encoded as $lt0 +^\# lt0 = lt0$, where $\#$ denotes an abstract transformer
@@ -106,8 +106,8 @@ abstract domain a meet-semilattice.
 
 \paragraph{Data Flow Analysis}
 Data flow analyses~\cite{kildall1973unified} 
-provides a framework for computing properties shared by sets of
-program traces reaching a program state, or set of states.  It is
+provide a framework for computing properties shared by sets of
+program traces reaching a program state, or a set of states.  It is
 common for such analyses to group together the states that share a
 common control location; the computed properties attempt to characterize
 the invariants over those states.
@@ -356,7 +356,7 @@ Markov chains and Markov decision processes (MDP).
 
 Both models rely on the concept of a probability distribution.
 A \textit{probability distribution} over a set is given by a function
-which maps each of the set's subsets to some real number between 0 and 1;
+that maps each of the set's subsets to some real number between 0 and 1;
 this number represents the probability of a given subset being the outcome
 of a random experiment.
 The sum of the probabilities of all subsets is 1.
@@ -388,7 +388,7 @@ The probability of reaching a state in
 a set of goal states, $G$, is $Pr(G) = \sum_{s \in Tr(G)} Pr(s)$.
 }
 
-A Markov chain is a labeled transition system which, given some
+A Markov chain is a labeled transition system that, given some
 state, defines the probability of moving to another state.
 The probability of executing a sequence of states is then the
 product of the transition probabilities between each state.
@@ -434,7 +434,7 @@ probabilistically, to a next state.   That sequence of choices
 \ignore{$\sigma \in A^*$,} is termed a \textit{schedule} (or policy or 
 strategy) for the MDP.
 Given a fixed schedule, an MDP reduces to a Markov chain, but
-the value of an MDP lies in its ability to provide upper and
+the advantage of an MDP lies in its ability to provide upper and
 lower bounds on the behavior of the modeled system (discussed
 in the following section).
 \ignore{
