@@ -60,7 +60,7 @@ but as both frameworks operate over exploded control flow graphs, a fully
 path-sensitive approach is not tractable.
 
 Ramalingam's sum-over-all-paths approach is reminiscent of
-the approach taken in probabilistic model checking of DTMCs.
+the approach taken in probabilistic model checking of Markov chains.
 In the latter approach, a system of linear equations is formulated
 whose solution yields the probability of some property
 holding---so-called \textit{quantitative} properties in 
@@ -92,7 +92,7 @@ This is typically done using a variation on Kozen's
 probabilistic semantics \cite{kozen1981semantics} 
 alongside abstract interpretation and data flow techniques.
 Embedding probabilities into the semantics allows 
-the expression of both control flow and data values to influence
+both control flow and data values to influence
 the property probabilities computed during the analysis.
 
 \paragraph{Abstracting Probability Distributions}
@@ -216,7 +216,7 @@ reduce time and space complexity.
 
 \subsubsection{Handling nondeterminism}
 When abstraction of program choice is required or when 
-there is no basis for defining an input distribution programs,
+there is no basis for defining an input distribution,
 it is natural to use nondeterminism to account for the uncertainty
 in program behavior.
 
