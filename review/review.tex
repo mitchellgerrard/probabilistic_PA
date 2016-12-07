@@ -42,10 +42,19 @@ To give a big picture of the related work, it would be nice if a
 summary (table) can be provided to give a comparison among the
 work discussed in the paper (showing their strength and weakness
 in terms of power, efficiency, etc).
+\ask{Matt: what would these table columns be?  What would be the
+characteristics we're comparing?}
 
 Also, this paper is mainly about program analysis of imperative
 programs (rather than functional or logic languages), so the
 title looks a bit too general.
+
+\ask{Matt: Where should we put this footnote addressing this comment?: 
+The analysis frameworks we have
+worked with are mostly tailored towards imperative programs.  These 
+analysis techniques are general, and apply to functional programs, but
+we did not think restating the techniques in a functional language added
+enough value to include.}
 
 
 ----------------------- REVIEW 2 ---------------------
@@ -133,6 +142,8 @@ one used in the paper. It furthermore has the advantage of being
 consistent with similar choice of terminology in process algebra
 (cf. external choice, internal nondeterminism, etc).
 
+\ask{Matt: how do we want to address the above comment?}
+
 The syntax of C doesn't help either. For instance, I must admit I got confused
 on first reading type `m(int x, int b1, int b2) \{...' because I thought
 the b1, b2 were integers such as x, e.g. ranging over [0,100] etc. Writing
@@ -149,6 +160,7 @@ Page 10: why an indexed collection of pairs A * [0,1]? Such pairs
 don't repeat the `A's, so a function is enough, `pa : A $\mapsto$ [0,1]'.
 Then `pr(c)' is simply given by `sum a : a $\in$ gamma(c) : pa(a)'.
 (No indices needed.)
+\ask{Matt: The indexing seems to come from Section 4.2 of Monniaux's ``Abstract Interpretation of Probabilistic Semantics'' but we also could have come up with this indexing-abstraction on our own; I can't remember.  But the mapping suggestion seems much cleaner. What do you think?}
 
 Page 12, Handling nondeterminism: what do you mean by an ``empty
 choice"? By the way: there have been significant advances in combining
@@ -156,6 +168,8 @@ probabilism with nondeterminism in a coalgebraic way, based on
 suitable distributive laws - see e.g. DOI 10.1016/j.entcs.2006.06.004,
 10.1007/978-3-642-32784-1\_7, 10.1016/j.jlamp.2015.11.007 among
 others. Please compare these with the explicit MDP approach.
+
+\ask{Matt: I haven't done anything to address the above.}
 
 Page 22, Future Directions: the paper mentions fault detection,
 but probabilism is also helpful in studying fault (or risk)
@@ -248,13 +262,17 @@ This paper presents an introductory survey of probabilistic variants of program 
 The structure of the paper is quite logical. I have but four minor suggestions for improvement:
 - First, the link between Section 3.3 ``Computing Program Probabilities" and the preceding sections should be made more explicit. The reader is left wondering how these methods are to be incorporated in a probabilistic program analysis. It would be enlightening to refer to specific lines of the pseudo-algorithm for symbolic execution, and to Figure 1 which was used as a running example throughout the paper. An enumeration of program analyses from the literature that use the precise or a sampling-based method would complete the section. 
 - Second, Gordon et al's view on probabilistic programs is explained only in the footnote on page 3 ---while 2 of the 6 opportunities for future work refer to it. It would be better to explain this view wholly in the introduction or in the future work section. 
+\ask{Matt: In discussing the above comment, we talked about including an explanatory statement such as: ``We're looking at the probabilistic analysis of programs rather than the analysis of probabilistic programs.''   But in the original paper text, the paragraph concludes with: ``What has lagged behind is the development of frameworks for defining and implementing static analysis techniques for such programs.''  The two sentences next to each other seem to conflict.}
 - Third, I felt the work on probabilistic symbolic execution is explained more crisply than the work on probabilistic data flow analysis. Would it be possible to include a one-pager with the typical pseudo-algorithm for the monotone dataflow analysis framework (i.e., analogous to what page 14 does for static symbolic execution). This would improve the clarity of the first part of the paper.
+\ask{Matt: In the above comment, we still weren't sure whether we would add the pseudocode
+suggested or if this would unnecessarily lengthen the paper.}
 - Fourth, some glue text is missing in key places. For instance, the structure of Section 3 should be announced before its first subsection. This glue text would be a good opportunity to link the aforementioned Subsection 3.3 to 3.1 and 3.2.
 Also, a ``Conclusion" section is missing.
 
 Minor issues in need of clarification:
 
 p2: can the claim that frameworks for developing probabilistic program analyses have lagged behind be substantiated? e.g., by enumerating how few exist compared to non-probabilistic ones?
+\ask{Matt: How to make this enumeration reproducible?  Is an enumeration like this possible/feasible?}
 
 p4: aren't the variants of symbolic execution described near the end of the page commonly referred to as dynamic symbolic execution (or concolic testing)?
 
@@ -265,16 +283,20 @@ p8: ``and the number of values in the set." $\rightarrow$ please elaborate at th
 \fixed{p9: the acronym DTMCs is not yet defined (Because we introduce and discuss Markov chains only in the context of discrete time, we changed DTMC to just Markov chain.)}
 
 p10: ``Ramalingam formulates an equivalent system of linear equations." Is it possible to make this equivalence more concrete?
+\ask{Matt: we discussed that making this equivalence more concrete may be adding more text without introducing value---what do you think?}
 
 p10: ``Within the last 15 years, began incorporating probabilistic program information directly into ..." Can the need for this shift be motivated using example applications?
+\ask{Matt: what are some of these applications?}
 
 p10/11: ``of the abstract domain [element]?, but rather are bounds on the probability of each concrete [s/element/value]? represented by the abstract domain [element]?. The next sentence, starting with ``This simplifies ..." should be rewritten to improve its clarity.
+\ask{Matt: I think it is the elements we are talking about, but can you look at this?}
 
 p11: In the part starting with ``The literature has constructed these ad-hoc techniques, but we believe the methods of Section 3.3 might be applied ...", it is unclear whether what follows are ``these ad-hoc techniques" or your belief. I recommend postponing the reference to Section 3.3 until after the ad-hoc techniques have been enumerated.
 
 p12: Isn't the reading of the leftmost trace of the MDP of Figure 2 missing the decision for the root node? i.e., shouldn't it have read as left: \_; left : \_; left ; 0.6?
+\ask{Matt: you had some ideas on how to address the above comment.}
 
-p15: the sentence starting with ``More specifically, how to ..." breaks the flow of the paragraph. I recommend omitting it.
+\fixed{p15: the sentence starting with ``More specifically, how to ..." breaks the flow of the paragraph. I recommend omitting it. (We didn't completely omit the sentence, but reduced it and tried to smooth the flow.)}
 
 p16: Which of the enumerated works under ``More and varied probabilistic symbolic execution" perform static and dynamic symbolic execution respectively?
 
