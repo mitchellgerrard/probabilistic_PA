@@ -44,6 +44,7 @@ work discussed in the paper (showing their strength and weakness
 in terms of power, efficiency, etc).
 \ask{Matt: what would these table columns be?  What would be the
 characteristics we're comparing?}
+\recognize{Anto: I am not sure we can easily compare all the techniques in a table. If we go in this direction, possible dimensions could include: explicit/implicit probabilities (if the user has to label each branch explicitly or not), support for control and/or data flow, nondeterminism, type/level of abstraction.}
 
 Also, this paper is mainly about program analysis of imperative
 programs (rather than functional or logic languages), so the
@@ -55,6 +56,7 @@ worked with are mostly tailored towards imperative programs.  These
 analysis techniques are general, and apply to functional programs, but
 we did not think restating the techniques in a functional language added
 enough value to include.}
+\recognize{Anto: At the end of 2.1 . As a general note, I am not aware of techniques explicitly defined for functional programs, but I am inclined to think they would be a simpler setting than imperative programs, especially if pure functionals because of ssa, immutability, and a ``cleaner'' representation of the program state.}
 
 
 ----------------------- REVIEW 2 ---------------------
@@ -143,6 +145,7 @@ consistent with similar choice of terminology in process algebra
 (cf. external choice, internal nondeterminism, etc).
 
 \ask{Matt: how do we want to address the above comment?}
+\recognize{Anto: the only point I would consider is internal/external vs implicit/explicit. I do not have a strong preference. Implicit/explicit takes the developer's perspective, who can clearly see the uncertainty or not. Being focused on program analysis for software engineering, I think our perspective is fair. We may just state it explicitly in 2.2: first paragraph of ``Where do the probabilities...'', before ``More generally...'', ``In this paper, we adopt the terms implicit and explicit to stress that some possible sources of uncertainty are not explicitely visible at code level, but emerge through the interactions with the users and the execution environment.'' --- or something similar}
 
 The syntax of C doesn't help either. For instance, I must admit I got confused
 on first reading type `m(int x, int b1, int b2) \{...' because I thought
@@ -161,6 +164,7 @@ don't repeat the `A's, so a function is enough, `pa : A $\mapsto$ [0,1]'.
 Then `pr(c)' is simply given by `sum a : a $\in$ gamma(c) : pa(a)'.
 (No indices needed.)
 \ask{Matt: The indexing seems to come from Section 4.2 of Monniaux's ``Abstract Interpretation of Probabilistic Semantics'' but we also could have come up with this indexing-abstraction on our own; I can't remember.  But the mapping suggestion seems much cleaner. What do you think?}
+\recognize{Anto: Monniaux was defining the abstraction domain using the cartesian product, which had a point for his definition of the abstraction rules. Since we only describe the result of the abstraction (the possible final states in pa reached for a concrete input c), a map fits better. I would go with the map.}
 
 Page 12, Handling nondeterminism: what do you mean by an ``empty
 choice"? By the way: there have been significant advances in combining
@@ -170,6 +174,8 @@ suitable distributive laws - see e.g. DOI 10.1016/j.entcs.2006.06.004,
 others. Please compare these with the explicit MDP approach.
 
 \ask{Matt: I haven't done anything to address the above.}
+\recognize{Anto: I had a quick look at the first 2 references. They seem to correspond, at a semantic level, to Interval-MDPs (which include another level of nondeterminism to select a specific transition probability from within an interval; there is a nice paper at cav13 by Pugelli et al.). We can add these papers and Pugelli's one at the end of the 3rd par of ``Handling nondeterminism'' stating that ``Recent theoretical advances in the analysis of stochastic processes [pugelli] and the theory of coalgebras [those from the reviewer] may provide new pathways towards the definition of more advanced probabilistic program analysis methods that combine nondeterministic and probabilistic choices''}
+
 
 Page 22, Future Directions: the paper mentions fault detection,
 but probabilism is also helpful in studying fault (or risk)
@@ -189,6 +195,7 @@ research-building" slightly ambiguous, so we prefer the original)}
 
 \ask{page 2 Fix the spurious vertical space (LaTeX) (This seems to happen
 because of the diagram on the following page)}
+\recognize{Anto: is it good enough now?}
 
 \fixed{page 2, 3rd paragraph: I cannot see the text of footnote 1. (Moved
 the footnote up into the text)}
