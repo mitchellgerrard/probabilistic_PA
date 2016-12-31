@@ -102,20 +102,19 @@ Figure~\ref{fig:sampling-based} plots the solution space for the example constra
 \end{figure}
 
 The hit-or-miss Monte Carlo method consists in taking $n$ independent random samples uniformly within the domain; if a sample $s_i$ satisfies the constraint, we assign $s_i=1$, otherwise, $s_i=0$. This process is formally called a Binomial experiment with $n$ samples. The maximum likelihood estimate for $p$ is then $\hat{p}$~\cite{pestman1998mathematical}:
-
+%
 \begin{equation}\label{eq:mleEstimator}
 	\hat{p} = \frac{\sum_{i=1}^n s_i}{n} \qquad\qquad\qquad \sigma(\hat{p}) = \sqrt{\frac{\hat{p} \cdot (1-\hat{p})}{n}}
 \end{equation}
- 
- 
+%
 The right part of Equation~\eqref{eq:mleEstimator} shows the standard deviation $\sigma$ of $\hat{p}$~\cite{pestman1998mathematical}. The standard deviation is an index of the convergence of the estimate. Notably, it decreases with the square root of the number of samples; when the number of samples grows to infinity, the standard deviation goes to $0$, making the estimation converge to the actual value of $p$.
 
 Despite the convergence of $\hat{p}$ to $p$ can be proved only in the limit, given the value of $\hat{p}$, its standard deviation $\sigma$, and a desired confidence level $0<\alpha<1$, it is possible to define a confidence interval for the unknown value $p$. In particular:
-
+%
 \begin{equation}\label{eq:mleInterval}
 	Pr\Big( \hat{p} - z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\hat{p} \cdot (1-\hat{p})}{n}} \ \leq p \leq \ \hat{p} + z_{\frac{\alpha}{2}} \cdot \sqrt{\frac{\hat{p} \cdot (1-\hat{p})}{n}} \Big) = 1-\frac{\alpha}{2}
 \end{equation}
-
+%
 \noindent where $z_{\frac{\alpha}{2}}$ is the $1-\frac{\alpha}{2}$ quantile of the standard Gaussian distribution~\cite{pestman1998mathematical}.
 
 Equation~\eqref{eq:mleInterval} is constructed using the central limit theorem, under the assumption that a large number of samples $n$ have been collected (as a rule of thumb, hundreds of samples or more are almost surely a good fit for this assumption). The width of the interval, which is an index of the accuracy of the estimate, can be arbitrarily reduced by increasing the number of samples $n$; thus, Equation~\eqref{eq:mleInterval} can be used as stopping criteria for the estimation process.
