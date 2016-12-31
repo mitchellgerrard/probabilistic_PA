@@ -33,6 +33,42 @@
 \usepackage{pgfplotstable}
 
 
+%%%%% BEGIN SPACE SAVERS %%%%%
+\usepackage{times} % More compact font, allowed by lncs
+\usepackage{microtype} % reduces some unnecessary spaces
+
+% Reduces useless spacing around section headers
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+                       {-2\p@ \@plus -4\p@ \@minus -4\p@}%
+                       {5\p@ \@plus 2\p@ \@minus 2\p@}%
+                       {\normalfont\large\bfseries\boldmath
+                        \rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+                       {-8\p@ \@plus -4\p@ \@minus -4\p@}%
+                       {4\p@ \@plus 2\p@ \@minus 2\p@}%
+                       {\normalfont\normalsize\bfseries\boldmath
+                        \rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+                       {-4\p@ \@plus -4\p@ \@minus -4\p@}%
+                       {-1.5em \@plus -0.22em \@minus -0.1em}%
+                       {\normalfont\normalsize\bfseries\boldmath}}
+\makeatother
+
+% Reduce useless space before paragraphs
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+                                      {\parskip}%{3.25ex \@plus1ex \@minus.2ex}%
+                                      {-1em}%
+                                      {\normalfont\normalsize\itshape}}
+\makeatother
+
+% Nuclear weapon: use only if strictly needed :)
+%\def\baselinestretch{0.97}
+
+%%%%% END SPACE SAVERS %%%%%
+
+
 \newcommand\x[1]{\ensuremath{\mathit{#1}}}
 \newcommand\lrangle[1]{\ensuremath{\langle#1\rangle}}
 
