@@ -190,22 +190,26 @@ to remove the indexing since it is not needed to communicate the key
 point of Monniaux's approach.}
 
 Page 12, Handling nondeterminism: what do you mean by an ``empty
-choice"? By the way: there have been significant advances in combining
+choice"? 
+
+\fixed{Example has been reworked and discussion expanded to clarify
+the meaning.}
+
+By the way: there have been significant advances in combining
 probabilism with nondeterminism in a coalgebraic way, based on
 suitable distributive laws - see e.g. DOI 10.1016/j.entcs.2006.06.004,
 10.1007/978-3-642-32784-1\_7, 10.1016/j.jlamp.2015.11.007 among
 others. Please compare these with the explicit MDP approach.
 
-\ask{Matt: Antonio can you go ahead and make these changes?}
-\recognize{Anto: I had a quick look at the first 2 references. They seem to correspond, at a semantic level, to Interval-MDPs (which include another level of nondeterminism to select a specific transition probability from within an interval; there is a nice paper at cav13 by Pugelli et al.). We can add these papers and Pugelli's one at the end of the 3rd par of ``Handling nondeterminism'' stating that ``Recent theoretical advances in the analysis of stochastic processes [pugelli] and the theory of coalgebras [those from the reviewer] may provide new pathways towards the definition of more advanced probabilistic program analysis methods that combine nondeterministic and probabilistic choices''}
-
+\fixed{Added a reference to these and another recent piece of
+relevant work.}
 
 Page 22, Future Directions: the paper mentions fault detection,
 but probabilism is also helpful in studying fault (or risk)
 propagation in the case of recursive programs, see e.g. 
 DOI 10.1016/j.scico.2015.04.008.
 
-\fixed{}
+\fixed{Added this as another example motivation for probabilistic reasoning.}
 
 3. Further suggestions for improving the manuscript
 
@@ -310,7 +314,7 @@ This paper presents an introductory survey of probabilistic variants of program 
 The structure of the paper is quite logical. I have but four minor suggestions for improvement:
 - First, the link between Section 3.3 ``Computing Program Probabilities" and the preceding sections should be made more explicit. The reader is left wondering how these methods are to be incorporated in a probabilistic program analysis. It would be enlightening to refer to specific lines of the pseudo-algorithm for symbolic execution, and to Figure 1 which was used as a running example throughout the paper. An enumeration of program analyses from the literature that use the precise or a sampling-based method would complete the section. 
 
-\ask{Matt: Antonio do you think you can find some ways to weave 3.3 into the other sections or at least cross-reference a bit.  You can leave a description of what you did here in the review response.}
+\fixed{}
 
 - Second, Gordon et al's view on probabilistic programs is explained only in the footnote on page 3 ---while 2 of the 6 opportunities for future work refer to it. It would be better to explain this view wholly in the introduction or in the future work section. 
 
@@ -321,9 +325,11 @@ The structure of the paper is quite logical. I have but four minor suggestions f
 \fixed{We had included this in a prior draft, but the feedback we received was that it made the survey too long.  We removed it to address that concern and since the analysis framework, e.g., of Kildall, is very clearly explained in the literature we felt that the reader would be better off with the details of the newer, and less well known, symbolic execution approach.}
 
 - Fourth, some glue text is missing in key places. For instance, the structure of Section 3 should be announced before its first subsection. This glue text would be a good opportunity to link the aforementioned Subsection 3.3 to 3.1 and 3.2.
+\fixed{}
+
 Also, a ``Conclusion" section is missing.
 
-\fixed{TBD}
+\fixed{}
 
 Minor issues in need of clarification:
 
@@ -339,7 +345,8 @@ p6: However, it may be the case that phi fails to hold on some trace reaching $\
 p8: ``and the number of values in the set." $\rightarrow$ please elaborate at this point \_why\_ this quantity is important (to improve the link to section 3.3)
 \fixed{}
 
-\fixed{p9: the acronym DTMCs is not yet defined (Because we introduce and discuss Markov chains only in the context of discrete time, we changed DTMC to just Markov chain.)}
+p9: the acronym DTMCs is not yet defined
+\fixed{Because we introduce and discuss Markov chains only in the context of discrete time, we changed DTMC to just Markov chain.}
 
 p10: ``Ramalingam formulates an equivalent system of linear equations." Is it possible to make this equivalence more concrete?
 \fixed{We considered this and to illustrate the equivalence would require nearly
@@ -358,13 +365,13 @@ p12: Isn't the reading of the leftmost trace of the MDP of Figure 2 missing the 
 \fixed{}
 
 p15: the sentence starting with ``More specifically, how to ..." breaks the flow of the paragraph. I recommend omitting it. 
-\fixed{We trimmed the paragraph and tried to smooth the flow.)}
+\fixed{We trimmed the paragraph and tried to smooth the flow.}
 
 p16: Which of the enumerated works under ``More and varied probabilistic symbolic execution" perform static and dynamic symbolic execution respectively?
 \fixed{}
 
 p22: I suggest merging future directions 3 and 4 (with the text of 4 taking precedence), and placing the merger at the back of the list. The others can be understood without understanding Gordon et al's view on probabilistic programs (cf. above). 
-\fixed{TBD}
+\fixed{}
 
 Spelling and typography:
 

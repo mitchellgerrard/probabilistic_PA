@@ -1,18 +1,18 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Static program analyses aim to calculate properties of 
+Static program analyses calculate properties of 
 the possible executions of a program without ever running the program,
 and have been an active topic of study for over five decades.
 Initially developed to allow compilers to generate more efficient
-output programs, by the mid-1970s \cite{fosdick1976data} researchers had
-understood that such program analyses could be applied to fault
+output programs, by the mid-1970s \cite{fosdick1976data} researchers 
+understood that program analyses could be applied to fault
 detection and verification of the absence of specific classes of faults.
 
 The power of these analysis techniques, and what distinguishes them from
 simply running a program and observing its behavior, is their
 ability to reason about program behavior without knowing all of the
-exact details of program execution (e.g., the specific 
+details of program execution (e.g., the specific 
 input values provided to the program).
 This tolerance of uncertainty allows analyses
 to provide useful information when users don't know exactly how
@@ -37,8 +37,10 @@ some simple assumption, i.e., that income must be non-negative.
 Domain experts have studied income distributions and find that
 incomes vary according to a generalized beta distribution 
 \cite{mcdonald1984some,thurow1970analyzing}.  
-With such a distribution the program can now be viewed as a probabilistic
-program and the semantics of such programs has long been studied 
+With such a distribution the program can now be viewed as a 
+\textit{probabilistic program} 
+and, beginning with Kozen's seminal work in the early 1980s,
+the semantics of such programs has long been studied 
 \cite{kozen1981semantics,kozen1983probabilistic,jones1990probabilistic,morgan1996probabilistic}.
 
 For non-probabilistic programs, it was just over six years
@@ -47,8 +49,8 @@ to Kildall's widely-applicable static analysis framework~\cite{kildall1973unifie
 Sophisticated extensions of Kildall's work are prevalent 
 today, e.g., ~\cite{lam11:_soot_java,Lattner:2004:LLVM}, and form 
 the basis for modern software development environments.
-For probabilistic programs, the development of 
-static analysis frameworks has taken several decades and 
+For probabilistic programs, however, the development of 
+static analysis frameworks has taken decades and 
 they have not yet reached the level of applicability of 
 their non-probabilistic counterparts.
 
@@ -58,10 +60,9 @@ results to assess the security of software components~\cite{mardziel2013dynamic}
 to assess program reliability~\cite{Filieri2013}, to measure program
 similarity~\cite{Geldenhuys2012}, 
 to characterize fault propagation~\cite{RiskAwareTransformation},
-to characterize the coverage
-achieved by an analysis technique~\cite{DwyerASE11}, and to provide information
-about program properties when a classic analysis would fail, e.g.,
-by running out of memory, time, or due to excessive approximation.
+and to characterize the coverage
+achieved by an analysis technique~\cite{DwyerASE11}.
+\mycomment{Corina: add some more examples here about your latest work}
 We believe that there are many more applications for cost-effective
 and widely-applicable static analysis frameworks for probabilistic
 programs.
@@ -74,14 +75,15 @@ allowning certain program runs to be rejected.
 These programs can be viewed as expressing computations over 
 probability distributions rather than inputs drawn from a distribution.  
 While recent work has just begun to explore the foundations of analysis for
-this more general setting~\cite{Gordon2014}, in this paper we consider
+this more general setting~\cite{claret2013bayesian,Gordon2014}, 
+in this paper we consider
 Kozen's original definition and analysis frameworks targetting such programs.
 
 More specifically, we survey work on adapting data flow analysis 
 and symbolic execution to use information about input distributions.
 We begin with background that provides basic definitions
 related to static analysis and probabilistic models.
-Section~\ref{sec:overview} attempts to expose some of the key
+Section~\ref{sec:overview} exposes some of the key
 intuitions and concepts that cross-cut the work in this area.
 The following two sections, \ref{sec:pdfa}-\ref{sec:pse}, 
 survey work on probabilistic data flow analysis and probabilistic

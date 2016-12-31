@@ -4,10 +4,6 @@
 The key challenge in probabilistic data flow analysis is
 determining how probabilities are incorporated into the control
 and data abstractions upon which it is based.
-As in the classical case, we will see that probabilistic data flow analysis
-can be thought of as model checking
-of probabilistic abstract interpretations, and in some
-cases, the model checking itself must be made probabilistic.
 
 \subsubsection{Control Flow Probabilities}
 Early work in extending data flow analysis 
@@ -26,7 +22,7 @@ The left side of Figure~\ref{fig:pcfgs} shows the probabilistic CFG for the
 example of Figure~\ref{fig:example}, given that input $x$
 is uniformly distributed in the range $[1,100]$.  
 This program is simple enough that the branch probabilities can
-be easily computed---importantly the probabilities for each
+be easily computed---because the probabilities for each
 branch along a path are independent.
 
 The sum of all probabilities leaving any control flow node must be 1
@@ -62,7 +58,7 @@ PRISM \cite{kwiatkowska2010advances}.   Ramalingam's analysis
 effectively solves an equivalent system of equations.  
 
 These techniques rely on being able to annotate
-branch decisions in the program (or model, in PRISM's case)
+branch decisions in the program 
 with probabilities.  When the input distributions governing
 branches is unknown or when the branches along a path are 
 dependent the techniques described above cannot be applied.
@@ -71,12 +67,11 @@ and \ref{sec:computingprobabilities} describe ways
 to address this problem.
 
 \subsubsection{Abstract Data Probabilities}
-Within the last 15 years, researchers 
-began incorporating probabilistic information directly into
-the semantics of a program and then abstracting over 
+Researchers have incorporated probabilistic information directly into
+the semantics of a program and then abstracted over 
 those semantics 
 \cite{monniaux2000abstract,smith2008probabilistic,cousot2012probabilistic}
-to enable data flow analysis.
+to construct probabilistic data flow analyses.
 This is typically done using a variation on Kozen's 
 probabilistic semantics \cite{kozen1981semantics} 
 alongside abstract interpretation and data flow techniques.
@@ -216,27 +211,39 @@ probability estimate.
 
 More recent work on abstraction in probabilistic data flow
 analysis, as well as in model checking, takes a different approach.
-In the MDP on the right side of Figure~\ref{fig:pcfgs} the ``$?_i$''
-indicate branch outcomes whose probabilities are unknown.
-A trace in an MDP can be viewed as the alternation of
-probabilistic and nondeterministic choices---whose probabilities are unknown.  
-For a given program state, we can formulate a 2-player game
-that seeks to compute values for ``$?_i$'' which maximizes (or minimizes)
-the probability of reaching that state.
+In the MDP on the right side of Figure~\ref{fig:pcfgs} $\alpha$ and
+$\beta$ are used to denote the outcomes of nondeterministic
+choices---modeling for instance unknown branch conditions---and their
+values comprise the MDP policy.
+There are three policies for this example:
+$(\alpha,\beta)$, $(\alpha,\neg \beta)$, and $(\neg \alpha)$.
+For a given program state, we can formulate an alternating game
+that seeks to determine values for $\alpha$ and $\beta$ which 
+maximize (or minimize) the probability of reaching that state.
 Probabilistic model checkers such as PRISM and PASS 
 use this approach to formulate MDP-based analyses.
 
-Consider the reachability of line 5 in the MDP.  There is a single
-path consisting of transitions labeled $?_1$, $?_2$, and $0.6$.  
-The probability of this path, which is the product of the transition
-probabilities, is maximized if $?_1 = \; ?_2 = 1$.
-The probability of returning from a call to $m$ without reaching
-an assert false requires computing values for $?_1$ and $?_2$ that
-maximizes $(?_1 * ?_2 * 0.6) + (?_1 * (1 - ?_2) * 0.3) + ((1 - ?_1) * 0.55)$, 
-i.e., the sum of the probabilities along all paths reaching the state.
+The reachability of line 5 in the MDP is only possible under
+the policy $(\alpha, \beta)$.  Thus, that policy maximizes the
+probability of reaching that state at $0.6$---the product of 
+the probabilities along the path. 
+Any other policy will minimize the probability of reaching
+line 5 at $0$.
+Bounding the probability of violating an assertion in a call to $m$ 
+requires considering all three policies.  The
+maximal probability is $0.7$ under policy $(\alpha, \neg \beta)$,
+whereas the minimal probability is 
+$0.4$ under policy $(\alpha, \beta)$.
 
 Abstract interpretation can be applied to the data states in
 such approaches~\cite{kwiatkowska2011prism,wachter2010best,esparza2011probabilistic}
 to improve efficiency.  These abstractions are, however,
 independent of the probabilistic choices implicit in the semantics, and must be specified
 by the developer in some way---as in the case of Ramalingam's work.
+
+Theoretical advances in the analysis of stochastic 
+processes~\cite{Pugelli:CAV2013} and coalgebraic 
+semantics~\cite{HASUO200647,Oliveira2016449}
+may provide new pathways towards the definition of more advanced 
+probabilistic program analysis methods that combine nondeterministic 
+and probabilistic choice.

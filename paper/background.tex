@@ -11,8 +11,8 @@ results of drawing values from a Bernoulli distribution,
 it either performs its computation
 (which is unspecified and denoted with \texttt{...}) or triggers
 an assertion. 
-For the example, we are interested in reasoning about
-assertion, i.e., that the program does not reach a false assertion.
+For the example, we might be interested in reasoning about the lack
+of assertion violations.
 
 \input{example1}
 
@@ -27,15 +27,15 @@ choice -- depicted by the lack of labels on the edges.
 
 We will also consider models that include probabilistic choice,
 e.g., defining the probability that a branch is taken.
-The left side of Figure~\ref{fig:choice} shows a probability
-that reflects the outcome of the Bernoulli draw on line 2.
+The left side of Figure~\ref{fig:choice} show edge probabilities
+that reflect the outcome of the Bernoulli draw on line 2.
 In addition, we will consider models where the
-choice of successor is defined based on the semantics
+choice of successor is defined by the semantics
 of the branch condition.
 The right side of Figure~\ref{fig:choice} 
 shows a logical condition that 
 reflects the fact that the value of parameter $x$ must be
-less than or equal to $60$ for control to traverse the branch at line 4.
+less than or equal to $60$ for control to traverse the true branch at line 4.
 
 \input{example2}
 
@@ -43,7 +43,7 @@ A key concept in the program analysis frameworks we survey is
 \textit{symbolic abstraction}.  A symbolic abstraction is a 
 representation of a set of states.  Abstractions can be encoded
 in a variety of forms, e.g., logical formulae \cite{thakur2012bilateral}, binary
-decision diagrams \cite{bryant1992symbolic}, or custom representations \cite{bagnara2008parma}.  For example, the set of negatie integer values 
+decision diagrams \cite{bryant1992symbolic}, or custom representations \cite{bagnara2008parma}.  For example, the set of negative integer values 
 can be defined by a predicate 
 $lt0 \equiv \lambda x.x<0$ which returns true for all values in the set.
 Logical combinations of such predicates can be used to define
@@ -62,9 +62,9 @@ states, whereas those that seek to falsify properties generally define
 abstractions that \textit{underapproximate} the set of program states.
 
 \paragraph{Data Flow Analysis}
-Data flow analyses~\cite{kildall1973unified} 
-provide a framework for computing properties shared by sets of
-program traces reaching a program state, or a set of states.  It is
+Data flow analysis~\cite{kildall1973unified} 
+provides a framework for computing properties shared by sets of
+program traces reaching a program state.  It is
 common for such analyses to group together the states that share a
 common control location; the computed properties attempt to characterize
 the invariants over those states.
@@ -88,8 +88,8 @@ instead, abstract states can be combined, via a meet operation, wherever
 traces merge in the control flow, and loops are processed
 repeatedly to compute the maximum fix point (MFP).
 
-Data flow analysis tools and toolkits exist for many popular 
-languages~\cite{vallee1999soot,fink2012wala}
+Data flow analysis tools and toolkits exist for popular 
+languages, e.g., \cite{vallee1999soot,fink2012wala,Lattner:2004:LLVM},
 and have been used primarily for program optimization and
 verifying program conformance with assertional specifications.
 
@@ -101,9 +101,7 @@ Symbolic execution records symbolic expressions encoding the
 values of program memory for each program location.  
 A \textit{path condition}
 accumulates symbolic expressions that encode branch constraints 
-taken along a trace.  
-The analysis begins at the first
-program location with the path condition set to \textit{true}.
+taken along an execution.
 
 Sequences of program statements are interpreted by applying the operation
 at each program location to update the values of program
@@ -130,15 +128,15 @@ as both Bernoulli trials yield a value of 1.
 In practice symbolic execution computes an underapproximation of 
 program behavior.
 Programs with looping behavior that is determined by input values 
-may result in an infinite symbolic execution tree. 
+may result in an infinite symbolic execution.
 For this reason, symbolic execution is
 typically run with a (user-specified) bound on the search depth, thus
 some paths may be unexplored.   Moreover, there may be path constraints
 for which efficient satisfiable checking is not possible.  Variants of
 symbolic execution~\cite{godefroid2005dart,sen2005cute,song2008bitblaze},
 called concolic execution, address this by replacing problematic 
-path condition constraints with equality constraints based 
-on values collected while executing the program along the trace.
+constraints with equality constraints between variables 
+and values collected while executing the program along the trace.
 
 Symbolic execution tools and toolkits exist for many popular 
 languages~\cite{pasareanu2010symbolic,godefroid2005dart,jamrozik2013generating,cadar2008klee}
@@ -149,7 +147,7 @@ and have been used primarily for test generation and fault detection.
 There is an enormous literature on probability and statistics
 that can be brought to bear in program analysis.  
 In this paper, we consider two types of discrete time models:
-Markov chains and Markov decision processes~\cite{Puterman:MDP94}.
+Markov chains and Markov decision processes (MDP)~\cite{Puterman:MDP94}.
 
 Both models rely on the concept of a probability distribution.
 A \textit{probability distribution} over a set is given by a function
@@ -214,16 +212,15 @@ efficiency of analysis, to abstract program behavior, and that
 abstraction may make it impossible to accurately compute the 
 probability of a transition.  
 
-When nondeterminism is included in a probabilistic state
-transition model, it results in a Markov Decision Process (MDP).  
+Including nondeterminism in a probabilistic state
+transition model yields a Markov decision process.
 An MDP adds an additional structure, $A$, that defines
 a set of (internal) actions which are used to model the
 selection among a set of possible next-state probability distributions.
 When traversing a path in an MDP, in each state, a choice
 from $A$ must be made in order to determine how to transition,
 probabilistically, to a next state.   That sequence of choices
-\ignore{$\sigma \in A^*$,} is termed a \textit{schedule} (or policy or 
-strategy) for the MDP.
+\ignore{$\sigma \in A^*$,} is termed a \textit{policy} for the MDP.
 Given a fixed schedule, an MDP reduces to a Markov chain, but
 the advantage of an MDP lies in its ability to provide upper and
 lower bounds on the behavior of the modeled system (discussed
