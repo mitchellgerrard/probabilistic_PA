@@ -3,11 +3,8 @@
 
 Symbolic execution produces path conditions (PCs), i.e., constraints on the inputs, that characterize how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analyzed any further.  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
 
-For simplicity, we assume we are working with a uniform usage profile for the program under analysis.  In other words, all input values are equally likely.  
-See \cite{Filieri2013} for a detailed discussion of usage profiles within symbolic execution.
-\ignore{
-Note that arbitrary usage profiles can be embedded in the code, and hence this assumption is not a restriction on the generality of the approach. 
-}
+For simplicity, we assume we are working with a uniform input distribution for the program under analysis.  
+See \cite{Filieri2013} for a detailed discussion of input distributions within symbolic execution.
 
 For example, in Figure~\ref{fig:symex:illus}, 
 we introduce variables $b_0$ and $b_1$ to model 
@@ -158,7 +155,6 @@ Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{p
  \WHILE{$\neg branch(l)$}
    \STATE $m \gets op(l)(m)$
    \STATE $l \gets succ(l)$
-   \STATE $check(l,m,\phi)$
  \ENDWHILE
  
  
@@ -205,13 +201,13 @@ Enough confidence exists about the portion of the input domain that has been ana
 
 Handling nondeterminism within the systems being analyzed has been studied in \cite{Filieri2013} in the context of scheduling choices in concurrent programs. The approach was to determine the schedule giving the highest (or lowest) reliability. More recently, an approach based on value iteration learning was presented in \cite{luckow2014exact} to handle the problem in a more general fashion.
 
+\ignore{
 \subsubsection{More and varied probabilistic symbolic execution}
 
-Probabilistic symbolic execution was introduced in \cite{Geldenhuys2012}, where the approach was to do model counting (using LattE) on-the-fly during symbolic execution. This work was extended in \cite{Filieri2013} to collect path conditions from symbolic execution and then calculate the reliability of the code. This work also showed how usage profiles can be handled. In both works it is important to observe that {\it all} paths of the program are analyzed, and thus the probability calculations are precise. 
+Probabilistic symbolic execution was introduced in \cite{Geldenhuys2012}, where the approach was to do model counting (using LattE) on-the-fly during symbolic execution. This work was extended in \cite{Filieri2013} to collect path conditions from symbolic execution and then calculate the reliability of the code. This work also showed how input distributions can be handled. In both works it is important to observe that {\it all} paths of the program are analyzed, and thus the probability calculations are precise. 
 
 The work in \cite{Sankaranarayanan2013} was the first to apply sampling of paths during static analysis to provide a probability calculation with a certain confidence bound. They applied the approach to calculate bounds on the probability of assertions holding in the code. In \cite{filieri2014statistical}, an approach similar to Algorithm~\ref{alg-pse} was used to also sample paths and then use Bayesian estimation and hypothesis testing. This paper also introduced the subtraction of the counts to ensure rare events can be sampled (see {\tt processPath} above). 
 
-\ignore{
 \mycomment{Anto: the next paragraph will be updated after completing sect 3}
 Another important dimension to consider is how to count the solutions for constraints in various domains. The work so far described has mostly focussed on linear integer arithmetic, since the theory is decidable and thus often used as the basis for symbolic execution tools. Fortunately, as already mentioned, efficient model counters also exist for this domain (such as LattE\cite{deloera2012software} and Barvinok\cite{verdoolaegesoftware}). In \cite{Borges2014} non-linear and bounded floating-point domains are handled giving accurate estimates of the size of the solution space. Counting the solutions to constraints complex data-structures, such as objects in Java, are addressed in \cite{Filieri2015}. New domains such counting the solutions to string domains \cite{Aydin2015} and the more general all solutions to a SAT formula (\#SAT) \cite{Chakraborty2014} has recently been proposed. 
 }

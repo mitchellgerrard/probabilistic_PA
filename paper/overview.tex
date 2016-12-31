@@ -3,11 +3,10 @@
 
 The literature on incorporating probabilistic techniques into 
 program analysis is large and growing, technically deep, and quite
-varied.  In this paper we cannot hope to cover all of it, but our
+varied.  In this paper, our
 intention is to expose key similarities and differences between 
-families of approaches and, in doing so, provide the reader with
-intuitions that are often missing in the detailed presentation of
-techniques.
+families of approaches and, in so doing, provide the reader with
+intuitions that are often missing in the detailed presentation of techniques.
 
 \subsubsection{Where do the probabilities come from?}
 There are two perspectives adopted in the literature.
@@ -17,12 +16,8 @@ but are characteristics of the execution environment.
 Alternately, programs are \textit{explicitly} probabilistic in 
 that the statements
 within the program define the input probability distributions.
-More generally, a program might combine both implicit and explicit
-probabilistic calls.  Method \texttt{m} in Figure~\ref{fig:example}
-is an example of such a program.
 
 It is possible to transform explicit probabilistic constructs
-into implicit ones
 by introducing auxiliary input variables and then specifying
 their distributions.   For the example, this would result
 in the addition of two integer input variables 
@@ -32,14 +27,11 @@ in the addition of two integer input variables
 where the two instances of
 \texttt{drawBernoulli(0.5)} expressions would be replaced
 by \texttt{b1} and \texttt{b2}, respectively.  The input
-distribution for these auxiliary inputs would then be specified
+distribution for these each auxiliary input would then be specified
 as a set of pairs,
-\[
-\{ (\lambda x.x=0,0.5), (\lambda x.x\not=0 \vee x\not=1, 0), (\lambda x.x=1,0.5)\}
-\]
-where the first component defines the characteristic function
-of a set of values and the second component defines the probability
-of a value in that set.
+$\{ \ldots, (-1,0), (0,0.5), (1,0.5), (1,0), \ldots \}$
+where the first component defines a value and the second defines
+its probability.
 
 Section~\ref{sec:pdfa} discusses approaches where probabilities
 governing specific branch outcomes, as opposed to input values,
@@ -67,10 +59,10 @@ techniques explore---and it is even possible to compute the probability
 \textit{exactly}, if certain restrictions hold on the program and its distributions.
 
 Conceptually, there are two pieces of information that are necessary
-to reason probabilisticaly about a set of concrete values: a quantity
+to reason probabilisticaly about a set of values: a quantity
 that approximates the probability of each value in the set 
 and the number of values in the set.  
-Many of the earlier probabilistic static analysis
+Early probabilistic static analysis
 techniques did not explicitly capture this latter quantity, but
 more recent work discussed in Section~\ref{sec:pse}, using the
 techniques of Section~\ref{sec:computingprobabilities}, 
@@ -82,7 +74,7 @@ recent approaches~\cite{mardziel2013dynamic}.
 Any analysis that hopes to scale will have to approximate
 behavior.  As explained earlier, in static analyses it is common
 to model such overapproximation using nondeterministic choice.
-Across all of the analysis techniques we have surveyed, MDPs
+Across all of the analysis techniques we survey, MDPs
 have been used when there is a need to mix probabilistic
 and nondeterministic choice.   
 An important consequence of using MDPs is that it is no longer possible
@@ -90,13 +82,3 @@ to compute a single probabilistic characterization of a property.
 Instead, analyses can compute, across the set of all possible sequences
 of nondeterministic choice outcomes, the minimal and maximal 
 probabilities for a property to hold.
-
-If the minimal probability for a property of interest lies above 
-a desired probability threshold, then regardless of how the nondeterminism
-is resolved, the property is guaranteed to hold within the desired 
-threshold---the probabilistic property \textit{must} hold.  
-If that is not the case, but the maximal probability for
-a property of interest lies above a desired threshold, then there
-is a schedule to resolve the nondeterminism that satisfies
-the property with at least the desired probability---the probabilistic property \textit{may} hold.
-

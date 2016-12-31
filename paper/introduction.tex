@@ -13,24 +13,20 @@ The power of these analysis techniques, and what distinguishes them from
 simply running a program and observing its behavior, is their
 ability to reason about program behavior without knowing all of the
 exact details of program execution (e.g., the specific 
-input values provided to the program, the set of operating system
-thread scheduler decisions).  This tolerance of uncertainty allows analyses
+input values provided to the program).
+This tolerance of uncertainty allows analyses
 to provide useful information when users don't know exactly how
-a program will be used (e.g., when a program is first released, when
-embedded systems read sensor inputs from the physical world, or
-when it is ported to an operating system with a different scheduler).
+a program will be used.
 
-Static analyses model uncertainty in program behavior
+Static analyses model uncertainty 
 through the use of various forms of abstraction and symbolic representation.
 For example, symbolic expressions are used to encode logical constraints 
 in symbolic execution~\cite{king1976symbolic}, to define abstract domains
 in data flow analysis~\cite{kildall1973unified,cousot1977abstract}, and to 
 capture sets of data values that constitute reachable states via
 predicate abstraction~\cite{graf1997predabs}.
-Nondeterministic choice is another widely used approach for modeling
-uncertainty---for instance, in modeling uncertain branch 
-decisions in data flow analysis,
-or scheduler decisions in model checking.
+Nondeterministic choice is another widely used approach,
+for instance, in modeling branch decisions in data flow analysis.
 While undeniably effective, these approaches sacrifice potentially
 important distinctions in program behavior.   
 
@@ -40,55 +36,49 @@ by allowing any integer value, or, perhaps, by applying
 some simple assumption, i.e., that income must be non-negative.
 Domain experts have studied income distributions and find that
 incomes vary according to a generalized beta distribution 
-\cite{mcdonald1984some,thurow1970analyzing}.  Can this type of information be 
-exploited to yield useful analysis results when classic
-analyses fail, or to reason about new types of program properties?
+\cite{mcdonald1984some,thurow1970analyzing}.  
+With such a distribution the program can now be viewed as a probabilistic
+program and the semantics of such programs has long been studied 
+\cite{kozen1981semantics,kozen1983probabilistic,jones1990probabilistic,morgan1996probabilistic}.
 
-\ignore{
-For decades, there has been a growing awareness of the value of 
-incorporating more precise forms of uncertainty into program behavior.  
-The field of randomized algorithms has studied how to incorporate
-randomness as an additional program input---as a means of achieving
-good average case performance, and consequently, as a defense against
-intolerable worst case performance.
-Programming such algorithms requires that primitives be available
-to draw values from probability distributions, and there are many
-languages that provide such primitives, e.g., NetLogo \cite{tisue2004netlogo},
-the C++ \texttt{$\mathtt{<random>}$} library, and the GNU Scientific library.
-}
-
-Whether information about the distribution of
-values is embedded within a program or stated as an input assumption,
-the semantics of such probabilistic programs is well-understood---and
-has long been studied 
-\cite{kozen1981semantics,kozen1983probabilistic,jones1990probabilistic,morgan1996probabilistic}
-\setcounter{footnote}{0}
-In recent
-years, the term probabilistic program has been generalized beyond
-drawing inputs from probability distributions, which we
-consider here, to programs that can condition program behavior---by
-rejecting certain program runs---and thereby be viewed as
-computations over probability distributions.  We refer the reader to the
-recent paper by Gordon, Henzinger, Nori and Rajamani \cite{Gordon2014}
-for discussion of the analysis of these more general probabilistic programs. 
-What has lagged behind is the development of frameworks for 
-defining and implementing static analysis techniques for such programs.
+For non-probabilistic programs, it was just over six years
+from Floyd's foundational work on program semantics~\cite{FLOYD67} 
+to Kildall's widely-applicable static analysis framework~\cite{kildall1973unified}.
+Sophisticated extensions of Kildall's work are prevalent 
+today, e.g., ~\cite{lam11:_soot_java,Lattner:2004:LLVM}, and form 
+the basis for modern software development environments.
+For probabilistic programs, the development of 
+static analysis frameworks has taken several decades and 
+they have not yet reached the level of applicability of 
+their non-probabilistic counterparts.
 
 What would such analyses have to offer?
-They can, of course, provide a means of analyzing programs that compute
-with values chosen from probability distributions, but they offer much
-more.
-For example, researchers have explored the use of probabilistic analysis
+Researchers have explored the use of probabilistic analysis
 results to assess the security of software components~\cite{mardziel2013dynamic},
 to assess program reliability~\cite{Filieri2013}, to measure program
 similarity~\cite{Geldenhuys2012}, 
+to characterize fault propagation~\cite{RiskAwareTransformation},
 to characterize the coverage
 achieved by an analysis technique~\cite{DwyerASE11}, and to provide information
 about program properties when a classic analysis would fail, e.g.,
 by running out of memory, time, or due to excessive approximation.
+We believe that there are many more applications for cost-effective
+and widely-applicable static analysis frameworks for probabilistic
+programs.
 
-In this paper, we survey work on adapting data flow analysis 
-and symbolic execution to use probabilistic information.
+In recent years, the term ``probabilistic program'' has been generalized 
+beyond Kozen's definition in which programs draw inputs from probability 
+distributions.
+This more general setting permits the conditioning of program behavior by
+allowning certain program runs to be rejected.  
+These programs can be viewed as expressing computations over 
+probability distributions rather than inputs drawn from a distribution.  
+While recent work has just begun to explore the foundations of analysis for
+this more general setting~\cite{Gordon2014}, in this paper we consider
+Kozen's original definition and analysis frameworks targetting such programs.
+
+More specifically, we survey work on adapting data flow analysis 
+and symbolic execution to use information about input distributions.
 We begin with background that provides basic definitions
 related to static analysis and probabilistic models.
 Section~\ref{sec:overview} attempts to expose some of the key
@@ -96,6 +86,9 @@ intuitions and concepts that cross-cut the work in this area.
 The following two sections, \ref{sec:pdfa}-\ref{sec:pse}, 
 survey work on probabilistic data flow analysis and probabilistic
 symbolic execution.  
+While we focus on analysis of imperative programs, we note that
+principles exposed in our survey apply to analysis frameworks 
+for functional programs as well.
 Section~\ref{sec:computingprobabilities} discusses approaches that
 have been developed to reason about the probability of program-related 
 events, e.g., executing a path, taking a branch, or reaching a state.

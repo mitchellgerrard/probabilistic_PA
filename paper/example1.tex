@@ -1,0 +1,84 @@
+\begin{figure}[t]
+\begin{minipage}[b]{0.05\linewidth}
+~
+\end{minipage}%
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\begin{lstlisting}[language=Java,numbers=left,basicstyle=\scriptsize\ttfamily]
+m(int x) {
+ if(drawBernoulli(0.5) == 1) {
+  if(drawBernoulli(0.5) == 1) {
+   if(x <= 60)
+    ...
+   else
+    assert false
+  } else {
+   if(x <= 30)
+    ...
+   else
+    assert false
+  }
+ } else {
+  if(x <= 55)
+   ...
+  else
+   assert false
+ }
+}
+\end{lstlisting}
+\end{minipage}%
+\begin{minipage}[b]{0.3\linewidth}
+\tikzstyle{every node}=[text centered, font=\scriptsize, inner sep=1pt]
+\begin{tikzpicture}[scale=0.5, level/.style={sibling distance = 40mm, level distance = 15mm}]
+  \node[name=entry, xshift=0mm, yshift=20mm] {\texttt{2 if(drawB...}}
+   child{
+    node[xshift=-10mm] {\texttt{3 if(drawB...}}
+     child{
+      node[xshift=-5mm] {\texttt{4 if(x <= 60)}}
+       child{
+        node[name=e1,yshift=-2mm,xshift=3mm] {\texttt{5 ...}}
+        edge from parent[->]
+       }
+       child{
+        node[xshift=-3mm] {\texttt{7 assert false}}
+        edge from parent[->]
+       }
+      edge from parent[->]
+     }
+     child{
+      node[xshift=5mm] {\texttt{9 if(x <= 30)}}
+       child{
+        node[name=e2,yshift=-2mm,xshift=3mm] {\texttt{10 ...}}
+        edge from parent[->]
+       }
+       child{
+        node[name=m1,xshift=-3mm] {\texttt{12 assert false}}
+        edge from parent[->]
+       }
+      edge from parent[->]
+     }
+     edge from parent[->]
+   }
+   child{
+    node[xshift=10mm] {\texttt{15 if(x <= 55)}}
+     child{
+      node[name=e3,yshift=-2mm,xshift=3mm] {\texttt{16 ...}}
+      edge from parent[->]
+     }
+     child{
+      node[xshift=-3mm] {\texttt{18 assert false}}
+      edge from parent[->]
+     }
+    edge from parent[->]
+   }
+;
+\node[name=r,below of=entry, yshift=-30mm] {\texttt{20 \}}};
+\draw[->] (e1.south) to ($(r.north)+(-3mm,0)$);
+\draw[->] (e2.south) to ($(r.north)+(0,0)$);
+\draw[->] (e3.south) to ($(m1.east)+(5mm,0)$) to ($(r.north)+(3mm,0)$);
+\end{tikzpicture}
+\end{minipage}
+\caption{Example: Source Code (left) and Control Flow Graph (right)}
+\label{fig:example}
+\end{figure}
+

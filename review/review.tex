@@ -6,7 +6,7 @@
 \usepackage{listings}
 \usepackage{color}
 
-\newcommand{\fixed}[1]{\textcolor{green}{#1}}
+\newcommand{\fixed}[1]{\textcolor{green}{Fixed #1}}
 \newcommand{\recognize}[1]{\textcolor{blue}{#1}}
 \newcommand{\ask}[1]{\textcolor{red}{#1}}
 
@@ -42,22 +42,20 @@ To give a big picture of the related work, it would be nice if a
 summary (table) can be provided to give a comparison among the
 work discussed in the paper (showing their strength and weakness
 in terms of power, efficiency, etc).
-\ask{Matt: what would these table columns be?  What would be the
-characteristics we're comparing?}
-\recognize{Anto: I am not sure we can easily compare all the techniques in a table. If we go in this direction, possible dimensions could include: explicit/implicit probabilities (if the user has to label each branch explicitly or not), support for control and/or data flow, nondeterminism, type/level of abstraction.}
 
+\fixed{We considered this suggestion, but many of dimensions
+of comparison are conditioned on the specifics of how the analysis
+frameworks are instantiated, e.g., the abstract domain, and
+how those interact with program structure.  We have tried to
+sharpen up the descriptions to better illustrate aspects
+of comparison between approaches.}
+ 
 Also, this paper is mainly about program analysis of imperative
 programs (rather than functional or logic languages), so the
 title looks a bit too general.
 
-\ask{Matt: Where should we put this footnote addressing this comment?: 
-The analysis frameworks we have
-worked with are mostly tailored towards imperative programs.  These 
-analysis techniques are general, and apply to functional programs, but
-we did not think restating the techniques in a functional language added
-enough value to include.}
-\recognize{Anto: At the end of 2.1 . As a general note, I am not aware of techniques explicitly defined for functional programs, but I am inclined to think they would be a simpler setting than imperative programs, especially if pure functionals because of ssa, immutability, and a ``cleaner'' representation of the program state.}
-
+\fixed{We do focus on imperative programs and have added a statement
+about this focus in the introduction.}
 
 ----------------------- REVIEW 2 ---------------------
 
@@ -94,9 +92,21 @@ rapid spread of many seemingly disparate approaches which need
 to be compared and evaluated.
 
 Is the survey in this paper a successful and useful one? Perhaps
-not. This is too long a paper, there is too much text. Instead
+not. This is too long a paper, there is too much text. 
+
+\fixed{We have trimmed the paper in length reducing some of the
+broader survey elements to better focus on the main techniques
+that we focus on.}
+
+Instead
 of simple, sharp examples, it relies on a single running example
-which is confusing in places. Looking at Fig.1, I read
+which is confusing in places. 
+
+\fixed{We have sharpened descriptions of how the analyses apply to
+the example, e.g., we now describe how the 2-player game approach
+applies to an MDP.}
+
+Looking at Fig.1, I read
 ``if(drawBernoulli(0.5) == 1)" as picking a boolean from a distribution,
 i.e. a quantitative way of expressing deterministic choice.
 When further studying the paper, I made these two probabilistic
@@ -144,8 +154,13 @@ one used in the paper. It furthermore has the advantage of being
 consistent with similar choice of terminology in process algebra
 (cf. external choice, internal nondeterminism, etc).
 
-\ask{Matt: how do we want to address the above comment?}
-\recognize{Anto: the only point I would consider is internal/external vs implicit/explicit. I do not have a strong preference. Implicit/explicit takes the developer's perspective, who can clearly see the uncertainty or not. Being focused on program analysis for software engineering, I think our perspective is fair. We may just state it explicitly in 2.2: first paragraph of ``Where do the probabilities...'', before ``More generally...'', ``In this paper, we adopt the terms implicit and explicit to stress that some possible sources of uncertainty are not explicitely visible at code level, but emerge through the interactions with the users and the execution environment.'' --- or something similar}
+\fixed{The functional presentation of the example is quite interesting.
+We agree that the functional setting does provide some clear advantages,
+e.g., the analysis need not worry about side-effects.  Our goal
+in this paper is to explain how imperative program analyses, which
+have been widely studied, can be adapted to incorporate explicitly
+specified probabilistic information about program inputs.  We have
+clarified this focus in the introductory portions of the paper.}
 
 The syntax of C doesn't help either. For instance, I must admit I got confused
 on first reading type `m(int x, int b1, int b2) \{...' because I thought
@@ -153,18 +168,26 @@ the b1, b2 were integers such as x, e.g. ranging over [0,100] etc. Writing
 ``\textbackslash b.b=..." instead of ``\textbackslash x.x=..." would have helped, but the misinterpretation
 was mine, not the authors'.
 
+\fixed{We have rewritten the input constraints to clarify this.}
+
 Section 3 of the paper stresses on Monniaux's view that ``probabilistic
 programs effectively transform an input distribution into an output
 distribution". This happens because Monniauxâ€™s approach is denotational.
 In a sense, our probabilistic functional program above is the denotational
 semantics of the imperative code given in the paper.
 
+\fixed{Yes, we see that the monadicity of m(x) in your formulation exploits
+the power of higher-order functions to shift between computing over probabilities
+of input values and computing over distributions.}
+
 Page 10: why an indexed collection of pairs A * [0,1]? Such pairs
 don't repeat the `A's, so a function is enough, `pa : A $\mapsto$ [0,1]'.
 Then `pr(c)' is simply given by `sum a : a $\in$ gamma(c) : pa(a)'.
 (No indices needed.)
-\ask{Matt: The indexing seems to come from Section 4.2 of Monniaux's ``Abstract Interpretation of Probabilistic Semantics'' but we also could have come up with this indexing-abstraction on our own; I can't remember.  But the mapping suggestion seems much cleaner. What do you think?}
-\recognize{Anto: Monniaux was defining the abstraction domain using the cartesian product, which had a point for his definition of the abstraction rules. Since we only describe the result of the abstraction (the possible final states in pa reached for a concrete input c), a map fits better. I would go with the map.}
+
+\fixed{Thank you for the question.  We have simplified our presentation
+to remove the indexing since it is not needed to communicate the key
+point of Monniaux's approach.}
 
 Page 12, Handling nondeterminism: what do you mean by an ``empty
 choice"? By the way: there have been significant advances in combining
@@ -173,7 +196,7 @@ suitable distributive laws - see e.g. DOI 10.1016/j.entcs.2006.06.004,
 10.1007/978-3-642-32784-1\_7, 10.1016/j.jlamp.2015.11.007 among
 others. Please compare these with the explicit MDP approach.
 
-\ask{Matt: I haven't done anything to address the above.}
+\ask{Matt: Antonio can you go ahead and make these changes?}
 \recognize{Anto: I had a quick look at the first 2 references. They seem to correspond, at a semantic level, to Interval-MDPs (which include another level of nondeterminism to select a specific transition probability from within an interval; there is a nice paper at cav13 by Pugelli et al.). We can add these papers and Pugelli's one at the end of the 3rd par of ``Handling nondeterminism'' stating that ``Recent theoretical advances in the analysis of stochastic processes [pugelli] and the theory of coalgebras [those from the reviewer] may provide new pathways towards the definition of more advanced probabilistic program analysis methods that combine nondeterministic and probabilistic choices''}
 
 
@@ -182,72 +205,90 @@ but probabilism is also helpful in studying fault (or risk)
 propagation in the case of recursive programs, see e.g. 
 DOI 10.1016/j.scico.2015.04.008.
 
+\fixed{}
 
 3. Further suggestions for improving the manuscript
 
 The suggestions below either spot typos or propose different
 (hopefully better) ways to rephrase the original text.
 
-\recognize{page 1, Abstract ``€œopportunities for future research that builds"
-$\rightarrow$ ``opportunities for future research building" (this phrasing makes
-the parsing between ``future research" (pause) ``building" and an implicit ``future
-research-building" slightly ambiguous, so we prefer the original)}
+page 1, Abstract ``€œopportunities for future research that builds"
+$\rightarrow$ ``opportunities for future research building" 
+\fixed{this phrasing makes the parsing between ``future research" 
+(pause) ``building" and an implicit ``future
+research-building" slightly ambiguous, so we prefer the original}
 
-\ask{page 2 Fix the spurious vertical space (LaTeX) (This seems to happen
-because of the diagram on the following page)}
-\recognize{Anto: is it good enough now?}
+page 2 Fix the spurious vertical space (LaTeX) 
+\fixed{}
 
-\fixed{page 2, 3rd paragraph: I cannot see the text of footnote 1. (Moved
-the footnote up into the text)}
+page 2, 3rd paragraph: I cannot see the text of footnote 1. 
+\fixed{Moved the footnote up into the text}
 
-\fixed{page 3 ``We focus in this paper on programs" $\rightarrow$ ``This paper focuses
-on programs"}
+page 3 ``We focus in this paper on programs" $\rightarrow$ ``This paper focuses
+on programs"
+\fixed{}
 
-\fixed{page 7: ``Markov chain, but the value of an MDP" $\rightarrow$ ``Markov chain,
-but the advantage of an MDP"}
+page 7: ``Markov chain, but the value of an MDP" $\rightarrow$ ``Markov chain,
+but the advantage of an MDP"
+\fixed{}
 
-\fixed{page 9: tell what ``DTMC" means. (Because we introduce and discuss Markov chains only in the context of discrete time, we changed DTMC to just Markov chain.)}
+page 9: tell what ``DTMC" means.
+\fixed{Because we introduce and discuss Markov chains only in the context of discrete time, we changed DTMC to just Markov chain.}
 
-\fixed{page 9: ``In that approach" $\rightarrow$ ``In this approach" (We chose the
-phrasing ``In the latter approach" to disambiguate)}
+page 9: ``In that approach" $\rightarrow$ ``In this approach"
+\fixed{We chose the phrasing ``In the latter approach" to disambiguate}
 
-\fixed{page 10: ``computes the probability with which a property holds"
-$\rightarrow$ ``computes the probability of some property holding"}
+page 10: ``computes the probability with which a property holds"
+$\rightarrow$ ``computes the probability of some property holding"
+\fixed{}
 
-\fixed{page 11: ``Fundamentally, that requires" $\rightarrow$ ``In essence, this requires"}
+page 11: ``Fundamentally, that requires" $\rightarrow$ ``In essence, this requires"
+\fixed{}
 
-\fixed{page 11: ``from Section 3.3" $\rightarrow$ ``of Section 3.3"}
+page 11: ``from Section 3.3" $\rightarrow$ ``of Section 3.3"
+\fixed{}
 
-\fixed{page 15: ``example from Figure 3" $\rightarrow$ ``example of Figure 3"}
+page 15: ``example from Figure 3" $\rightarrow$ ``example of Figure 3"
+\fixed{}
 
-\fixed{page 15: ``import task" $\rightarrow$ ``important task"}
+page 15: ``import task" $\rightarrow$ ``important task"
+\fixed{}
 
-\fixed{page 16: ``As more of the paths of the program are analyzed, counts
+page 16: ``As more of the paths of the program are analyzed, counts
 are being propagated up" $\rightarrow$ ``The more paths of the program are
-analyzed, the more counts propagate up"}
+analyzed, the more counts propagate up"
+\fixed{}
 
-\fixed{page 16: ``In both of these works" $\rightarrow$ ``In both works"}
+page 16: ``In both of these works" $\rightarrow$ ``In both works"
+\fixed{}
 
-\fixed{page 17: ``Efficient implementations" $\rightarrow$ ``As efficient implementations"}
+page 17: ``Efficient implementations" $\rightarrow$ ``As efficient implementations"
+\fixed{}
 
-\fixed{page 18: ``this purpose, however, 1)" $\rightarrow$ ``this purpose. However: 1)"}
+page 18: ``this purpose, however, 1)" $\rightarrow$ ``this purpose. However: 1)"
+\fixed{}
 
-\fixed{page 18: ``scale when the cardinality of the input domain grows"
-$\rightarrow$ ``scale up to large cardinalities"}
+page 18: ``scale when the cardinality of the input domain grows"
+$\rightarrow$ ``scale up to large cardinalities"
+\fixed{}
 
-\fixed{page 19: sentence ``Given an input x, y, the constraint would either
+page 19: sentence ``Given an input x, y, the constraint would either
 be satisfied or violated" is ``une lapalissade" and as such should
-be removed.}
+be removed.
+\fixed{}
 
-\fixed{page 22: ``cycle of algorithm and tool development coupled with
+page 22: ``cycle of algorithm and tool development coupled with
 applications of analyses" $\rightarrow$ ``cycle of algorithm / tool developments
-/ applications" (We changed the phrasing to be: ``cycle of
-developments in algorithms, tools, and applications")}
+/ applications" 
+\fixed{We changed the phrasing to be: ``cycle of
+developments in algorithms, tools, and applications"}
 
-\fixed{page 22: ``efficient and effective and that this will," $\rightarrow$ ``efficient
-and effective. This will,"}
+page 22: ``efficient and effective and that this will," $\rightarrow$ ``efficient
+and effective. This will,"
+\fixed{}
 
-\fixed{page 24: ``counting for sat" $\rightarrow$ ``counting for SAT"}
+page 24: ``counting for sat" $\rightarrow$ ``counting for SAT"
+\fixed{}
 
 
 ----------------------- REVIEW 3 ---------------------
@@ -268,106 +309,150 @@ This paper presents an introductory survey of probabilistic variants of program 
 
 The structure of the paper is quite logical. I have but four minor suggestions for improvement:
 - First, the link between Section 3.3 ``Computing Program Probabilities" and the preceding sections should be made more explicit. The reader is left wondering how these methods are to be incorporated in a probabilistic program analysis. It would be enlightening to refer to specific lines of the pseudo-algorithm for symbolic execution, and to Figure 1 which was used as a running example throughout the paper. An enumeration of program analyses from the literature that use the precise or a sampling-based method would complete the section. 
+
+\ask{Matt: Antonio do you think you can find some ways to weave 3.3 into the other sections or at least cross-reference a bit.  You can leave a description of what you did here in the review response.}
+
 - Second, Gordon et al's view on probabilistic programs is explained only in the footnote on page 3 ---while 2 of the 6 opportunities for future work refer to it. It would be better to explain this view wholly in the introduction or in the future work section. 
-\ask{Matt: In discussing the above comment, we talked about including an explanatory statement such as: ``We're looking at the probabilistic analysis of programs rather than the analysis of probabilistic programs.''   But in the original paper text, the paragraph concludes with: ``What has lagged behind is the development of frameworks for defining and implementing static analysis techniques for such programs.''  The two sentences next to each other seem to conflict.}
+
+\fixed{}
+
 - Third, I felt the work on probabilistic symbolic execution is explained more crisply than the work on probabilistic data flow analysis. Would it be possible to include a one-pager with the typical pseudo-algorithm for the monotone dataflow analysis framework (i.e., analogous to what page 14 does for static symbolic execution). This would improve the clarity of the first part of the paper.
-\ask{Matt: In the above comment, we still weren't sure whether we would add the pseudocode
-suggested or if this would unnecessarily lengthen the paper.}
+
+\fixed{We had included this in a prior draft, but the feedback we received was that it made the survey too long.  We removed it to address that concern and since the analysis framework, e.g., of Kildall, is very clearly explained in the literature we felt that the reader would be better off with the details of the newer, and less well known, symbolic execution approach.}
+
 - Fourth, some glue text is missing in key places. For instance, the structure of Section 3 should be announced before its first subsection. This glue text would be a good opportunity to link the aforementioned Subsection 3.3 to 3.1 and 3.2.
 Also, a ``Conclusion" section is missing.
+
+\fixed{TBD}
 
 Minor issues in need of clarification:
 
 p2: can the claim that frameworks for developing probabilistic program analyses have lagged behind be substantiated? e.g., by enumerating how few exist compared to non-probabilistic ones?
-\ask{Matt: How to make this enumeration reproducible?  Is an enumeration like this possible/feasible?}
+\fixed{}
 
 p4: aren't the variants of symbolic execution described near the end of the page commonly referred to as dynamic symbolic execution (or concolic testing)?
+\fixed{}
 
 p6: However, it may be the case that phi fails to hold on some trace reaching $\rightarrow$ that phi holds on ... ?
+\fixed{}
 
 p8: ``and the number of values in the set." $\rightarrow$ please elaborate at this point \_why\_ this quantity is important (to improve the link to section 3.3)
+\fixed{}
 
 \fixed{p9: the acronym DTMCs is not yet defined (Because we introduce and discuss Markov chains only in the context of discrete time, we changed DTMC to just Markov chain.)}
 
 p10: ``Ramalingam formulates an equivalent system of linear equations." Is it possible to make this equivalence more concrete?
-\ask{Matt: we discussed that making this equivalence more concrete may be adding more text without introducing value---what do you think?}
+\fixed{We considered this and to illustrate the equivalence would require nearly
+half a page with an illustrative example.  Given the strong suggestions that we reduce the length of the survey we have chosen to not address your suggestion.}
 
 p10: ``Within the last 15 years, began incorporating probabilistic program information directly into ..." Can the need for this shift be motivated using example applications?
-\ask{Matt: what are some of these applications?}
+\fixed{}
 
 p10/11: ``of the abstract domain [element]?, but rather are bounds on the probability of each concrete [s/element/value]? represented by the abstract domain [element]?. The next sentence, starting with ``This simplifies ..." should be rewritten to improve its clarity.
-\ask{Matt: I think it is the elements we are talking about, but can you look at this?}
+\fixed{}
 
 p11: In the part starting with ``The literature has constructed these ad-hoc techniques, but we believe the methods of Section 3.3 might be applied ...", it is unclear whether what follows are ``these ad-hoc techniques" or your belief. I recommend postponing the reference to Section 3.3 until after the ad-hoc techniques have been enumerated.
+\fixed{}
 
 p12: Isn't the reading of the leftmost trace of the MDP of Figure 2 missing the decision for the root node? i.e., shouldn't it have read as left: \_; left : \_; left ; 0.6?
-\ask{Matt: you had some ideas on how to address the above comment.}
+\fixed{}
 
-\fixed{p15: the sentence starting with ``More specifically, how to ..." breaks the flow of the paragraph. I recommend omitting it. (We didn't completely omit the sentence, but reduced it and tried to smooth the flow.)}
+p15: the sentence starting with ``More specifically, how to ..." breaks the flow of the paragraph. I recommend omitting it. 
+\fixed{We trimmed the paragraph and tried to smooth the flow.)}
 
 p16: Which of the enumerated works under ``More and varied probabilistic symbolic execution" perform static and dynamic symbolic execution respectively?
+\fixed{}
 
 p22: I suggest merging future directions 3 and 4 (with the text of 4 taking precedence), and placing the merger at the back of the list. The others can be understood without understanding Gordon et al's view on probabilistic programs (cf. above). 
+\fixed{TBD}
 
 Spelling and typography:
 
-\ask{p2: spurious space between citations and footnote (Same as above)}
+p2: spurious space between citations and footnote
+\fixed{}
 
 p3: ``Example" is too generic as a caption for Figure 1; its three subfigures could be described instead
+\fixed{}
 
-\fixed{p4: While abstractions encode sets of states\_,\_ abstract transformers ...}
+p4: While abstractions encode sets of states\_,\_ abstract transformers ...
+\fixed{}
 
-\fixed{p4: Data flow analyses [45] provides$\rightarrow$provide}
+p4: Data flow analyses [45] provides$\rightarrow$provide
+\fixed{}
 
-\fixed{p4: , or \_a\_ set of states.}
+p4: , or \_a\_ set of states.
+\fixed{}
 
-\fixed{p6: given by a function which$\rightarrow$that maps ..., a labeled transition system which$\rightarrow$that ..., for the conditions which$\rightarrow$that test ... (In the final case, we left
-``which'' in, because the word ``that'' immediately follows ``test'')}
+p6: given by a function which$\rightarrow$that maps ..., a labeled transition system which$\rightarrow$that ..., for the conditions which$\rightarrow$that test ... 
+\fixed{In the final case, we left
+``which'' in, because the word ``that'' immediately follows ``test''}
 
-\fixed{p6: , it results in an MDP.$\rightarrow$Markov Decision Process (MDP).}
+p6: , it results in an MDP.$\rightarrow$Markov Decision Process (MDP).
+\fixed{}
 
-\recognize{p7: as a program whose inputs $\rightarrow$ of which the inputs (The suggested
-phrasing sounded awkward.)}
+p7: as a program whose inputs $\rightarrow$ of which the inputs 
+\fixed{Rephrased differently as the suggested
+phrasing sounded awkward.}
 
 p9: Early work in extending data flow analysis \_[enumerate the citations to the work in the following few paragraphs]\_
+\fixed{}
 
-\fixed{p9: excepting the exit node $\rightarrow$ except for the exit node}
+p9: excepting the exit node $\rightarrow$ except for the exit node
+\fixed{}
 
-\fixed{p9: of traces which can reach $\rightarrow$ of traces reaching / of traces that can reach}
+p9: of traces which can reach $\rightarrow$ of traces reaching / of traces that can reach
+\fixed{}
 
-\recognize{p9: To compute ... at a program point, Ramalingam \_[cite 57]\_ uses ... (the citation at the end of this sentence refers to Ramalingam's work; cite 57 (Mehofer et al.) does not seem relevant here)}
+p9: To compute ... at a program point, Ramalingam \_[cite 57]\_ uses ... (the citation at the end of this sentence refers to Ramalingam's work; cite 57 (Mehofer et al.) does not seem relevant here)
+\fixed{}
 
-\fixed{p9: The restricted properties $\rightarrow$ The usual properties}
+p9: The restricted properties $\rightarrow$ The usual properties
+\fixed{}
 
-\recognize{p10: whose solution $\rightarrow$ of which the solution (We changed the
-phrasing to ``whose solution yields...''; ``of which the'' sounded awkward.)}
+p10: whose solution $\rightarrow$ of which the solution 
+\fixed{We changed the
+phrasing to ``whose solution yields...''; ``of which the'' sounded awkward.}
 
-\fixed{p10: ``allows the expression of both control flow and data flow" $\rightarrow$ ``allows both control flow and data flow"}
+p10: ``allows the expression of both control flow and data flow" $\rightarrow$ ``allows both control flow and data flow"
+\fixed{}
 
-\fixed{p12: an input distribution \_, it is natural}
+p12: an input distribution \_, it is natural
+\fixed{}
 
-\fixed{p13: domains of those variables consist\_ of}
+p13: domains of those variables consist\_ of
+\fixed{}
 
-\fixed{p15: are no loops in the example\_,\_ the rest of the paths}
+p15: are no loops in the example\_,\_ the rest of the paths
+\fixed{}
 
-\fixed{p15: a path is finished being explored $\rightarrow$ has been explored completely}
+p15: a path is finished being explored $\rightarrow$ has been explored completely
+\fixed{}
 
 p16: model counting (using Latte) $\rightarrow$ add citation to [78] and forward reference to the next section
+\fixed{}
 
-\fixed{p16: above is mistakenly set in texttt}
+p16: above is mistakenly set in texttt
+\fixed{}
 
-\fixed{p17: A\_ LLIA constraint --the$\rightarrow$a conjunction}
+p17: A\_ LLIA constraint --the$\rightarrow$a conjunction
+\fixed{}
 
 p18: A number of commercial and open-source tools can be used for this purpose\_.\_ [Which ones?] However, ...
+\fixed{Antonio: Can you handle this?}
 
-\fixed{p19: ,an\_d\_ the input domain}
+p19: ,an\_d\_ the input domain
+\fixed{}
 
-\fixed{p20: ``it is immediate to calculate that p=0.25" $\rightarrow$ rephrase to improve clarity}
+p20: ``it is immediate to calculate that p=0.25" $\rightarrow$ rephrase to improve clarity
+\fixed{}
 
-\fixed{p20: the actual value of p \_is\_ close to its extremes}
+p20: the actual value of p \_is\_ close to its extremes
+\fixed{}
 
-\fixed{p21: provide\_s\_ a significantly better scalability (or: scales significantly better)}
+p21: provide\_s\_ a significantly better scalability (or: scales significantly better)
+\fixed{}
 
-\fixed{p22: in other areas of program analysis\_,\_ a mutually\_-\_reinforcing cycle}
+p22: in other areas of program analysis\_,\_ a mutually\_-\_reinforcing cycle
+\fixed{}
 
 \end{document}
