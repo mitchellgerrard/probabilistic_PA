@@ -27,8 +27,10 @@ choice -- depicted by the lack of labels on the edges.
 
 We will also consider models that include probabilistic choice,
 e.g., defining the probability that a branch is taken.
-The left side of Figure~\ref{fig:choice} show edge probabilities
-that reflect the outcome of the Bernoulli draw on line 2.
+The left side of Figure~\ref{fig:choice} shows edge probabilities
+that reflect the outcome of the Bernoulli draw on line 2. Thus the probability 
+of taking the {\em then} branch is 0.5; the probability of taking 
+the {\em else} branch is also 0.5.
 In addition, we will consider models where the
 choice of successor is defined by the semantics
 of the branch condition.
@@ -71,7 +73,8 @@ the invariants over those states.
 
 Data flow analyses are solved using a fixpoint computation which
 allows properties of all program paths to be safely approximated.
-Model checking~\cite{clarke1999model} also relies on an underlying
+Model checking~\cite{clarke1999model} is a popular verification technique
+which also relies on an underlying
 fixpoint computation.  Moreover, data flow
 analyses operate on symbolic abstractions of program states that
 can be defined by abstract interpretation~\cite{cousot1977abstract}. 
@@ -121,7 +124,7 @@ in a depth-first manner.
 In the example of Figure~\ref{fig:example}, on the leftmost path through
 the control flow graph, when symbolic execution reaches the 
 final branch it will record the condition ${\cal X} \le 60$, where
-${\cal X}$ models the unknown value of input $x$.  This describes the
+${\cal X}$ models the unknown value of input $x$.  This condition describes the
 set of input values that will trigger execution of this path---as long
 as both Bernoulli trials yield a value of 1.
 
@@ -134,7 +137,7 @@ typically run with a (user-specified) bound on the search depth, thus
 some paths may be unexplored.   Moreover, there may be path constraints
 for which efficient satisfiable checking is not possible.  Variants of
 symbolic execution~\cite{godefroid2005dart,sen2005cute,song2008bitblaze},
-called concolic execution, address this by replacing problematic 
+called concolic execution, address this problem by replacing problematic 
 constraints with equality constraints between variables 
 and values collected while executing the program along the trace.
 
@@ -144,17 +147,20 @@ and have been used primarily for test generation and fault detection.
 
 \subsubsection{Probabilities and Probabilistic Models}
 
-There is an enormous literature on probability and statistics
+There is an enormous literature on probabilistic reasoning and statistics
 that can be brought to bear in program analysis.  
-In this paper, we consider two types of discrete time models:
+In this paper, we consider two types of discrete time probabilistic models:
 Markov chains and Markov decision processes (MDP)~\cite{Puterman:MDP94}.
 
 Both models rely on the concept of a probability distribution.
-A \textit{probability distribution} over a set is given by a function
-that maps each of the set's subsets to some real number between 0 and 1;
-this number represents the probability of a given subset being the outcome
-of a random experiment.
-The sum of the probabilities of all subsets is 1.
+A \textit{probability distribution} a probability distribution is a function 
+that provides the probability of occurrence of different possible outcomes 
+in an experiment.
+%over a set is given by a function
+%that maps each of the set's subsets to some real number between 0 and 1;
+%this number represents the probability of a given subset being the outcome
+%of a random experiment.
+The sum of the probabilities for all outcomes is 1.
 
 \ignore{
 A \textit{distribution} over a set $S$ is given by a 
@@ -184,9 +190,10 @@ a set of goal states, $G$, is $Pr(G) = \sum_{s \in Tr(G)} Pr(s)$.
 }
 
 A Markov chain is a labeled transition system that, given some
-state, defines the probability of moving to another state.
+state, defines the probability of moving to another state, according 
+to a probability distribution.
 The probability of executing a sequence of states is then the
-product of the transition probabilities between each state.
+product of the transition probabilities between the states.
 The model fragment in the upper right corner of 
 Figure~\ref{fig:example} depicts a Markov chain fragment.
 It defines, for the set of states 
@@ -201,10 +208,10 @@ For this small example, if we were to assume a probability
 distribution on the input $x$, then it would be possible
 to compute the probability of taking every edge in the CFG.   
 This would be a Markov chain model of {\tt m} and it would replace
-all nondeterministic choice in the CFG with probabilistic choice.
+all nondeterministic choices in the CFG with probabilistic choices.
 
 There are many situations where the removal of nondeterministic
-choice is impractical or undesirable.  For example, if the input
+choices is impractical or undesirable.  For example, if the input
 distribution of $x$ is unknown, then retaining nondeterministic
 choices for the conditionals which test that value would yield a
 faithful program model.  In addition, it may be desirable, for
@@ -213,7 +220,7 @@ abstraction may make it impossible to accurately compute the
 probability of a transition.  
 
 Including nondeterminism in a probabilistic state
-transition model yields a Markov decision process.
+transition model yields a Markov decision process (MDP).
 An MDP adds an additional structure, $A$, that defines
 a set of (internal) actions which are used to model the
 selection among a set of possible next-state probability distributions.
@@ -221,8 +228,8 @@ When traversing a path in an MDP, in each state, a choice
 from $A$ must be made in order to determine how to transition,
 probabilistically, to a next state.   That sequence of choices
 \ignore{$\sigma \in A^*$,} is termed a \textit{policy} for the MDP.
-Given a fixed schedule, an MDP reduces to a Markov chain, but
-the advantage of an MDP lies in its ability to provide upper and
+Given a policy, an MDP reduces to a Markov chain.
+One of the advantages of using MDP an lies in its ability to provide upper and
 lower bounds on the behavior of the modeled system (discussed
 in the following section).
 \ignore{
