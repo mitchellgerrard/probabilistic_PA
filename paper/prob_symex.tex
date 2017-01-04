@@ -1,12 +1,15 @@
 \subsection{Probabilistic Symbolic Execution}
 \label{sec:pse}
 
-Symbolic execution produces path conditions (PCs), i.e., constraints on the inputs, that characterize how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analyzed any further.  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
+Probabilistic symbolic execution extends traditional symbolic execution with the ability of computing probabilities of executing program paths.
+The computation is based on {\em quantifying} the solution spaces of the path conditions computed by symbolic execution.
 
-For simplicity, we assume we are working with a uniform input distribution for the program under analysis.  
-See \cite{Filieri2013} for a detailed discussion of input distributions within symbolic execution.
+%Symbolic execution produces path conditions (PCs), i.e., constraints on the inputs, that characterize how a certain target property can be reached. During the process of symbolic execution, the most important question to answer about each PC is whether it is satisfiable or not.  If not, then the corresponding path does not need to be analyzed any further.  However, now we are additionally interested in the \emph{probability} of a target property being satisfied. 
 
-For example, in Figure~\ref{fig:symex:illus}, 
+%For simplicity, we assume we are working with a uniform input distribution for the program under analysis.  
+%See \cite{Filieri2013} for a detailed discussion of input distributions within symbolic execution.
+
+We illustrate probabilistic symbolic execution using the example in Figure~\ref{fig:symex:illus}, where 
 we introduce variables $b_0$ and $b_1$ to model 
 the two {\tt drawBernoulli} distributions from Figure~\ref{fig:example};
 the domains of those variables consist of 10 values and the tests
@@ -107,7 +110,7 @@ The domain of variables, which is finite and discrete, is denoted by $D$.
     \end{picture}}
 \end{picture}
 \end{minipage}
-\caption{Illustration of symbolic execution}
+\caption{Illustration of probabilistic symbolic execution}
 \label{fig:symex:illus}
 \end{figure}
 
@@ -115,18 +118,17 @@ The domain of variables, which is finite and discrete, is denoted by $D$.
 
 %To use model counting techniques to compute the probability $\x{Pr}(\x{pc})$ of path condition \x{pc}, we define a counting function, $\sharp(\x{pc})$, that returns the number of elements of $D$ that satisfy $\x{pc}$. Because we assume that $D$ is finite and countable, $\sharp(\cdot)$ always produces a finite non-negative integer, and $\x{Pr}(\x{pc})$ is, by definition~\cite{pestman1998mathematical}, $\sharp(\x{pc}) / \sharp(D)$ (where $\sharp(D)$ is the size of the non-empty input domain). 
 
-\subsubsection{Approach}
+\subsubsection{Algorithm}
 
-We outline a general approach to probabilistic symbolic execution
-that accomodates many of the advances in the recent literature.
+We outline a general algorithm to probabilistic symbolic execution
+that accomodates many of the advances in the recent literature~\cite{filieri2014statistical,Filieri2013}.
 Algorithms~\ref{alg-pse} and~\ref{alg-symsample} are modifications of
-the traditional symbolic execution algorithm to sample and process 
-symbolic paths one at a time. 
+traditional symbolic execution to process symbolic paths one at a time. 
 This processing includes the calculation of probabilities as described in
 the next section.
 The interested reader is referred to \cite{filieri2014statistical} for a more detailed discussion of the precise algorithm.
 
-When considering the example in Figure~\ref{fig:symex:illus}, each of the six paths from the root to the leaves can be sampled and the path condition describing that path will be the conjunct of the constraints along the path; for example the leftmost path will have $b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ as its path condition. 
+When considering the example in Figure~\ref{fig:symex:illus}, each of the six paths from the root to the leaves can be sampled and the path condition describing that path will be the conjunction of the constraints along the path; for example the leftmost path will have $b_0 < 5 \wedge b_1 < 5 \wedge x \le 60$ as its path condition. 
 
 Below we discuss \x{stoppingPath}, \x{selectBranch}, \x{stoppingSearch} and \x{processPath} of Algorithms~\ref{alg-pse} and~\ref{alg-symsample}. At a high level, {\tt symsample} is called from the initial state of the program with $pc=\mathtt{true}$ as the current path condition;  it returns a single path which is then processed.  This is followed by a check to see if the analysis is complete and can stop. Within {\tt symsample} we first check to see if the search needs to be stopped; otherwise, we symbolically execute the program up to the next branching point and decide which of the next branching statements must be taken. Note that now only one branch is taken, unlike in traditional symbolic execution, where both branches could be taken if they were both satisfiable. 
 
