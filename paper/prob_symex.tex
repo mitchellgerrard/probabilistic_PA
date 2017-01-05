@@ -27,24 +27,49 @@ The path condition describing each path is the conjunction of the constraints al
 
 \begin{figure}[t]
 \begin{minipage}{0.3\textwidth}
-\begin{algorithmic}
-  \STATE $\triangleright\quad b_0,b_1\in\{0,\ldots,9\}$
-  \IF{$b_0<5$}
-    \IF{$b_1<5$}
-      \IF{$x\le60$} \STATE $\ldots A$
-      \ELSE \STATE \textbf{assert} \FALSE
-      \ENDIF
-    \ELSE
-      \IF{$x\le30$} \STATE $\ldots B$
-      \ELSE \STATE \textbf{assert} \FALSE
-      \ENDIF
-    \ENDIF
-  \ELSE
-    \IF{$x\le55$} \STATE $\ldots C$
-    \ELSE \STATE \textbf{assert} \FALSE
-    \ENDIF
-  \ENDIF
-\end{algorithmic}
+%\begin{algorithmic}
+%  \STATE $\triangleright\quad b_0,b_1\in\{0,\ldots,9\}$
+%  \IF{$b_0<5$}
+%    \IF{$b_1<5$}
+%      \IF{$x\le60$} \STATE $\ldots A$
+%      \ELSE \STATE \textbf{assert} \FALSE
+%      \ENDIF
+%    \ELSE
+%      \IF{$x\le30$} \STATE $\ldots B$
+%      \ELSE \STATE \textbf{assert} \FALSE
+%      \ENDIF
+%    \ENDIF
+%  \ELSE
+%    \IF{$x\le55$} \STATE $\ldots C$
+%    \ELSE \STATE \textbf{assert} \FALSE
+%    \ENDIF
+%  \ENDIF
+%\end{algorithmic}
+\centering
+\footnotesize
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize\ttfamily]
+// b0, b1 in 0..9
+m(int x, int b0, int b1) {
+ if(b0<5) {
+  if(b1<5) {
+   if(x <= 60)
+    ...A
+   else
+    assert false
+  } else {
+   if(x <= 30)
+    ...B
+   else
+    assert false
+  }
+ } else {
+  if(x <= 55)
+   ...C
+  else
+   assert false
+ }
+}
+\end{lstlisting}
 \end{minipage}
 \begin{minipage}{0.6\textwidth}
 \def\llabel#1{\makebox(0,0)[r]{\small\strut#1\space}}
