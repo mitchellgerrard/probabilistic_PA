@@ -31,23 +31,17 @@ The path condition describing each path is the conjunction of the constraints al
   \STATE $\triangleright\quad b_0,b_1\in\{0,\ldots,9\}$
   \IF{$b_0<5$}
     \IF{$b_1<5$}
-      \IF{$x\le60$}
-        \STATE $\ldots A$
-      \ELSE
-        \STATE \textbf{assert} \FALSE
+      \IF{$x\le60$} \STATE $\ldots A$
+      \ELSE \STATE \textbf{assert} \FALSE
       \ENDIF
     \ELSE
-      \IF{$x\le30$}
-        \STATE $\ldots B$
-      \ELSE
-        \STATE \textbf{assert} \FALSE
+      \IF{$x\le30$} \STATE $\ldots B$
+      \ELSE \STATE \textbf{assert} \FALSE
       \ENDIF
     \ENDIF
   \ELSE
-    \IF{$x\le55$}
-      \STATE $\ldots C$
-    \ELSE
-      \STATE \textbf{assert} \FALSE
+    \IF{$x\le55$} \STATE $\ldots C$
+    \ELSE \STATE \textbf{assert} \FALSE
     \ENDIF
   \ENDIF
 \end{algorithmic}
